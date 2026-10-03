@@ -18,20 +18,27 @@ Cline, Claude, Codex, Antigravity, Gemini, OpenCode, any model, or any IDE.
 |---|---|
 | Phase ID | `PHASE-04` |
 | Phase name | Discovery & Capability Architecture |
-| Phase status | `AWAITING_USER_APPROVAL` |
+| Phase status | `APPROVED` |
 | Completion | `COMPLETE` |
 | Verification | `VERIFIED` |
-| **Approval** | **`AWAITING_USER_APPROVAL`** — not granted |
+| **Approval** | **`APPROVED`** — granted by User, 2026-10-03 |
+| Approved by | User (explicit approval) |
+| Approval basis | Phase 04 implementation and verification were independently reviewed and accepted |
 | Started | 2026-10-03 |
+| Approved | 2026-10-03 |
 | Previous phase | `PHASE-03` — Enforcement & Control Foundation (`APPROVED` 2026-10-03) |
-| Next phase | `PHASE-05` — **`NOT_STARTED`, `NOT_APPROVED`** — needs a new explicit instruction |
+| Next phase | **`NOT_YET_DEFINED`** — the next phase is NOT `PHASE-05` |
 
-> **Three axes, recorded separately.** Phase 04 is `COMPLETE` and `VERIFIED` (capability
-> validator 52/52 + 16 negative cases; governance 50/50; control 49/49 + 8; lint PASSED). It is
-> **not approved**. Only the user may change that. Phase 03's approval did **not** carry forward.
+> **Three axes, recorded separately.** Phase 04 is `COMPLETE` (work performed), `VERIFIED`
+> (capability validator 52/52 + 16 negative cases; governance 50/50; control 49/49 + 8; lint
+> PASSED), and now `APPROVED` (the user accepted it on 2026-10-03).
+>
+> **Repository strategy is changing.** The next phase will be a separate
+> **"SPS 2.0 Repository Architecture & Migration Planning"** phase, NOT Phase 05. That phase
+> has no ID, no scope and no approval yet, and must not begin without an explicit prompt.
 >
 > **Nothing was installed, discovered, or fabricated.** The capability registry and research
-> cache are intentionally empty (`DEC-0005`).
+> cache remain intentionally empty (`DEC-0005`).
 
 > **Three axes, recorded separately:** this phase is `COMPLETE` (work performed),
 > `VERIFIED` (evidence proves it), and now `APPROVED` (the user accepted it on
@@ -59,6 +66,13 @@ PHASE-01 (audit)  ──►  PHASE-02 (governance)  ──►  PHASE-03 (enforce
 | `PHASE-03` | `APPROVED` | User | 2026-10-03 | Implementation and verification independently reviewed and accepted |
 | `DEC-0003` lifecycle extends status model | `APPROVED` | User | 2026-10-03 | Accepted as implemented |
 | `DEC-0004` evidence immutability scope | `APPROVED` | User | 2026-10-03 | Accepted as detection-based, not prevention-based |
+| `PHASE-04` | `APPROVED` | User | 2026-10-03 | Implementation and verification independently reviewed and accepted |
+| `DEC-0005` empty registry | `APPROVED` | User | 2026-10-03 | Registry starts empty; no capability fabricated |
+| `DEC-0006` provenance scope | `APPROVED` | User | 2026-10-03 | Detection-based, not runtime-traced |
+
+**Strategy change (2026-10-03):** the next phase is **not** `PHASE-05`. It is a separate
+**"SPS 2.0 Repository Architecture & Migration Planning"** phase, recorded as
+`NOT_YET_DEFINED`. No phase ID has been allocated and no approval exists for it.
 
 **Standing obligation carried by `DEC-0002`:** the Git identity placeholder must be replaced
 **before this repository is published or shared externally**. Not yet due, because `DEC-0001`
@@ -88,8 +102,8 @@ Never collapse these into a single field.
 | `PHASE-01` | Read-only forensic audit | `VERIFIED` | `AUDIT-PHASE-01-BASELINE-FORENSIC.md` |
 | `PHASE-02` | Governance + Git + evidence foundation | `APPROVED` (2026-10-03) | `AUDIT-PHASE-02-GOVERNANCE-IMPLEMENTATION.md` |
 | `PHASE-03` | Enforcement & control foundation | `APPROVED` (2026-10-03) | `AUDIT-PHASE-03-ENFORCEMENT-CONTROL.md` |
-| `PHASE-04` | Discovery & capability architecture | `AWAITING_USER_APPROVAL` | `AUDIT-PHASE-04-DISCOVERY-CAPABILITY-ARCHITECTURE.md` |
-| `PHASE-05` | — | `NOT_STARTED` — not approved | — |
+| `PHASE-04` | Discovery & capability architecture | `APPROVED` (2026-10-03) | `AUDIT-PHASE-04-DISCOVERY-CAPABILITY-ARCHITECTURE.md` |
+| _next_ | **SPS 2.0 Repository Architecture & Migration Planning** | `NOT_YET_DEFINED` — no ID, scope or approval | — |
 
 ## Governance Map
 

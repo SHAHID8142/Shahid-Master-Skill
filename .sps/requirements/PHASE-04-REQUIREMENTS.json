@@ -3,7 +3,7 @@
   "phase": "PHASE-04",
   "title": "Discovery & Capability Architecture",
   "generated": "2026-10-03",
-  "note": "Every requirement is a real Phase 04 obligation. All are PENDING_USER_APPROVAL: the agent implemented them and may not approve them.",
+  "note": "Every requirement is a real Phase 04 obligation. All were APPROVED by the User on 2026-10-03; the agent implemented them but did not approve them.",
   "requirements": [
     {
       "requirement_id": "REQ-P04-01",
@@ -26,14 +26,16 @@
       "verification_refs": [
         "VER-P04-001"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [],
       "related_tasks": [
         "PHASE-04-T01"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P04-02",
@@ -57,14 +59,16 @@
       "verification_refs": [
         "VER-P04-003"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [],
       "related_tasks": [
         "PHASE-04-T02"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P04-03",
@@ -89,14 +93,16 @@
       "verification_refs": [
         "VER-P04-002"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [],
       "related_tasks": [
         "PHASE-04-T02"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P04-04",
@@ -120,14 +126,16 @@
       "verification_refs": [
         "VER-P04-004"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [],
       "related_tasks": [
         "PHASE-04-T03"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P04-05",
@@ -151,14 +159,16 @@
       "verification_refs": [
         "VER-P04-005"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [],
       "related_tasks": [
         "PHASE-04-T03"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P04-06",
@@ -182,14 +192,16 @@
       "verification_refs": [
         "VER-P04-006"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [],
       "related_tasks": [
         "PHASE-04-T03"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P04-07",
@@ -213,14 +225,16 @@
       "verification_refs": [
         "VER-P04-007"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [],
       "related_tasks": [
         "PHASE-04-T04"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P04-08",
@@ -243,14 +257,16 @@
       "verification_refs": [
         "VER-P04-001"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [],
       "related_tasks": [
         "PHASE-04-T04"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P04-09",
@@ -274,14 +290,16 @@
       "verification_refs": [
         "VER-P04-008"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [],
       "related_tasks": [
         "PHASE-04-T01"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P04-10",
@@ -305,14 +323,16 @@
       "verification_refs": [
         "VER-P04-009"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [],
       "related_tasks": [
         "PHASE-04-T05"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P04-11",
@@ -336,14 +356,16 @@
       "verification_refs": [
         "VER-P04-010"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [],
       "related_tasks": [
         "PHASE-04-T01"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P04-12",
@@ -366,14 +388,16 @@
       "verification_refs": [
         "VER-P04-001"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [],
       "related_tasks": [
         "PHASE-04-T01"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P04-13",
@@ -396,14 +420,16 @@
       "verification_refs": [
         "VER-P04-003"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [],
       "related_tasks": [
         "PHASE-04-T06"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
     }
   ],
   "verifications": []

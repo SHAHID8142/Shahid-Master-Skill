@@ -168,7 +168,41 @@ for s in 'Capability Contract' 'Research Contract' 'MCP Contract' \
   grep -q "$s" .sps/SCHEMA.md && pass "SCHEMA.md defines $s" || fail "SCHEMA.md missing $s"
 done
 
-sect "4. Registry and research cache integrity"
+sect "4b. Requirement approval integrity (JSON)"
+# The approval-discipline checks elsewhere scan Markdown decision records and
+# registry capability records. Requirement JSON files carry their own
+# approval_decided_by field and were NOT covered - a real gap found by negative
+# test T2 during the Phase 04 approval transition.
+for rq in .sps/requirements/*.json; do
+  [ -e "$rq" ] || continue
+  OUT2="$(python3 - "$rq" <<'PY'
+import json, re, sys
+AGENT = re.compile(r'\b(agent|ai|assistant|model|bot|claude|cursor|codex|gemini|opencode)\b', re.I)
+d = json.load(open(sys.argv[1]))
+errs = []
+for r in d.get('requirements', []):
+    rid = r.get('requirement_id', '<no id>')
+    if r.get('approval_status') == 'APPROVED':
+        who = (r.get('approval_decided_by') or '').strip()
+        if not who:
+            errs.append("%s: APPROVED with no approval_decided_by" % rid)
+        elif AGENT.search(who):
+            errs.append("%s: APPROVED attributed to non-user %r" % (rid, who))
+        if not r.get('approved_at'):
+            errs.append("%s: APPROVED without approved_at" % rid)
+print("\n".join(errs) if errs else "CLEAN")
+PY
+)"
+  if [ "$OUT2" = "CLEAN" ]; then
+    pass "$rq: requirement approvals are properly attributed"
+  else
+    while IFS= read -r line; do
+      [ -n "$line" ] && fail "$rq: $line"
+    done <<< "$OUT2"
+  fi
+done
+
+sect "5. Registry and research cache integrity"
 for j in "$REG" "$RES"; do
   python3 -c "import json;json.load(open('$j'))" 2>/dev/null \
     && pass "$j is valid JSON" || fail "$j is not valid JSON"

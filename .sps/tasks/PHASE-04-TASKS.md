@@ -2,7 +2,7 @@
 
 **Phase:** `PHASE-04` — Discovery & Capability Architecture
 **Status:** `AWAITING_USER_APPROVAL` (implementation `COMPLETE`, verification `VERIFIED`)
-**Approval:** **`PENDING_USER_APPROVAL`** — explicit user approval required; not inferred
+**Approval:** **`APPROVED` by User, 2026-10-03** — explicit user approval, not inferred
 **Contracts:** `.sps/SCHEMA.md` §12–§16 · **Model:** `.sps/capability/`
 
 ---
@@ -11,12 +11,12 @@
 
 | ID | Title | Requirements | Status | Completion | Verification | Approval |
 |---|---|---|---|---|---|---|
-| `PHASE-04-T01` | Capability model, lifecycle, hardcoded-routing audit | `REQ-P04-01,09,11,12` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-04-T02` | Capability + research contracts, registry, research cache | `REQ-P04-02,03` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-04-T03` | Security gate + MCP evaluation contract | `REQ-P04-04,05,06` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-04-T04` | Research gate + provenance chain | `REQ-P04-07,08` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-04-T05` | Agent-interoperability contract | `REQ-P04-10` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-04-T06` | Validator + negative suite CASE A–N | `REQ-P04-13` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
+| `PHASE-04-T01` | Capability model, lifecycle, hardcoded-routing audit | `REQ-P04-01,09,11,12` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-04-T02` | Capability + research contracts, registry, research cache | `REQ-P04-02,03` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-04-T03` | Security gate + MCP evaluation contract | `REQ-P04-04,05,06` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-04-T04` | Research gate + provenance chain | `REQ-P04-07,08` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-04-T05` | Agent-interoperability contract | `REQ-P04-10` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-04-T06` | Validator + negative suite CASE A–N | `REQ-P04-13` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` (User, 2026-10-03) |
 
 ---
 

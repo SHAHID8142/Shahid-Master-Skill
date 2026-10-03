@@ -11,9 +11,17 @@
 |---|---|
 | `CURRENT_PHASE` *(P4)* | `PHASE-04` — Discovery & Capability Architecture |
 | `CURRENT_TASK` *(P4)* | Phase complete; awaiting user approval |
-| `CURRENT_STATE` *(P4)* | `AWAITING_USER_APPROVAL` |
-| `USER_APPROVAL` *(P4)* | **`PENDING_USER_APPROVAL`** — not granted |
+| `CURRENT_STATE` *(P4)* | `APPROVED` |
+| `USER_APPROVAL` *(P4)* | **`APPROVED` by User, 2026-10-03** |
 | `BLOCKERS` *(P4)* | none |
+
+**Phase 04 approval:** granted by the User on 2026-10-03, on the basis that its implementation
+and verification were independently reviewed and accepted. `DEC-0005` and `DEC-0006` are
+resolved as `APPROVED` on the same basis.
+
+**Next phase is NOT `PHASE-05`.** Repository strategy is changing: the next phase is
+**"SPS 2.0 Repository Architecture & Migration Planning"**, recorded as `NOT_YET_DEFINED` — no
+ID, no scope, no approval. It must not begin without an explicit user prompt.
 
 ### Capability architecture (what exists)
 
@@ -32,7 +40,7 @@
 | Field | Value |
 |---|---|
 | Action class | `READ`, `ANALYZE` |
-| What | Review `AUDIT-PHASE-04-DISCOVERY-CAPABILITY-ARCHITECTURE.md`, `.sps/capability/*`, the Phase 04 requirements/evidence JSON, and the commit diff. Approve or reject via the decision mechanism. |
+| What | Review `.sps/capability/*`, the Phase 04 report, and the commit diff. Do **not** begin the SPS 2.0 Repository Architecture & Migration Planning phase until the user issues its prompt. Do **not** populate the capability registry or research cache. |
 | Risk | `LOW` |
 
 ### `FORBIDDEN_NEXT_ACTION` *(P4 — mandatory)*
@@ -40,8 +48,8 @@
 | Field | Value |
 |---|---|
 | Action class | `WRITE`, `INSTALL`, `EXECUTE`(installers), `DELETE`, `DEPLOY`, `PUBLISH`, `DESTRUCTIVE`, `DISCOVER` |
-| What | Do **not** start `PHASE-05`; do **not** populate the capability registry or research cache; do **not** discover, evaluate, install or activate any skill, MCP, package or tool; do **not** modify `SKILL-ROUTER.md` or `SKILL-GOVERNANCE.md`; do not fix any Phase 01 finding (`KI-01`–`KI-14`); do not run `install.sh`/`uninstall.sh`/`sps-update.sh`; do not configure a remote or push (`DEC-0001`). |
-| Why | Phase 04 is not approved, and capability population/install is out of Phase 04 scope (§21). |
+| What | Do **not** begin the SPS 2.0 phase or `PHASE-05`; do **not** discover, evaluate, install or activate any skill, MCP, package or tool; do **not** populate the capability registry or research cache; do not modify `SKILL-ROUTER.md` / `SKILL-GOVERNANCE.md` or any SPS implementation; do not fix any Phase 01 finding (`KI-01`–`KI-14`); do not run `install.sh`/`uninstall.sh`/`sps-update.sh`; do not create a Git remote or push (`DEC-0001`). |
+| Why | Phase 04 is approved but the **next phase has no approval and no scope**. Capability population remains out of scope. |
 | Risk | `HIGH` |
 
 ### Verified
@@ -50,12 +58,12 @@ Capability validator **52/52 + 16 negative cases (A–N, G2) enforced, exit 0**,
 CASE 0 positive control. Governance 50/50, control 49/49 + 8, SPS lint PASSED. Zero source
 files changed; no remote configured.
 
-### PHASE 04 DECISIONS (pending user approval)
+### PHASE 04 DECISIONS (approved by User, 2026-10-03)
 
 | ID | Decision | Approval |
 |---|---|---|
-| `DEC-0005` | Registry starts empty; no capability fabricated | `PENDING_USER_APPROVAL` |
-| `DEC-0006` | Provenance enforcement is detection-based, not runtime | `PENDING_USER_APPROVAL` |
+| `DEC-0005` | Registry starts empty; no capability fabricated | `APPROVED` (User, 2026-10-03) |
+| `DEC-0006` | Provenance enforcement is detection-based, not runtime | `APPROVED` (User, 2026-10-03) |
 
 ---
 
