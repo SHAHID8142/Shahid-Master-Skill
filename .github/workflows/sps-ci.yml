@@ -1,0 +1,81 @@
+name: sps-ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint-and-smoke:
+    name: Lint + smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: SPS lint
+        run: bash scripts/lint-sps.sh
+
+      - name: SPS smoke
+        run: bash scripts/smoke-sps.sh
+        env:
+          CI: "1"
+          npm_config_yes: "true"
+          NPX_NO_UPDATE_NOTIFIER: "1"
+
+  version-sanity:
+    name: Version sanity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: VERSION parses and matches templates
+        run: |
+          V="$(tr -d '[:space:]' < skills/sps/VERSION)"
+          echo "VERSION=$V"
+          [[ "$V" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "VERSION malformed: $V"; exit 1; }
+          grep -q "SPS version: $V" skills/sps/templates/audit-report.md \
+            || { echo "templates/audit-report.md not stamped with $V"; exit 1; }
+          grep -q "Skill version: $V" skills/sps/templates/agent.md \
+            || { echo "templates/agent.md not stamped with $V"; exit 1; }
+          grep -q "**Version:** $V" README.md \
+            || { echo "README.md version mismatch ($V)"; exit 1; }
+          grep -q "## $V" CHANGELOG.md \
+            || { echo "CHANGELOG.md missing $V entry"; exit 1; }
+
+      - name: Script mirrors in sync
+        run: |
+          diff -rq scripts skills/sps/scripts || { echo "scripts/ and skills/sps/scripts/ drifted"; exit 1; }
+
+      - name: No profile flags in installers (single unified install)
+        run: |
+          grep -n -- '--profile' install.sh && { echo "install.sh still has --profile"; exit 1; } || true
+          grep -n 'Profile' install.ps1 && { echo "install.ps1 still has Profile"; exit 1; } || true
+          grep -n 'Profile' get-sps.ps1 && { echo "get-sps.ps1 still has Profile"; exit 1; } || true
+
+      - name: Installer arrays balanced (install.ps1)
+        run: |
+          grep -c '@(' install.ps1 | awk '{print "open-array-count=" $1}'
+          awk 'BEGIN{d=0} /@\(/ {d++} /\)$/ {if (d>0) d--} END{exit (d==0 ? 0 : 1)}' install.ps1 \
+            || { echo "unbalanced array literal in install.ps1"; exit 1; }
+
+  powershell-syntax:
+    name: PowerShell syntax
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Parse all PS1 files
+        shell: pwsh
+        run: |
+          pwsh -NoProfile -File scripts/check-powershell.ps1
