@@ -1,9 +1,17 @@
-# AUDIT-PHASE-07 — P3 Production Capability Registry and Selection Engine
+# AUDIT-PHASE-07 — P3 Capability Engine, Project Selection and Incident Closure
 
-**Status:** `COMPLETE / VERIFIED / AWAITING_USER_APPROVAL`
+**Status:** `COMPLETE / VERIFIED / APPROVED`
+**Approved by:** User (explicit instruction, 2026-10-03)
+**Approval scope:** P3 capability engine + project selection, **including the
+documented INCIDENT-P3-001 security closure**.
 **Roadmap phase:** P3 (audit phase 07; phases 01-06 exist)
 **Date:** 2026-10-03
 **Baseline:** `9cc67a7` (P2 approval transition)
+
+**Bounded approval.** Credential revocation is recorded as
+`USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED`. Forensic checkpoint `a7767cf`
+is `PRESERVED_BY_USER_DECISION` and was **not** purged. This approval
+confers **no approval of P4**.
 
 ---
 
@@ -104,6 +112,11 @@ No secret introduced.
 
 ## 11. Phase state
 
-**P3: `COMPLETE / VERIFIED / AWAITING_USER_APPROVAL`**
+**P3: `COMPLETE / VERIFIED / APPROVED`** (2026-10-03, explicit user instruction)
 
-P3 was not self-approved. P4 has not started.
+Approval is bounded and machine-enforced by `validate-p3.sh` section 3, which
+asserts: user attribution on every approval; P4 recorded `NOT_APPROVED`;
+revocation recorded as `USER_ATTESTED`; checkpoint `a7767cf` still present; no
+capability promoted past `CANDIDATE`; every capability still `PROJECT_LOCAL`.
+
+**P4: `NOT_STARTED / NOT_APPROVED`.** Not begun.

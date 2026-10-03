@@ -2,7 +2,7 @@
   "schema": "sps2.decision-set/v1",
   "phase": "P3",
   "generated": "2026-10-03",
-  "note": "DEC-0016 to DEC-0019 await separate user approval.",
+  "note": "DEC-0016 to DEC-0019 approved by User on 2026-10-03 as part of the P3 approval.",
   "decisions": [
     {
       "decision_id": "DEC-0016",
@@ -19,10 +19,13 @@
           "rejected_because": "P3 exists to establish the mechanism; an empty registry would prove nothing."
         }
       ],
-      "status": "PROPOSED",
+      "status": "ACTIVE",
       "approval": {
         "required": true,
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03"
       }
     },
     {
@@ -39,10 +42,13 @@
           "rejected_because": "Popularity is contextual evidence only, per the P2 source hierarchy."
         }
       ],
-      "status": "PROPOSED",
+      "status": "ACTIVE",
       "approval": {
         "required": true,
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03"
       }
     },
     {
@@ -63,10 +69,13 @@
           "rejected_because": "That would let a forced choice bypass a safety constraint."
         }
       ],
-      "status": "PROPOSED",
+      "status": "ACTIVE",
       "approval": {
         "required": true,
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03"
       }
     },
     {
@@ -83,10 +92,13 @@
           "rejected_because": "No runtime tracing exists, so the claim would be false."
         }
       ],
-      "status": "PROPOSED",
+      "status": "ACTIVE",
       "approval": {
         "required": true,
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03"
       }
     }
   ]

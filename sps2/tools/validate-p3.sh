@@ -108,18 +108,53 @@ OUT=$(python3 "$CHECK" records handoff "$SPS2/handoff/HANDOFF-P3.json" 2>&1)
 [ -z "$OUT" ] && pass "P3 handoff validates" \
   || while IFS= read -r l; do [ -n "$l" ] && fail "handoff: $l"; done <<< "$OUT"
 
-sect "3. P3 is NOT self-approved"
-jq -e '[.requirements[].approval.state] | all(. == "PENDING_USER_APPROVAL")' \
+sect "3. Approval is genuine, user-attributed and bounded"
+# Approval may only ever be attributed to the user, never to an agent.
+jq -e '[.requirements[] | select(.approval.state == "APPROVED")
+        | .approval.decided_by] | length > 0 and all(. == "User")' \
   "$SPS2/requirements/P3-REQUIREMENTS.json" >/dev/null 2>&1 \
-  && pass "all P3 requirements remain PENDING_USER_APPROVAL" \
-  || fail "a P3 requirement claims approval"
-jq -e '[.decisions[].approval.state] | all(. == "PENDING_USER_APPROVAL")' \
+  && pass "every approved P3 requirement is attributed to User" \
+  || fail "a P3 requirement approval is not user-attributed"
+jq -e '[.decisions[] | select(.approval.state == "APPROVED")
+        | .approval.decided_by] | length > 0 and all(. == "User")' \
   "$SPS2/decisions/P3-DECISIONS.json" >/dev/null 2>&1 \
-  && pass "all P3 decisions remain PENDING_USER_APPROVAL" \
-  || fail "a P3 decision claims approval"
-jq -e '.handoffs[0].user_approval == "PENDING_USER_APPROVAL"' \
+  && pass "every approved P3 decision is attributed to User" \
+  || fail "a P3 decision approval is not user-attributed"
+jq -e '.handoffs[0].user_approval == "APPROVED"
+       and (.handoffs[0].current_state | test("APPROVED"))' \
   "$SPS2/handoff/HANDOFF-P3.json" >/dev/null 2>&1 \
-  && pass "P3 handoff approval pending" || fail "P3 handoff approval changed"
+  && pass "P3 handoff reads APPROVED" || fail "P3 handoff state is wrong"
+
+# The approval must stay bounded: P4 is NOT approved by it.
+jq -e '.approval_scope.p4 == "NOT_APPROVED"' \
+  "$SPS2/handoff/HANDOFF-P3.json" >/dev/null 2>&1 \
+  && pass "P4 explicitly recorded as NOT_APPROVED" || fail "P4 approval scope missing"
+jq -e '.approval_scope.credential_revocation | test("USER_ATTESTED")' \
+  "$SPS2/handoff/HANDOFF-P3.json" >/dev/null 2>&1 \
+  && pass "revocation recorded as USER_ATTESTED, not verified" \
+  || fail "revocation classification missing"
+jq -e '.approval_scope.forensic_checkpoint_a7767cf | test("PRESERVED")' \
+  "$SPS2/handoff/HANDOFF-P3.json" >/dev/null 2>&1 \
+  && pass "forensic checkpoint a7767cf recorded as PRESERVED" \
+  || fail "forensic checkpoint scope missing"
+
+# Approval must not silently promote capabilities past CANDIDATE.
+jq -e '[.capabilities[].lifecycle_state] | all(. == "CANDIDATE")' \
+  "$SPS2/capability/registry.json" >/dev/null 2>&1 \
+  && pass "no capability promoted beyond CANDIDATE by the approval" \
+  || fail "a capability lifecycle changed without its own approval"
+jq -e '[.capabilities[].install_scope] | all(. == "PROJECT_LOCAL")' \
+  "$SPS2/capability/registry.json" >/dev/null 2>&1 \
+  && pass "every capability remains PROJECT_LOCAL" \
+  || fail "a capability is not project-local"
+
+# The forensic checkpoint must still exist: approval does not authorise cleanup.
+if git -C "$REPO" cat-file -t a7767cf5f761cab4aa633c1cbc7604f83e4d14f8 \
+     >/dev/null 2>&1; then
+  pass "forensic checkpoint a7767cf preserved (not purged)"
+else
+  fail "forensic checkpoint a7767cf was purged"
+fi
 
 sect "3. Promotion gate positive control"
 mk "pass"

@@ -3,7 +3,7 @@
   "phase": "P3",
   "generated": "2026-10-03",
   "title": "Production Capability Registry and Selection Engine",
-  "note": "P3 approval is NOT recorded here. Authorising P3 is not approval of P3 completion. Only a separate explicit user instruction may approve.",
+  "note": "P3 approved by User on 2026-10-03. Approval is bounded to the P3 capability engine and project selection, INCLUDING the documented INCIDENT-P3-001 closure. It confers NO approval of P4.",
   "requirements": [
     {
       "requirement_id": "REQ-P3-01",
@@ -12,7 +12,7 @@
       "description": "Research findings must not become production by default.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": [
         "promote() returns ok only when every required field is present and valid",
         "Cases A-O of the negative suite are each rejected by a named gate rule",
@@ -38,7 +38,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03",
+        "state": "APPROVED"
       }
     },
     {
@@ -48,7 +51,7 @@
       "description": "Popularity and recency are tie-breakers only.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": [
         "Twenty-four input permutations produce one identical ranking fingerprint",
         "A candidate with ten million stars cannot outrank a higher evidence score",
@@ -74,7 +77,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03",
+        "state": "APPROVED"
       }
     },
     {
@@ -84,7 +90,7 @@
       "description": "The system must not silently replace the user's choice, nor obey it into unsafe territory.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": [
         "A forced choice moves the selected capability to rank 1 and records its former rank",
         "A forced choice on a VULNERABLE or SUSPECTED_RISK capability is refused with a stated reason"
@@ -109,7 +115,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03",
+        "state": "APPROVED"
       }
     },
     {
@@ -119,7 +128,7 @@
       "description": "Research is a candidate, not a capability.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": [
         "Every deferred candidate carries a stated reason",
         "No P2 research record id appears in the production registry",
@@ -145,7 +154,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03",
+        "state": "APPROVED"
       }
     },
     {
@@ -155,7 +167,7 @@
       "description": "The mechanism is established before dependency adoption.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": [
         "Every registered capability has install_scope PROJECT_LOCAL",
         "No node_modules, lockfile or wheel exists under sps2",
@@ -181,7 +193,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03",
+        "state": "APPROVED"
       }
     },
     {
@@ -191,7 +206,7 @@
       "description": "Freshness is a lifecycle property, not a note.",
       "scope": "IN_SCOPE",
       "risk": "MEDIUM",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": [
         "STALE_AS_ACTIVE is rejected",
         "STALE_WITHOUT_REVIEW is rejected",
@@ -217,7 +232,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03",
+        "state": "APPROVED"
       }
     },
     {
@@ -227,7 +245,7 @@
       "description": "Static provenance must not be presented as runtime tracing.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": [
         "Every capability carries provenance.origin, commit and fact_class",
         "The selection record sets runtime_tracing to false explicitly",
@@ -253,7 +271,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03",
+        "state": "APPROVED"
       }
     },
     {
@@ -263,7 +284,7 @@
       "description": "Standing constraints survive implementation.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": [
         "git diff against c11da27 over legacy paths is empty",
         "The emoji scan finds nothing under sps2",
@@ -289,8 +310,19 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03",
+        "state": "APPROVED"
       }
     }
-  ]
+  ],
+  "approval_scope": {
+    "phase": "P3",
+    "scope": "CAPABILITY_ENGINE_AND_PROJECT_SELECTION",
+    "security_incident_closure": "APPROVED_INCIDENT_P3_001",
+    "credential_revocation": "USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED",
+    "forensic_checkpoint_a7767cf": "PRESERVED_BY_USER_DECISION",
+    "p4": "NOT_APPROVED"
+  }
 }
