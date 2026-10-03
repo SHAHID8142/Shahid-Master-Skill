@@ -2,7 +2,7 @@
 
 - **Date:** 2026-10-03
 - **Status:** Active
-- **Approval:** `PENDING_USER_APPROVAL`
+- **Approval:** `APPROVED`
 - **Phase / Task:** `PHASE-02` / `PHASE-02-T02`
 - **Evidence:** `EV-P02-003`
 - **Supersedes:** none
@@ -52,13 +52,38 @@ commit is published to a shared remote.
 ## Approval
 
 **Required:** yes — the identity should be the user's own before publishing.
-**Status:** `PENDING_USER_APPROVAL`
-**Decided by:** _(none — awaiting user)_
+**Status:** `APPROVED`
+**Decision:** `DEFER_IDENTITY_UPDATE`
+**Decided by:** User (explicit user approval, 2026-10-03)
+**Approval basis:** Phase 02 implementation and verification were independently reviewed and accepted.
 
-**Action for the user:** if you plan to push this repository, replace the placeholder with
-your identity:
+The user explicitly resolved this as `DEFER_IDENTITY_UPDATE`: keep the current repository-local
+placeholder identity for now, and replace it before the repository is published or shared
+externally.
+
+### What this decision does and does not settle
+
+| Question | Status |
+|---|---|
+| May the placeholder identity be used for local commits? | **Yes** — approved. |
+| Is the placeholder the *final* identity? | **No** — deferred. |
+| Must it change before external publication? | **Yes** — a standing obligation. |
+| When must it change? | Before the repository is published or shared externally. |
+
+### Standing obligation (carried forward)
+
+This deferral creates a **precondition that has not yet been discharged**. Any future phase
+that publishes, pushes, or shares this repository externally MUST first replace the identity:
 
 ```bash
 git config --local user.name "Your Name"
 git config --local user.email "you@example.com"
 ```
+
+Because `DEC-0001` resolves to `KEEP_LOCAL_ONLY`, no push can occur under current instructions,
+so the obligation is not yet due. It becomes due the moment a remote is added or the repository
+is shared.
+
+**Note on provenance:** the Phase 02 report describes this decision as pending. That was
+accurate when written. This record supersedes that status; the report is left unmodified
+because reports are point-in-time artefacts, not live state.

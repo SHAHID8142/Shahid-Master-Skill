@@ -40,7 +40,7 @@
       "requirement": "REQ-P02-02",
       "command": "git config --local user.name/user.email ; git config --global --get user.name",
       "expected": "Identity set repo-locally; global identity remains unset (no machine-global change)",
-      "actual": "user.name='SPS Governance (local)' ; user.email='sps-governance@local.invalid' ; global user.name: still unset (unchanged)",
+      "actual": "PLACEHOLDER identity confirmed: 'SPS Governance (local)' / 'sps-...@local.invalid'. At the time this record was made (Phase 02 execution) the global identity was unset; EV-P02-003 recorded that it remained unset afterwards. NOTE: a global identity has since appeared in ~/.gitconfig, created externally after Phase 02 - see DISC-07 and EV-P02-020. Repo-local config still overrides it, so this repository is unaffected.",
       "result": "PASS",
       "timestamp": "2026-10-03T00:00:00Z",
       "file": ".git/config",
@@ -215,6 +215,76 @@
       "test": "validator-syntax",
       "commit": null,
       "maturity": "VERIFIED"
+    },
+    {
+      "id": "EV-P02-020",
+      "task": "PHASE-02-T11",
+      "requirement": "REQ-P02-11",
+      "command": "git config --show-origin --get user.name/user.email ; stat -f '%Sm %N' ~/.gitconfig .git/config",
+      "expected": "Confirm this repository's effective identity comes from repo-local config and that no machine-global config was written by this agent",
+      "actual": "git config --show-origin reports BOTH user.name and user.email resolving from file:.git/config, so repo-local overrides any global value; effective identity remains 'SPS Governance (local)' / 'sps-cms placeholder'. A global identity exists in ~/.gitconfig but its mtime (11:47) is later than .git/config (11:21), proving it was created externally, not by this agent. ~/.gitconfig was NOT modified (brief section 26). See discrepancy DISC-07.",
+      "result": "PASS",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "file": ".git/config",
+      "test": "identity-provenance-approval-transition",
+      "commit": null,
+      "maturity": "VERIFIED"
+    },
+    {
+      "id": "EV-P02-016",
+      "task": "PHASE-02-T11",
+      "requirement": "REQ-P02-11",
+      "command": "bash .sps/tools/validate-governance.sh  (after recording genuine user approval)",
+      "expected": "Validator must ACCEPT a genuine user-attributed approval and exit 0",
+      "actual": "Validator correctly FAILED first with the old rule ('STATE.md does not record an approval-pending state'), proving the pre-existing check made recording real approval impossible. Section 6 was redesigned to validate user ATTRIBUTION instead of blanket-blocking any approval. After redesign: '== GOVERNANCE VALID: 48 checks passed, 0 failed ==', exit 0.",
+      "result": "PASS",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "file": ".sps/tools/validate-governance.sh",
+      "test": "validator-genuine-approval",
+      "commit": null,
+      "maturity": "VERIFIED"
+    },
+    {
+      "id": "EV-P02-017",
+      "task": "PHASE-02-T11",
+      "requirement": "REQ-P02-11",
+      "command": "negative test: (a) attribute approval to 'agent'; (b) remove User attribution from DEC-0001 only",
+      "expected": "Both fake-approval variants must FAIL. This proves the redesigned check is stricter than the rule it replaced, not weaker.",
+      "actual": "(a) 'Decided by: agent' -> FAIL 'an approval is attributed to an agent/model - only the User may approve', exit 1. (b) Removing User attribution from DEC-0001 while DEC-0002 retained it -> initially PASSED, revealing a REAL BUG: the check used a directory-wide grep so DEC-0002 masked DEC-0001's gap. Fixed to validate each decision record individually; re-test then correctly produced FAIL 'DEC-0001-git-init-no-remote.md is APPROVED but not attributed to the User', exit 1.",
+      "result": "PASS",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "file": ".sps/tools/validate-governance.sh",
+      "test": "validator-fake-approval-negative",
+      "commit": null,
+      "maturity": "VERIFIED"
+    },
+    {
+      "id": "EV-P02-018",
+      "task": "PHASE-02-T11",
+      "requirement": "REQ-P02-11",
+      "command": "negative test: revert DEC-0002 Approval field to PENDING_USER_APPROVAL",
+      "expected": "An unresolved decision must FAIL - decisions may not be left open once the phase is approved",
+      "actual": "FAIL 'DEC-0002-local-git-identity.md still PENDING_USER_APPROVAL - decisions must be resolved, not left open', exit 1. During restoration the validator additionally detected an inconsistent intermediate state (file reverted by a git checkout while the header field was restored separately), confirming it catches partial/inconsistent edits.",
+      "result": "PASS",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "file": ".sps/decisions/DEC-0002-local-git-identity.md",
+      "test": "validator-unresolved-decision-negative",
+      "commit": null,
+      "maturity": "VERIFIED"
+    },
+    {
+      "id": "EV-P02-019",
+      "task": "PHASE-02-T11",
+      "requirement": "REQ-P02-11",
+      "command": "git status --porcelain ; git diff --stat",
+      "expected": "Only intended governance-state files changed; no application or skill source touched",
+      "actual": "Changed files limited to .sps/STATE.md, .sps/decisions/DEC-0001, .sps/decisions/DEC-0002, .sps/handoff/HANDOFF-CURRENT.md, .sps/tools/validate-governance.sh, .sps/evidence/PHASE-02-EVIDENCE.json. No file under skills/, scripts/, plugins/, .github/ or any installer was modified.",
+      "result": "PASS",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "file": null,
+      "test": "scope-diff-approval-transition",
+      "commit": null,
+      "maturity": "VERIFIED"
     }
   ],
   "phase01_discrepancies":   [
@@ -253,6 +323,15 @@
       "resolution": "Confirmed. NOT fixed (out of scope). Governance mitigates by requiring an explicit maturity level for every capability claim.",
       "action": "Maturity model introduced in .sps/GOVERNANCE.md section 1.",
       "severity": "Mitigated, not fixed"
+    },
+    {
+      "id": "DISC-07",
+      "finding": "External machine-global state change observed (not agent-initiated)",
+      "phase01_claim": "n/a - observed during the Phase 02 approval transition",
+      "verified_reality": "A global git identity (user.name=SHAHID8142, email value deliberately not reproduced) appeared in ~/.gitconfig with mtime 2026-10-03 11:47, i.e. AFTER this agent's repo-local config was written at 11:21. Evidence EV-P02-003 had verified the global identity was unset at that earlier time. This agent did not create it: every identity command it ran used git config --local, and repo-local values are unchanged.",
+      "resolution": "Documented, not altered. Brief section 26 forbids modifying global machine configuration, so ~/.gitconfig was left untouched. Verified with git config --show-origin that this repository resolves its identity from .git/config, which overrides the global value; the effective identity for this repo remains the placeholder. The repository is unaffected.",
+      "action": "Recorded here. Relevant to the standing obligation in DEC-0002: a real identity now exists globally and could be adopted repo-locally whenever the user chooses, but that remains the user's decision and was not actioned.",
+      "severity": "Informational (no impact on this repository)"
     },
     {
       "id": "DISC-06",

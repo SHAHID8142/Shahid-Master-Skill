@@ -18,26 +18,44 @@ Cline, Claude, Codex, Antigravity, Gemini, OpenCode, any model, or any IDE.
 |---|---|
 | Phase ID | `PHASE-02` |
 | Phase name | Governance, Git & Evidence Foundation |
-| Phase status | `VERIFIED` |
+| Phase status | `APPROVED` |
 | Completion | `COMPLETE` |
 | Verification | `VERIFIED` |
-| **Approval** | **`PENDING_USER_APPROVAL`** — not granted |
+| **Approval** | **`APPROVED`** — granted by User, 2026-10-03 |
+| Approved by | User (explicit approval) |
+| Approval basis | Phase 02 implementation and verification were independently reviewed and accepted |
 | Started | 2026-10-03 |
+| Approved | 2026-10-03 |
 | Previous phase | `PHASE-01` — Baseline Forensic Audit (`VERIFIED`, read-only) |
-| Next phase | `PHASE-03` — **NOT STARTED, NOT APPROVED** |
+| Next phase | `PHASE-03` — **`NOT_STARTED`, `NOT_APPROVED`** — needs a new explicit instruction |
 
-> **Note on the three axes:** this phase is `COMPLETE` and `VERIFIED`, but approval is
-> still `PENDING_USER_APPROVAL`. Only the user can change that field. An agent must
-> never set it to `APPROVED` on the user's behalf.
+> **Three axes, recorded separately:** this phase is `COMPLETE` (work performed),
+> `VERIFIED` (evidence proves it), and now `APPROVED` (the user accepted it on
+> 2026-10-03). These remain distinct states and must never be collapsed into one
+> field going forward.
 
 ## Current Position
 
 ```
-PHASE-01 (audit)  ──►  PHASE-02 (governance)  ──►  PHASE-03 (remediation)
-   VERIFIED              VERIFIED                  NOT_STARTED
-                                                       ▲
-                                          requires explicit user approval
+PHASE-01 (audit)  ──►  PHASE-02 (governance)  ──►  PHASE-03 (enforcement)
+   VERIFIED              APPROVED                   NOT_STARTED
+                                                        ▲
+                                        NOT approved; needs a NEW explicit
+                                   instruction. Phase 02 approval does
+                                    NOT carry forward to Phase 03.
 ```
+
+## Approval Record
+
+| Subject | Status | Decided by | Date | Basis |
+|---|---|---|---|---|
+| `PHASE-02` | `APPROVED` | User | 2026-10-03 | Independent review and acceptance |
+| `DEC-0001` git remote | `APPROVED` → `KEEP_LOCAL_ONLY` | User | 2026-10-03 | Do not configure a remote now |
+| `DEC-0002` git identity | `APPROVED` → `DEFER_IDENTITY_UPDATE` | User | 2026-10-03 | Replace before external publication |
+
+**Standing obligation carried by `DEC-0002`:** the Git identity placeholder must be replaced
+**before this repository is published or shared externally**. Not yet due, because `DEC-0001`
+keeps the repository local-only.
 
 ## Phase Status Legend
 
@@ -61,8 +79,8 @@ Never collapse these into a single field.
 | Phase | Scope | Status | Report |
 |---|---|---|---|
 | `PHASE-01` | Read-only forensic audit | `VERIFIED` | `AUDIT-PHASE-01-BASELINE-FORENSIC.md` |
-| `PHASE-02` | Governance + Git + evidence foundation | `VERIFIED` | `AUDIT-PHASE-02-GOVERNANCE-IMPLEMENTATION.md` |
-| `PHASE-03` | Functional remediation (scope TBD, awaiting approval) | `NOT_STARTED` | — |
+| `PHASE-02` | Governance + Git + evidence foundation | `APPROVED` (2026-10-03) | `AUDIT-PHASE-02-GOVERNANCE-IMPLEMENTATION.md` |
+| `PHASE-03` | Enforcement & control foundation | `NOT_STARTED` — not approved | — |
 
 ## Governance Map
 
@@ -92,8 +110,9 @@ existing convention rather than replacing it.
 | Field | Value |
 |---|---|
 | Baseline commit | `10ab67a` — `chore(governance): establish pre-remediation baseline` |
-| Governance commit | see `evidence/PHASE-02-EVIDENCE.json` |
-| Remote | `REMOTE_NOT_CONFIGURED` |
+| Governance commit | `ec32dfa` — `chore(governance): establish SPS phase governance foundation` |
+| Approval commit | Recorded in the Phase 02 approval transition commit |
+| Remote | `REMOTE_NOT_CONFIGURED` (`DEC-0001` → `KEEP_LOCAL_ONLY`) |
 | Branch | `main` |
 
 ## Rules

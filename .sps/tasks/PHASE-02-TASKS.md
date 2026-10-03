@@ -1,12 +1,12 @@
 # PHASE-02 Task Register
 
 **Phase:** `PHASE-02` — Governance, Git & Evidence Foundation
-**Status:** `VERIFIED` (implementation + verification complete)
-**Approval:** `PENDING_USER_APPROVAL` — **not yet granted**
+**Status:** `APPROVED` (implementation `COMPLETE`, verification `VERIFIED`)
+**Approval:** **`APPROVED` by User, 2026-10-03** — explicit user approval, not inferred
 **Contract:** `.sps/SCHEMA.md` §1 · **Rules:** `.sps/GOVERNANCE.md`
 
 > Reminder: `completion`, `verification` and `approval` are independent axes.
-> A task can be `COMPLETE` + `VERIFIED` while still awaiting user approval.
+> This phase is all three — but they were established separately, in that order.
 
 ---
 
@@ -14,16 +14,20 @@
 
 | ID | Title | Status | Completion | Verification | Approval |
 |---|---|---|---|---|---|
-| `PHASE-02-T01` | Verify Git state & create baseline | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-02-T02` | Repo-local Git identity (no global change) | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-02-T03` | Hardened `.gitignore` (secret-safe) | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-02-T04` | Governance state model + maturity levels | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-02-T05` | Task/phase identity + traceability model | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-02-T06` | Decision records (DEC-0001, DEC-0002) | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-02-T07` | Agent handoff contract | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-02-T08` | Evidence records + validation runs | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-02-T09` | Governance validator (executable) | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-02-T10` | Known-issue register for out-of-scope findings | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
+| `PHASE-02-T01` | Verify Git state & create baseline | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` |
+| `PHASE-02-T02` | Repo-local Git identity (no global change) | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` |
+| `PHASE-02-T03` | Hardened `.gitignore` (secret-safe) | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` |
+| `PHASE-02-T04` | Governance state model + maturity levels | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` |
+| `PHASE-02-T05` | Task/phase identity + traceability model | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` |
+| `PHASE-02-T06` | Decision records (DEC-0001, DEC-0002) | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` |
+| `PHASE-02-T07` | Agent handoff contract | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` |
+| `PHASE-02-T08` | Evidence records + validation runs | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` |
+| `PHASE-02-T09` | Governance validator (executable) | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` |
+| `PHASE-02-T10` | Known-issue register for out-of-scope findings | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` |
+| `PHASE-02-T11` | Record user approval + resolve DEC-0001/0002 | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` |
+
+> **Approval column updated 2026-10-03.** The user explicitly approved `PHASE-02` and
+> resolved both pending decisions. See `.sps/STATE.md` → Approval Record.
 
 ---
 
@@ -98,3 +102,21 @@
 - **Requirement:** `REQ-P02-10` · **Evidence:** `EV-P02-012`
 - **What was done:** Registered 5 Phase 01 discrepancies and 5 out-of-scope observations in
   `.sps/audits/README.md` so later phases inherit known issues rather than rediscovering them.
+
+## T11 — Record user approval and resolve pending decisions
+
+- **Requirement:** `REQ-P02-11` · **Evidence:** `EV-P02-016` – `EV-P02-019`
+- **Status:** `VERIFIED` · **Approval:** `APPROVED` (User, 2026-10-03)
+- **What was done:** Recorded the user's explicit `PHASE-02` approval as genuine user
+  approval (never inferred), and resolved both pending decisions:
+  - `DEC-0001` → `APPROVED` / `KEEP_LOCAL_ONLY` (no remote configured)
+  - `DEC-0002` → `APPROVED` / `DEFER_IDENTITY_UPDATE` (placeholder retained; replace before
+    external publication — a standing obligation now tracked in `STATE.md` and `DEC-0002`)
+- **Validator redesign required:** the Phase 02 approval check previously failed if *any*
+  approval field was populated, which made recording a real approval impossible. Section 6 was
+  redesigned to validate **user attribution** instead — strictly stronger, because it now also
+  rejects agent-attributed approvals and per-record attribution gaps.
+- **Bug found and fixed during this task:** the redesigned check originally used a
+  directory-wide grep, so `DEC-0002`'s valid attribution masked `DEC-0001`'s missing one.
+  Detected by negative test `EV-P02-017` and fixed to validate each record individually.
+- **Not done:** `PHASE-03` was **not** started. It remains `NOT_STARTED` / `NOT_APPROVED`.

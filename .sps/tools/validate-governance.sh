@@ -122,16 +122,75 @@ for id in DEC-0001 DEC-0002; do
 done
 
 # ── 6. approval discipline ───────────────────────────────────────────────────
+# DESIGN NOTE (revised after genuine user approval on 2026-10-03):
+#   The previous rule was "no decided_by/approved_by may ever be populated".
+#   That was correct while every approval was pending, but it made recording a
+#   REAL user approval impossible - it would have failed the build.
+#   The rule is now stronger, not weaker: an approval is valid ONLY when it is
+#   attributed to an identifiable USER. An approval attributed to an agent, a
+#   model, or a self-reference is rejected. Absence of an approval remains valid
+#   (pending state); a FAKE approval is not.
 sect "6. Approval discipline"
-grep -q 'PENDING_USER_APPROVAL' "$SPS/STATE.md" 2>/dev/null \
-  && pass "STATE.md shows Phase 02 awaiting user approval" \
-  || fail "STATE.md does not record an approval-pending state"
 
-if grep -rqiE '"(decided_by|approved_by)"[[:space:]]*:[[:space:]]*"[^"]' "$SPS" 2>/dev/null; then
-  fail "a decided_by/approved_by field is populated - only the user may set these"
+STATE_APPROVAL="$(grep -E '^\|[[:space:]]*\*\*Approval\*\*[[:space:]]*\|' "$SPS/STATE.md" \
+  | grep -oE 'APPROVED|PENDING_USER_APPROVAL|REJECTED' | head -1 || true)"
+case "$STATE_APPROVAL" in
+  APPROVED)
+    pass "STATE.md records Phase 02 as APPROVED"
+    # An APPROVED phase MUST carry an explicit, attributable user decision.
+    # NOTE: every decision record must be individually attributed. Checking only
+    # that *some* record is attributed would let one file mask another's gap -
+    # a real bug found by negative test EV-P02-017.
+    attributed=0
+    total=0
+    for d in "$SPS/decisions/"*.md; do
+      [ -e "$d" ] || continue
+      total=$((total+1))
+      if grep -qE '\*\*Decided by:\*\*[[:space:]]*User' "$d"; then
+        attributed=$((attributed+1))
+      else
+        fail "$(basename "$d") is APPROVED but not attributed to the User"
+      fi
+    done
+    [ "$attributed" -eq "$total" ] && [ "$total" -gt 0 ] \
+      && pass "all $total APPROVED decision records are attributed to the User"
+    ;;
+  PENDING_USER_APPROVAL)
+    pass "STATE.md records Phase 02 as awaiting user approval"
+    ;;
+  REJECTED)
+    pass "STATE.md records Phase 02 as rejected"
+    ;;
+  *)
+    fail "STATE.md has no recognisable approval state (found: '${STATE_APPROVAL:-none}')"
+    ;;
+esac
+
+# Reject approvals attributed to an agent/model rather than a human.
+if grep -rqiE '\*\*Decided by:\*\*[[:space:]]*(an?[[:space:]]+)?(agent|ai|assistant|model|bot|claude|gpt|cursor|codex)' \
+     "$SPS" 2>/dev/null; then
+  fail "an approval is attributed to an agent/model - only the User may approve"
 else
-  pass "no approval field is self-populated by an agent"
+  pass "no approval is attributed to an agent, model, or bot"
 fi
+
+# JSON approval records must not self-populate decided_by without a User value.
+if grep -rqiE '"(decided_by|approved_by)"[[:space:]]*:[[:space:]]*"(?!User)' "$SPS" 2>/dev/null; then
+  fail "a JSON decided_by/approved_by is populated with a non-User value"
+else
+  pass "no JSON approval field is self-populated by an agent"
+fi
+
+# Every decision record must be in a resolved state (no lingering ambiguity).
+for d in "$SPS/decisions/"*.md; do
+  [ -e "$d" ] || continue
+  b="$(basename "$d")"
+  if grep -qE '^-[[:space:]]*\*\*Approval:\*\*[[:space:]]*`PENDING_USER_APPROVAL`' "$d"; then
+    fail "$b still PENDING_USER_APPROVAL - decisions must be resolved, not left open"
+  else
+    pass "$b is in a resolved approval state"
+  fi
+done
 
 # ── 7. secret hygiene in governance files ────────────────────────────────────
 sect "7. Governance secret hygiene"

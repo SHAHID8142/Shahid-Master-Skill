@@ -5,6 +5,14 @@ Index of audit reports plus the standing register of known issues discovered but
 
 ---
 
+| `PHASE-01` | [`../../AUDIT-PHASE-01-BASELINE-FORENSIC.md`](../../AUDIT-PHASE-01-BASELINE-FORENSIC.md) | Read-only forensic audit | `VERIFIED` |
+| `PHASE-02` | [`../../AUDIT-PHASE-02-GOVERNANCE-IMPLEMENTATION.md`](../../AUDIT-PHASE-02-GOVERNANCE-IMPLEMENTATION.md) | Governance implementation report | `APPROVED` (User, 2026-10-03) |
+| `PHASE-03` | — | — | `NOT_STARTED` — needs a new explicit instruction |
+
+> **Report-vs-state note.** The Phase 02 report states its approval was pending, because that
+> was true when written. Reports are point-in-time artefacts; `.sps/STATE.md` and the decision
+> records are the live state and now record `APPROVED`. The report was deliberately left
+> unmodified so its original claims remain auditable.
 ## Audit Reports
 
 | Phase | Report | Type | Status |

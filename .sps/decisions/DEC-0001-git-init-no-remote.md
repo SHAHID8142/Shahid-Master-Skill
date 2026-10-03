@@ -2,7 +2,7 @@
 
 - **Date:** 2026-10-03
 - **Status:** Active
-- **Approval:** `PENDING_USER_APPROVAL`
+- **Approval:** `APPROVED`
 - **Phase / Task:** `PHASE-02` / `PHASE-02-T01`
 - **Evidence:** `EV-P02-001`, `EV-P02-002`, `EV-P02-008`
 - **Supersedes:** none
@@ -48,8 +48,19 @@ provenance is sufficient for Phase 02.
 ## Approval
 
 **Required:** yes — remote/push decisions are the user's.
-**Status:** `PENDING_USER_APPROVAL`
-**Decided by:** _(none — awaiting user)_
+**Status:** `APPROVED`
+**Decision:** `KEEP_LOCAL_ONLY` — do not configure or add a remote at this stage.
+**Decided by:** User (explicit user approval, 2026-10-03)
+**Approval basis:** Phase 02 implementation and verification were independently reviewed and accepted.
 
-The user must decide whether to add a remote and push. Until then the repository is
-local-only, which satisfies §4 ("local Git provenance even if remote push is impossible").
+The user reviewed the Phase 02 report and commit, then explicitly resolved this decision as
+`KEEP_LOCAL_ONLY`. The repository therefore remains local-only, which satisfies §4
+("local Git provenance even if remote push is impossible").
+
+**Consequence:** `PUSH_SKIPPED: NO_REMOTE_CONFIGURED` remains the correct push result for
+this repository. No push may be attempted, and no remote may be invented, until the user
+issues a new explicit instruction.
+
+**Note on provenance:** the Phase 02 report describes this decision as pending. That was
+accurate when written. This record supersedes that status; the report is left unmodified
+because reports are point-in-time artefacts, not live state.

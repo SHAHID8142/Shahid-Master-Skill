@@ -101,19 +101,28 @@ secret file scan · secret literal scan · `git add --dry-run` secret gate ·
 
 | ID | Decision | Approval |
 |---|---|---|
-| `DEC-0001` | Git init on `main`, no remote | `PENDING_USER_APPROVAL` |
-| `DEC-0002` | Repo-local identity, no global change | `PENDING_USER_APPROVAL` |
+| `DEC-0001` | Git init on `main`, no remote | `APPROVED` → `KEEP_LOCAL_ONLY` (User, 2026-10-03) |
+| `DEC-0002` | Repo-local identity, no global change | `APPROVED` → `DEFER_IDENTITY_UPDATE` (User, 2026-10-03) |
+
+**Phase 02 approval:** `PHASE-02` is `APPROVED` by the User (2026-10-03), on the basis that
+its implementation and verification were independently reviewed and accepted.
+
+**Standing obligation from `DEC-0002`:** the Git identity placeholder must be replaced before
+this repository is published or shared externally. Not yet due — `DEC-0001` keeps the
+repository local-only.
 
 ## 11. Next Recommended Action
 
-1. **User reviews** `AUDIT-PHASE-02-GOVERNANCE-IMPLEMENTATION.md`.
-2. **User decides** on remote + Git identity (DEC-0001, DEC-0002).
-3. **User approves or rejects** `PHASE-02` (currently `PENDING_USER_APPROVAL`).
-4. Only then define `PHASE-03` scope.
+1. **Await explicit instruction to begin `PHASE-03`.** Phase 02 approval does **not** carry
+   forward; `PHASE-03` remains `NOT_STARTED` / `NOT_APPROVED`.
+2. When instructed, Phase 03 scope should be agreed before any implementation.
 
 ## 12. User Approval Required
 
-**YES.** `PHASE-02` is `VERIFIED` but **not approved**. Do not begin `PHASE-03`.
+**Phase 02 approval: GRANTED** (User, 2026-10-03).
+
+**Phase 03 approval: NOT GRANTED.** `PHASE-03` is `NOT_STARTED`. Do not begin it until the
+user issues a new explicit instruction.
 
 ---
 
