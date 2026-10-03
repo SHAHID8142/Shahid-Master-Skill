@@ -6,6 +6,8 @@
 **Investigated:** 2026-10-03 (this remediation pass)
 **Severity:** HIGH (live production credential written into a tracked file)
 
+| **Revocation** | **REPORTED REVOKED BY USER (2026-10-03)** — user-attested; **not independently verified** by this agent (`EV-SEC-011`, `EV-SEC-012`) |
+
 > The credential value is **never** reproduced in this record. It is referenced
 > only by fingerprint: SHA-256 `6ebcb3ea914cea56…`, length 73 characters.
 
@@ -125,14 +127,31 @@ The protection actually applied by this remediation is the
 
 ## 8. Next actions (for the user)
 
-1. **Revoke the exposed `ANTHROPIC_AUTH_TOKEN` at the provider.** This is the only
-   action that actually closes the risk.
-2. Decide whether to purge the Cline checkpoint ref locally.
+1. ~~Revoke the exposed `ANTHROPIC_AUTH_TOKEN` at the provider.~~ **Done, per
+   user report (2026-10-03).** This agent cannot verify provider-side state.
+2. Decide whether to purge the Cline checkpoint ref locally (`a7767cf`). It is
+   the only remaining location holding the value.
 3. Re-run `bash sps2/security/test-secret-safety.sh` and
    `python3 sps2/security/scan_secrets.py .` after any future session.
 4. Before publishing, confirm no checkpoint refs or reflogs are included.
 
 ## 9. Evidence
 
-`EV-P3-010` (initial detection) and `EV-SEC-001` … `EV-SEC-006` in
+`EV-P3-010` (initial detection) and `EV-SEC-001` … `EV-SEC-016` in
 `sps2/evidence/SEC-P3-INCIDENT-EVIDENCE.json`.
+
+## 10. Post-revocation verification (2026-10-03)
+
+| Surface | Result |
+|---|---|
+| Working tree `.claude/settings.json` | Credential key **absent**; 5 unrelated settings preserved |
+| Git index | `enabledPlugins` only — **no credential** |
+| `HEAD` | `enabledPlugins` only — **no credential** |
+| 19 commits reachable from `main` | **0** contain the real credential |
+| 3 commits | Contain the **synthetic** test fixture (self-referential test, by design) |
+| 1 off-main harness checkpoint (`a7767cf`) | **Still contains the credential**; retained, not modified |
+
+**Revocation status:** reported revoked by the user. This agent could **not**
+independently verify it: the value was removed from disk during containment, so
+no validity probe could be run without re-exposing and transmitting it, which
+this agent is not authorised to do. Recorded as **USER-ATTESTED**, not verified.
