@@ -1,0 +1,148 @@
+{
+  "schema": "sps2.evidence-set/v1",
+  "incident": "INCIDENT-P3-001",
+  "generated": "2026-10-03",
+  "note": "Incident evidence. No credential value appears in this file. classification distinguishes FACT, INFERENCE and UNRESOLVED; an observed absence is reported as an absence, not as proof of safety.",
+  "records": [
+    {
+      "evidence_id": "EV-SEC-001",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Secret-safe inventory of the affected file before remediation",
+      "expected_result": "python3 key-name walk over .claude/settings.json",
+      "observed_result": "A credential class is present",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-002",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Credential fingerprint recorded without disclosing the value",
+      "expected_result": "sha256 of the credential value, computed in process",
+      "observed_result": "A stable fingerprint exists for comparison",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-003",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "The credential is absent from the Git index and from HEAD",
+      "expected_result": "git show :.claude/settings.json and git show HEAD:.claude/settings.json",
+      "observed_result": "No credential in index or HEAD",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-004",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "No reachable commit contains the credential",
+      "expected_result": "git rev-list --all (25 commits) tested individually; git log --all -S sk-or-v1",
+      "observed_result": "No reachable commit is affected",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-005",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Exactly one dangling checkpoint commit contains the credential",
+      "expected_result": "git fsck dangling commits, then per-commit test of .claude/settings.json",
+      "observed_result": "One unreachable object is affected",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-006",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "The credential was contained in the working tree",
+      "expected_result": "selective removal of the single key env.ANTHROPIC_AUTH_TOKEN",
+      "observed_result": "Credential gone, unrelated settings preserved",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-007",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "The harness, not the SPS 2.0 implementation, wrote the credential",
+      "expected_result": "content search for any instruction to write this value",
+      "observed_result": "No SPS 2.0 or legacy artefact instructs the write",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "INFERENCE",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-008",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Credential revocation status cannot be established from this environment",
+      "expected_result": "no credential-management interface available",
+      "observed_result": "Revocation requires an external action",
+      "result": "BLOCKED",
+      "exit_code": null,
+      "classification": "UNRESOLVED",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-009",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "No credential pattern found anywhere in the repository after remediation",
+      "expected_result": "python3 sps2/security/scan_secrets.py .",
+      "observed_result": "Repository is clean",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-010",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "The exposed credential remains valid until revoked",
+      "expected_result": "logical consequence of removal without revocation",
+      "observed_result": "Removal is not revocation",
+      "result": "BLOCKED",
+      "exit_code": null,
+      "classification": "UNRESOLVED",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    }
+  ]
+}

@@ -230,7 +230,56 @@ else
   pass "legacy .sps/ governance untouched"
 fi
 
-sect "9. No emoji"
+sect "9. No emoji and no credential material"
+python3 "$SPS2/security/scan_secrets.py" "$SPS2" --quiet \
+  && pass "no credential-shaped value under sps2/" \
+  || fail "credential-shaped value detected under sps2/"
+python3 "$SPS2/security/scan_secrets.py" "$REPO" --quiet \
+  && pass "no credential-shaped value in the repository" \
+  || fail "credential-shaped value detected in the repository"
+[ -f "$SPS2/security/INCIDENT-P3-001-CREDENTIAL-EXPOSURE.md" ] \
+  && pass "INCIDENT-P3-001 record present" || fail "incident record missing"
+if grep -rqE 'sk-or-v1-[A-Za-z0-9]{32,}' "$SPS2/security/INCIDENT-P3-001-CREDENTIAL-EXPOSURE.md" \
+   "$SPS2/evidence/SEC-P3-INCIDENT-EVIDENCE.json" 2>/dev/null; then
+  fail "incident documentation contains a credential value"
+else
+  pass "incident documentation contains no credential value"
+fi
+[ -f "$SPS2/security/scan_secrets.py" ] && pass "secret scanner present" \
+  || fail "secret scanner missing"
+[ -f "$SPS2/security/test-secret-safety.sh" ] \
+  && pass "secret-safety negative test present" || fail "negative test missing"
+
+sect "10. Credential must not be in any reachable commit"
+if python3 - "$REPO" <<'PY' >/dev/null 2>&1
+import json, subprocess, sys
+tok = None
+try:
+    tok = json.load(open(sys.argv[1] + '/.claude/settings.json'))['env']['ANTHROPIC_AUTH_TOKEN']
+except Exception:
+    tok = None
+shas = subprocess.run(['git', 'rev-list', '--all'], capture_output=True,
+                      text=True).stdout.split()
+if tok:
+    for s in shas:
+        o = subprocess.run(['git', 'show', '%s:.claude/settings.json' % s],
+                           capture_output=True, text=True).stdout
+        if tok in o:
+            raise SystemExit(1)
+raise SystemExit(0)
+PY
+then
+  pass "no reachable commit contains a credential"
+else
+  fail "a reachable commit contains a credential"
+fi
+if git -C "$REPO" check-ignore -q .claude/settings.local.json 2>/dev/null; then
+  pass "local agent settings are gitignored as a prevention measure"
+else
+  warn "local agent settings are not gitignored"
+fi
+
+sect "11. No emoji"
 EMJ=$(python3 - "$SPS2" <<'PY'
 import os, sys, re
 pat = re.compile('[\U0001F300-\U0001FAFF\u2600-\u27BF\u2B00-\u2BFF\uFE0F]')

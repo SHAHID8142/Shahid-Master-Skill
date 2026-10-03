@@ -150,11 +150,12 @@ else
 fi
 # Validators are not installers. Exclude every file under tools/ that is
 # explicitly a validator, rather than hardcoding a single filename.
-# Validators are not installers. Exclude every explicitly-named validator
-# under tools/, rather than hardcoding a single filename.
+# Validators are not installers. Exclude every explicitly-named validator or
+# test harness under tools/ and security/, rather than hardcoding one filename.
 INSTALLERS=$(find "$SPS2" \( -name '*.sh' -o -name '*.ps1' \) 2>/dev/null \
   | grep -v '/tools/validate-sps2.sh' | grep -v '/tools/validate-p2.sh' \
-  | grep -v '/tools/validate-p3.sh')
+  | grep -v '/tools/validate-p3.sh' \
+  | grep -v '/security/test-secret-safety.sh')
 if [ -n "$INSTALLERS" ]; then
   fail "sps2/ ships executable installers: $INSTALLERS"
 else
