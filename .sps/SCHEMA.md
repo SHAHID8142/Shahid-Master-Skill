@@ -304,3 +304,87 @@ bash .sps/tools/validate-control.sh --negative  # run the negative test suite on
 
 Exit codes: `0` all valid · `1` validation failure · `2` tooling unavailable.
 - `risk_level: CRITICAL` requires `rollback_available != "no"` and `rollback_verified: true`.
+
+---
+
+## 12. Capability Contract (Phase 04)
+
+Registry: `.sps/capability/registry/PHASE-04-CAPABILITIES.json`.
+`fact_class` applies the `FACT`/`EVIDENCE`/`INFERENCE`/`UNKNOWN` taxonomy
+(`CAPABILITY-MODEL.md` s2) to every field.
+
+Required fields (full shape and semantics: `.sps/capability/PROVENANCE.md` s4):
+
+| Group | Fields |
+|---|---|
+| Identity | `capability_id` (`CAP-PNN-NNN`), `name`, `type`, `description`, `purpose`, `domain`, `serves_requirements`, `fact_class` |
+| Source | `source`, `source_rank` (1-6), `official_url`, `repository_url`, `version`, `release_date` |
+| Compatibility | `tech_compatibility`, `framework_compatibility`, `agent_compatibility`, `agent_specific_dependency` |
+| Trust | `maintenance_status`, `licence`, `security_status`, `security_evidence`, `trust_level` |
+| Quality | `evidence`, `quality_indicators`, `adoption_indicators`, `known_limitations`, `dependencies` |
+| Install | `install_method`, `install_scope`, `global_installation_authorized_by`, `project_local_install_method`, `rollback_method`, `verification_method` |
+| Freshness | `researched_at`, `research_id`, `version_checked`, `source_checked`, `last_verified`, `review_due`, `staleness` |
+| Provenance | `provenance{requirement,discovery,research,evaluation,user_decision,installation,verification}` |
+| Evaluation | `evaluation{evaluation_id,criteria{1..16},selection_reason,rejection_reason}` |
+| State | `lifecycle_state`, `status`, `completion`, `approval_status`, `approval_decided_by` |
+| MCP | `mcp{mcp_name,transport,source_url,maintainer,permissions,data_access,network_access,credentials_required,install_mechanism,project_local_feasible,requires_global_config,rollback,trust_level,trust_evidence}` |
+
+**Enforced rules** (each maps 1:1 to a negative case A-N):
+A provenance required | B `source` required | C `security_status: UNKNOWN` may never render
+as safe | D `install_scope: GLOBAL` requires a **user** authorizer | E `lifecycle_state` >= `EVALUATED`
+requires an evaluation | F selection requires `readiness: SUFFICIENT` research | G `APPROVED`
+requires a user decider | H `VERIFIED` requires evidence | I `AGENT_NEUTRAL` requires
+`agent_specific_dependency: null` | J `STALE` may not render as `CURRENT` | K `UNKNOWN` may not
+render as known | L untrusted MCP blocks install | M replacing `ACTIVE` requires approval |
+N project-local requirement may not entail a machine-global change.
+
+---
+
+## 13. Research Contract (Phase 04)
+
+`.sps/research/PHASE-04-RESEARCH.json`.
+
+| Field | Rule |
+|---|---|
+| `research_id` | `RSCH-PNN-NNN` |
+| `subject`, `subject_type` | What was researched; `TECHNOLOGY` or `CAPABILITY` |
+| `researched_at` | ISO-8601 UTC |
+| `sources[]` | Each `{rank 1-6, type, url, accessed_at}` |
+| `covered{}` | Ten required areas: official docs, version, compatibility, ecosystem, practices, security, tooling, MCP availability, testing, deployment - each `COVERED` or `UNKNOWN` |
+| `conclusions[]` | Each `{claim, fact_class, source_rank}` |
+| `uncertainties[]` | Explicitly `UNKNOWN` items |
+| `readiness` | `SUFFICIENT` or `INSUFFICIENT` |
+| `evidence[]` | Evidence IDs |
+
+**Gate:** `readiness: SUFFICIENT` requires all ten `covered` fields `COVERED` **and** at
+least one source of rank <= 4 (`CASE F`).
+
+---
+
+## 14. MCP Contract (Phase 04)
+
+Registered as `type: "MCP"` plus the `mcp` block (semantics: `SECURITY.md` s5).
+`requires_global_config: true` is a **material decision** (no-assumption rule);
+`trust_level` `UNTRUSTED`/`UNKNOWN` blocks installation (`CASE L`);
+**no MCP is installed during Phase 04**.
+
+---
+
+## 15. Project-Local Installation Contract (Phase 04)
+
+`install_scope` defaults to `PROJECT_LOCAL`. `project_local_install_method`,
+`rollback_method` and `verification_method` must all be non-empty.
+`global_installation_authorized_by` must be empty unless a **user** authorised a global
+install (`CASE D`, `CASE N`). Global installation is exceptional: explicit user request plus
+the same security and approval gates.
+
+---
+
+## 16. Validation (Phase 04)
+
+```bash
+bash .sps/tools/validate-capability.sh             # structural + CASE A-N
+bash .sps/tools/validate-capability.sh --negative  # negative suite only
+```
+
+Exit: `0` valid | `1` failure | `2` tooling unavailable.

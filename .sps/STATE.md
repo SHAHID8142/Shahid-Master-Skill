@@ -16,24 +16,22 @@ Cline, Claude, Codex, Antigravity, Gemini, OpenCode, any model, or any IDE.
 
 | Field | Value |
 |---|---|
-| Phase ID | `PHASE-03` |
-| Phase name | Enforcement & Control Foundation |
-| Phase status | `APPROVED` |
+| Phase ID | `PHASE-04` |
+| Phase name | Discovery & Capability Architecture |
+| Phase status | `AWAITING_USER_APPROVAL` |
 | Completion | `COMPLETE` |
 | Verification | `VERIFIED` |
-| **Approval** | **`APPROVED`** — granted by User, 2026-10-03 |
-| Approved by | User (explicit approval) |
-| Approval basis | Phase 03 implementation and verification were independently reviewed and accepted |
+| **Approval** | **`AWAITING_USER_APPROVAL`** — not granted |
 | Started | 2026-10-03 |
-| Approved | 2026-10-03 |
-| Previous phase | `PHASE-02` — Governance, Git & Evidence Foundation (`APPROVED` 2026-10-03) |
-| Next phase | `PHASE-04` — **`NOT_STARTED`, `NOT_APPROVED`** — needs a new explicit instruction |
+| Previous phase | `PHASE-03` — Enforcement & Control Foundation (`APPROVED` 2026-10-03) |
+| Next phase | `PHASE-05` — **`NOT_STARTED`, `NOT_APPROVED`** — needs a new explicit instruction |
 
-> **Three axes, recorded separately.** Phase 03 is `COMPLETE` (work performed), `VERIFIED`
-> (control validator 49/49 + 8 negative cases; governance 49/49; lint PASSED), and now
-> `APPROVED` (the user accepted it on 2026-10-03). These were established separately and in
-> that order. Approval of Phase 03 does **not** carry forward: `PHASE-04` remains unapproved
-> and requires a new explicit instruction.
+> **Three axes, recorded separately.** Phase 04 is `COMPLETE` and `VERIFIED` (capability
+> validator 52/52 + 16 negative cases; governance 50/50; control 49/49 + 8; lint PASSED). It is
+> **not approved**. Only the user may change that. Phase 03's approval did **not** carry forward.
+>
+> **Nothing was installed, discovered, or fabricated.** The capability registry and research
+> cache are intentionally empty (`DEC-0005`).
 
 > **Three axes, recorded separately:** this phase is `COMPLETE` (work performed),
 > `VERIFIED` (evidence proves it), and now `APPROVED` (the user accepted it on
@@ -90,7 +88,8 @@ Never collapse these into a single field.
 | `PHASE-01` | Read-only forensic audit | `VERIFIED` | `AUDIT-PHASE-01-BASELINE-FORENSIC.md` |
 | `PHASE-02` | Governance + Git + evidence foundation | `APPROVED` (2026-10-03) | `AUDIT-PHASE-02-GOVERNANCE-IMPLEMENTATION.md` |
 | `PHASE-03` | Enforcement & control foundation | `APPROVED` (2026-10-03) | `AUDIT-PHASE-03-ENFORCEMENT-CONTROL.md` |
-| `PHASE-04` | — | `NOT_STARTED` — not approved | — |
+| `PHASE-04` | Discovery & capability architecture | `AWAITING_USER_APPROVAL` | `AUDIT-PHASE-04-DISCOVERY-CAPABILITY-ARCHITECTURE.md` |
+| `PHASE-05` | — | `NOT_STARTED` — not approved | — |
 
 ## Governance Map
 

@@ -1,7 +1,61 @@
 # HANDOFF — Current
 
-**Contract:** `.sps/SCHEMA.md` §4 (Phase 02) extended by §10 (Phase 03)
-**Rules:** `.sps/GOVERNANCE.md` · `.sps/control/ENFORCEMENT.md`
+**Contract:** `.sps/SCHEMA.md` §4 extended by §10 (P3) and §12–§16 (P4)
+**Rules:** `.sps/GOVERNANCE.md` · `.sps/control/ENFORCEMENT.md` · `.sps/capability/`
+
+---
+
+## PHASE 04 EXTENSION (fields marked *(P4)*)
+
+| Field | Value |
+|---|---|
+| `CURRENT_PHASE` *(P4)* | `PHASE-04` — Discovery & Capability Architecture |
+| `CURRENT_TASK` *(P4)* | Phase complete; awaiting user approval |
+| `CURRENT_STATE` *(P4)* | `AWAITING_USER_APPROVAL` |
+| `USER_APPROVAL` *(P4)* | **`PENDING_USER_APPROVAL`** — not granted |
+| `BLOCKERS` *(P4)* | none |
+
+### Capability architecture (what exists)
+
+| Component | Path |
+|---|---|
+| Capability model (lifecycle, claims, pipeline, sources, staleness, no-emoji) | `.sps/capability/CAPABILITY-MODEL.md` |
+| Security gate + MCP evaluation | `.sps/capability/SECURITY.md` |
+| Provenance, research cache, evaluation, interop, migration | `.sps/capability/PROVENANCE.md` |
+| Registry (**empty by design**, `DEC-0005`) | `.sps/capability/registry/PHASE-04-CAPABILITIES.json` |
+| Research cache (**empty by design**) | `.sps/research/PHASE-04-RESEARCH.json` |
+| Contracts §12–§16 | `.sps/SCHEMA.md` |
+| Validator + CASE A–N | `.sps/tools/validate-capability.sh` |
+
+### `NEXT_ALLOWED_ACTION` *(P4 — mandatory)*
+
+| Field | Value |
+|---|---|
+| Action class | `READ`, `ANALYZE` |
+| What | Review `AUDIT-PHASE-04-DISCOVERY-CAPABILITY-ARCHITECTURE.md`, `.sps/capability/*`, the Phase 04 requirements/evidence JSON, and the commit diff. Approve or reject via the decision mechanism. |
+| Risk | `LOW` |
+
+### `FORBIDDEN_NEXT_ACTION` *(P4 — mandatory)*
+
+| Field | Value |
+|---|---|
+| Action class | `WRITE`, `INSTALL`, `EXECUTE`(installers), `DELETE`, `DEPLOY`, `PUBLISH`, `DESTRUCTIVE`, `DISCOVER` |
+| What | Do **not** start `PHASE-05`; do **not** populate the capability registry or research cache; do **not** discover, evaluate, install or activate any skill, MCP, package or tool; do **not** modify `SKILL-ROUTER.md` or `SKILL-GOVERNANCE.md`; do not fix any Phase 01 finding (`KI-01`–`KI-14`); do not run `install.sh`/`uninstall.sh`/`sps-update.sh`; do not configure a remote or push (`DEC-0001`). |
+| Why | Phase 04 is not approved, and capability population/install is out of Phase 04 scope (§21). |
+| Risk | `HIGH` |
+
+### Verified
+
+Capability validator **52/52 + 16 negative cases (A–N, G2) enforced, exit 0**, including a
+CASE 0 positive control. Governance 50/50, control 49/49 + 8, SPS lint PASSED. Zero source
+files changed; no remote configured.
+
+### PHASE 04 DECISIONS (pending user approval)
+
+| ID | Decision | Approval |
+|---|---|---|
+| `DEC-0005` | Registry starts empty; no capability fabricated | `PENDING_USER_APPROVAL` |
+| `DEC-0006` | Provenance enforcement is detection-based, not runtime | `PENDING_USER_APPROVAL` |
 
 ---
 
