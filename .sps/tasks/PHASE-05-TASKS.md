@@ -1,8 +1,8 @@
 # PHASE-05 Task Register
 
 **Phase:** `PHASE-05` — SPS 2.0 Repository Architecture & Migration Planning
-**Status:** `AWAITING_USER_APPROVAL` (planning complete, verification `VERIFIED`)
-**Approval:** **`PENDING_USER_APPROVAL`** — the agent produced the plan; it may not approve it.
+**Status:** `APPROVED` (planning complete, verification `VERIFIED`)
+**Approval:** **`APPROVED` by User, 2026-10-03** — explicit user approval, not inferred
 **Mode:** PLANNING ONLY — no SPS 2.0 implementation was performed.
 
 ---
@@ -11,14 +11,14 @@
 
 | ID | Title | Status | Verification | Approval |
 |---|---|---|---|---|
-| `PHASE-05-T01` | Forensic analysis of the legacy system | `VERIFIED` | `EV-P05-001` | `PENDING_USER_APPROVAL` |
-| `PHASE-05-T02` | Legacy preservation + migration matrix | `VERIFIED` | `EV-P05-002` | `PENDING_USER_APPROVAL` |
-| `PHASE-05-T03` | SPS 2.0 architecture, data flow, roadmap | `VERIFIED` | `EV-P05-004` | `PENDING_USER_APPROVAL` |
-| `PHASE-05-T04` | Global vs project-local + team model | `VERIFIED` | `EV-P05-005` | `PENDING_USER_APPROVAL` |
-| `PHASE-05-T05` | Agent interoperability + anti-drift controls | `VERIFIED` | `EV-P05-006` | `PENDING_USER_APPROVAL` |
-| `PHASE-05-T06` | Git strategy | `VERIFIED` | `EV-P05-007` | `PENDING_USER_APPROVAL` |
-| `PHASE-05-T07` | Roadmap | `VERIFIED` | `EV-P05-004` | `PENDING_USER_APPROVAL` |
-| `PHASE-05-T08` | Scope discipline + validation | `VERIFIED` | `EV-P05-008` | `PENDING_USER_APPROVAL` |
+| `PHASE-05-T01` | Forensic analysis of the legacy system | `VERIFIED` | `EV-P05-001` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-05-T02` | Legacy preservation + migration matrix | `VERIFIED` | `EV-P05-002` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-05-T03` | SPS 2.0 architecture, data flow, roadmap | `VERIFIED` | `EV-P05-004` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-05-T04` | Global vs project-local + team model | `VERIFIED` | `EV-P05-005` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-05-T05` | Agent interoperability + anti-drift controls | `VERIFIED` | `EV-P05-006` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-05-T06` | Git strategy | `VERIFIED` | `EV-P05-007` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-05-T07` | Roadmap | `VERIFIED` | `EV-P05-004` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-05-T08` | Scope discipline + validation | `VERIFIED` | `EV-P05-008` | `APPROVED` (User, 2026-10-03) |
 
 ---
 

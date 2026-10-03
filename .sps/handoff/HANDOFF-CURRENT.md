@@ -11,9 +11,12 @@
 |---|---|
 | `CURRENT_PHASE` *(P5)* | `PHASE-05` — SPS 2.0 Repository Architecture & Migration Planning |
 | `CURRENT_TASK` *(P5)* | Planning complete; awaiting user approval |
-| `CURRENT_STATE` *(P5)* | `AWAITING_USER_APPROVAL` |
-| `USER_APPROVAL` *(P5)* | **`PENDING_USER_APPROVAL`** — not granted |
+| `CURRENT_STATE` *(P5)* | `APPROVED` |
+| `USER_APPROVAL` *(P5)* | **`APPROVED` by User, 2026-10-03** |
 | `BLOCKERS` *(P5)* | none |
+
+**Phase 05 approval:** granted by the User on 2026-10-03. `DEC-0007` and `DEC-0008` resolved as
+`APPROVED` on the same basis. Approval of Phase 05 does **not** authorise P1.
 
 ### What Phase 05 produced (planning only)
 
@@ -39,7 +42,7 @@ is absent (`skills/seo` does not exist, 0 seo-named files). SEO is a phantom dep
 | Field | Value |
 |---|---|
 | Action class | `READ`, `ANALYZE` |
-| What | Review `AUDIT-PHASE-05-SPS2-ARCHITECTURE.md`, `.sps/architecture/*`, and the commit diff. Approve or reject Phase 05, `DEC-0007` and `DEC-0008`. |
+| What | Review `.sps/architecture/*` and the Phase 05 report if further reading is needed. **Do not begin roadmap P1 until the user issues a new explicit instruction.** |
 | Risk | `LOW` |
 
 ### `FORBIDDEN_NEXT_ACTION` *(P5 — mandatory)*
@@ -48,7 +51,7 @@ is absent (`skills/seo` does not exist, 0 seo-named files). SEO is a phantom dep
 |---|---|
 | Action class | `WRITE`, `INSTALL`, `EXECUTE`, `DELETE`, `DEPLOY`, `PUBLISH`, `DESTRUCTIVE`, `DISCOVER` |
 | What | Do **not** begin roadmap **P1**; do **not** create the SPS 2.0 repository; do **not** create a Git remote or push; do **not** modify `skills/`, `scripts/`, `plugins/` or any installer; do **not** install any skill, MCP, package or dependency; do not fix Phase 01 findings (`KI-01`–`KI-14`). |
-| Why | Phase 05 is planning only and is not approved. SPS 2.0 implementation belongs to a separately approved roadmap phase. |
+| Why | Phase 05 is approved but **P1 has no approval and no instruction**. Approval never carries forward between gates. |
 | Risk | `HIGH` |
 
 ---

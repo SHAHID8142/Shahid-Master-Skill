@@ -2,7 +2,7 @@
 
 - **Date:** 2026-10-03
 - **Status:** Active
-- **Approval:** `PENDING_USER_APPROVAL`
+- **Approval:** `APPROVED`
 - **Phase / Task:** `PHASE-05` / `PHASE-05-T02`
 - **Evidence:** `EV-P05-002`
 - **Supersedes:** none
@@ -47,8 +47,9 @@ identifying what is reusable (governance/validators, `KEEP` = 10) versus what mu
 ## Approval
 
 **Required:** yes — this constrains all of SPS 2.0.
-**Status:** `PENDING_USER_APPROVAL`
-**Decided by:** _(none — awaiting user)_
+**Status:** `APPROVED`
+**Decided by:** User (explicit user approval, 2026-10-03)
+**Approval basis:** User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05.
 
 **Consequence if approved:** no SPS 2.0 file may be created in this repository. The planning
 artefacts in `.sps/architecture/` are the *only* SPS 2.0 content that lives here.
@@ -59,7 +60,7 @@ artefacts in `.sps/architecture/` are the *only* SPS 2.0 content that lives here
 
 - **Date:** 2026-10-03
 - **Status:** Active
-- **Approval:** `PENDING_USER_APPROVAL`
+- **Approval:** `APPROVED`
 - **Phase / Task:** `PHASE-05` / `PHASE-05-T03`
 - **Evidence:** `EV-P05-003`
 - **Supersedes:** none
@@ -100,7 +101,8 @@ any other capability.
 ## Approval
 
 **Required:** yes — this is a global behavioural rule.
-**Status:** `PENDING_USER_APPROVAL`
-**Decided by:** _(none — awaiting user)_
+**Status:** `APPROVED`
+**Decided by:** User (explicit user approval, 2026-10-03)
+**Approval basis:** User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05.
 
 **Note:** the 155 legacy emoji remain. Removing them is remediation work, out of Phase 05 scope.

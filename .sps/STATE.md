@@ -18,18 +18,25 @@ Cline, Claude, Codex, Antigravity, Gemini, OpenCode, any model, or any IDE.
 |---|---|
 | Phase ID | `PHASE-05` |
 | Phase name | SPS 2.0 Repository Architecture & Migration Planning |
-| Phase status | `AWAITING_USER_APPROVAL` |
+| Phase status | `APPROVED` |
 | Completion | `COMPLETE` |
 | Verification | `VERIFIED` |
-| **Approval** | **`AWAITING_USER_APPROVAL`** — not granted |
+| **Approval** | **`APPROVED`** — granted by User, 2026-10-03 |
+| Approved by | User (explicit approval) |
+| Approval basis | User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05 |
 | Started | 2026-10-03 |
+| Approved | 2026-10-03 |
 | Previous phase | `PHASE-04` — Discovery & Capability Architecture (`APPROVED` 2026-10-03) |
 | Next phase | **Roadmap P1 — Repository Foundation** — `NOT_STARTED`, needs a NEW explicit instruction |
 
-> **Planning only.** No SPS 2.0 implementation was performed. No legacy file modified, no
-> dependency installed, no Git remote created, nothing pushed. The architecture, migration matrix
-> and 16-phase roadmap live in `.sps/architecture/`. SPS 2.0 itself will be built in a **NEW**
-> repository (`DEC-0007`), leaving this repository as the legacy reference.
+> **Planning only — nothing was implemented.** No SPS 2.0 implementation, no legacy
+> modification, no dependency installed, no Git remote created, nothing pushed. The
+> architecture, migration matrix and 16-phase roadmap live in `.sps/architecture/`. SPS 2.0
+> will be built in a **NEW** repository (`DEC-0007`), leaving this repository as the
+> immutable legacy reference.
+>
+> **Approval of Phase 05 does not authorise P1.** Every roadmap phase requires its own
+> explicit gate.
 
 > **Three axes, recorded separately.** Phase 04 is `COMPLETE` (work performed), `VERIFIED`
 > (capability validator 52/52 + 16 negative cases; governance 50/50; control 49/49 + 8; lint

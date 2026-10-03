@@ -3,7 +3,7 @@
   "phase": "PHASE-05",
   "phase_title": "SPS 2.0 Repository Architecture & Migration Planning",
   "generated": "2026-10-03",
-  "note": "Append-only. Phase 05 is PLANNING ONLY and is AWAITING_USER_APPROVAL. No SPS 2.0 implementation was performed; no legacy file was modified; no skill, MCP, package or dependency was installed; no remote was created.",
+  "note": "Append-only. Phase 05 was PLANNING ONLY and is now APPROVED by the User on 2026-10-03. No SPS 2.0 implementation was performed; no legacy file was modified; no skill, MCP, package or dependency was installed; no remote was created.",
   "records": [
     {
       "id": "EV-P05-001",
@@ -114,6 +114,34 @@
       "timestamp": "2026-10-03T00:00:00Z",
       "file": null,
       "test": "four-validator-suite",
+      "commit": null,
+      "maturity": "VERIFIED"
+    },
+    {
+      "id": "EV-P05-009",
+      "task": "PHASE-05-T08",
+      "requirement": "REQ-P05-18",
+      "command": "record user approval of PHASE-05, DEC-0007 and DEC-0008",
+      "expected": "Record the user's EXPLICIT approval with attribution, date and basis",
+      "actual": "Approval recorded on 2026-10-03 attributed to User with the stated approval basis. Updated STATE.md (Phase status APPROVED, Approved by/Approval basis/Approved rows), DEC-0007 and DEC-0008 (PENDING -> APPROVED, Decided by: User), all 17 PHASE-05 requirements, PHASE-05-TASKS.md, HANDOFF-CURRENT.md and audits/README.md. Next phase remains Roadmap P1 - NOT_STARTED, requiring a new explicit instruction.",
+      "result": "PASS",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "file": ".sps/STATE.md",
+      "test": "approval-transition",
+      "commit": null,
+      "maturity": "VERIFIED"
+    },
+    {
+      "id": "EV-P05-010",
+      "task": "PHASE-05-T08",
+      "requirement": "REQ-P05-02",
+      "command": "inspect .sps/audits/README.md for a stale audit index",
+      "expected": "The audit index accurately reflects current phase states",
+      "actual": "DEFECT FOUND AND FIXED: the file contained an orphan headerless table (lines 8-13) inserted by earlier edits, PLUS a stale '## Audit Reports' table (lines 19-25) that still claimed PHASE-03 was NOT_STARTED and omitted PHASE-04/05. Left unfixed it would mislead any agent reading the index. Consolidated into a single accurate table under the '## Audit Reports' heading.",
+      "result": "PASS",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "file": ".sps/audits/README.md",
+      "test": "audit-index-consistency",
       "commit": null,
       "maturity": "VERIFIED"
     }
