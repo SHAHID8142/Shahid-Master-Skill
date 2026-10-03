@@ -16,18 +16,20 @@ Cline, Claude, Codex, Antigravity, Gemini, OpenCode, any model, or any IDE.
 
 | Field | Value |
 |---|---|
-| Phase ID | `PHASE-04` |
-| Phase name | Discovery & Capability Architecture |
-| Phase status | `APPROVED` |
+| Phase ID | `PHASE-05` |
+| Phase name | SPS 2.0 Repository Architecture & Migration Planning |
+| Phase status | `AWAITING_USER_APPROVAL` |
 | Completion | `COMPLETE` |
 | Verification | `VERIFIED` |
-| **Approval** | **`APPROVED`** — granted by User, 2026-10-03 |
-| Approved by | User (explicit approval) |
-| Approval basis | Phase 04 implementation and verification were independently reviewed and accepted |
+| **Approval** | **`AWAITING_USER_APPROVAL`** — not granted |
 | Started | 2026-10-03 |
-| Approved | 2026-10-03 |
-| Previous phase | `PHASE-03` — Enforcement & Control Foundation (`APPROVED` 2026-10-03) |
-| Next phase | **`NOT_YET_DEFINED`** — the next phase is NOT `PHASE-05` |
+| Previous phase | `PHASE-04` — Discovery & Capability Architecture (`APPROVED` 2026-10-03) |
+| Next phase | **Roadmap P1 — Repository Foundation** — `NOT_STARTED`, needs a NEW explicit instruction |
+
+> **Planning only.** No SPS 2.0 implementation was performed. No legacy file modified, no
+> dependency installed, no Git remote created, nothing pushed. The architecture, migration matrix
+> and 16-phase roadmap live in `.sps/architecture/`. SPS 2.0 itself will be built in a **NEW**
+> repository (`DEC-0007`), leaving this repository as the legacy reference.
 
 > **Three axes, recorded separately.** Phase 04 is `COMPLETE` (work performed), `VERIFIED`
 > (capability validator 52/52 + 16 negative cases; governance 50/50; control 49/49 + 8; lint
@@ -103,7 +105,8 @@ Never collapse these into a single field.
 | `PHASE-02` | Governance + Git + evidence foundation | `APPROVED` (2026-10-03) | `AUDIT-PHASE-02-GOVERNANCE-IMPLEMENTATION.md` |
 | `PHASE-03` | Enforcement & control foundation | `APPROVED` (2026-10-03) | `AUDIT-PHASE-03-ENFORCEMENT-CONTROL.md` |
 | `PHASE-04` | Discovery & capability architecture | `APPROVED` (2026-10-03) | `AUDIT-PHASE-04-DISCOVERY-CAPABILITY-ARCHITECTURE.md` |
-| _next_ | **SPS 2.0 Repository Architecture & Migration Planning** | `NOT_YET_DEFINED` — no ID, scope or approval | — |
+| `PHASE-05` | SPS 2.0 architecture & migration planning | `AWAITING_USER_APPROVAL` | `AUDIT-PHASE-05-SPS2-ARCHITECTURE.md` |
+| P1-P16 | SPS 2.0 roadmap (`.sps/architecture/SPS2-ROADMAP.md`) | `NOT_STARTED` — P1 needs a new instruction | — |
 
 ## Governance Map
 

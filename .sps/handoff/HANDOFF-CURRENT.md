@@ -5,6 +5,54 @@
 
 ---
 
+## PHASE 05 EXTENSION (fields marked *(P5)*)
+
+| Field | Value |
+|---|---|
+| `CURRENT_PHASE` *(P5)* | `PHASE-05` — SPS 2.0 Repository Architecture & Migration Planning |
+| `CURRENT_TASK` *(P5)* | Planning complete; awaiting user approval |
+| `CURRENT_STATE` *(P5)* | `AWAITING_USER_APPROVAL` |
+| `USER_APPROVAL` *(P5)* | **`PENDING_USER_APPROVAL`** — not granted |
+| `BLOCKERS` *(P5)* | none |
+
+### What Phase 05 produced (planning only)
+
+| Artefact | Path |
+|---|---|
+| Repository architecture (22 concerns) | `.sps/architecture/SPS2-REPOSITORY-ARCHITECTURE.md` |
+| Data flow (control + capability) | `.sps/architecture/SPS2-DATA-FLOW.md` |
+| Agent interoperability | `.sps/architecture/SPS2-AGENT-INTEROPERABILITY.md` |
+| Global vs project-local | `.sps/architecture/SPS2-GLOBAL-VS-LOCAL.md` |
+| Migration matrix (39 components) | `.sps/architecture/SPS2-MIGRATION-MATRIX.md` |
+| Roadmap (16 isolated phases) | `.sps/architecture/SPS2-ROADMAP.md` |
+| Requirements (17), Evidence (8) | `.sps/requirements/`, `.sps/evidence/` (PHASE-05) |
+| Decisions | `DEC-0007` (new repo), `DEC-0008` (no-emoji) |
+
+### Key verified finding
+
+**No SEO skill exists in the legacy repository.** `SKILL-ROUTER.md:27` names an `seo` fallback that
+is absent (`skills/seo` does not exist, 0 seo-named files). SEO is a phantom dependency, so SEO 2.0 is a
+`REWRITE`, not a migration.
+
+### `NEXT_ALLOWED_ACTION` *(P5 — mandatory)*
+
+| Field | Value |
+|---|---|
+| Action class | `READ`, `ANALYZE` |
+| What | Review `AUDIT-PHASE-05-SPS2-ARCHITECTURE.md`, `.sps/architecture/*`, and the commit diff. Approve or reject Phase 05, `DEC-0007` and `DEC-0008`. |
+| Risk | `LOW` |
+
+### `FORBIDDEN_NEXT_ACTION` *(P5 — mandatory)*
+
+| Field | Value |
+|---|---|
+| Action class | `WRITE`, `INSTALL`, `EXECUTE`, `DELETE`, `DEPLOY`, `PUBLISH`, `DESTRUCTIVE`, `DISCOVER` |
+| What | Do **not** begin roadmap **P1**; do **not** create the SPS 2.0 repository; do **not** create a Git remote or push; do **not** modify `skills/`, `scripts/`, `plugins/` or any installer; do **not** install any skill, MCP, package or dependency; do not fix Phase 01 findings (`KI-01`–`KI-14`). |
+| Why | Phase 05 is planning only and is not approved. SPS 2.0 implementation belongs to a separately approved roadmap phase. |
+| Risk | `HIGH` |
+
+---
+
 ## PHASE 04 EXTENSION (fields marked *(P4)*)
 
 | Field | Value |

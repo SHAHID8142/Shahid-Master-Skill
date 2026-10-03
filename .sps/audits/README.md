@@ -9,7 +9,8 @@ Index of audit reports plus the standing register of known issues discovered but
 | `PHASE-02` | [`../../AUDIT-PHASE-02-GOVERNANCE-IMPLEMENTATION.md`](../../AUDIT-PHASE-02-GOVERNANCE-IMPLEMENTATION.md) | Governance implementation report | `APPROVED` (User, 2026-10-03) |
 | `PHASE-03` | [`../../AUDIT-PHASE-03-ENFORCEMENT-CONTROL.md`](../../AUDIT-PHASE-03-ENFORCEMENT-CONTROL.md) | Enforcement & control foundation | `APPROVED` (User, 2026-10-03) |
 | `PHASE-04` | [`../../AUDIT-PHASE-04-DISCOVERY-CAPABILITY-ARCHITECTURE.md`](../../AUDIT-PHASE-04-DISCOVERY-CAPABILITY-ARCHITECTURE.md) | Discovery & capability architecture | `APPROVED` (User, 2026-10-03) |
-| _next_ | — | **SPS 2.0 Repository Architecture & Migration Planning** | `NOT_YET_DEFINED` — no prompt yet |
+| `PHASE-05` | [`../../AUDIT-PHASE-05-SPS2-ARCHITECTURE.md`](../../AUDIT-PHASE-05-SPS2-ARCHITECTURE.md) | SPS 2.0 architecture & migration planning | `AWAITING_USER_APPROVAL` |
+| P1–P16 | — | SPS 2.0 roadmap (`.sps/architecture/SPS2-ROADMAP.md`) | `NOT_STARTED` — P1 needs a new instruction |
 
 > **Report-vs-state note.** The Phase 02 report states its approval was pending, because that
 > was true when written. Reports are point-in-time artefacts; `.sps/STATE.md` and the decision
