@@ -87,15 +87,52 @@ else
 fi
 
 sect "4. Research findings kept OUT of the production registry"
-NCAP=$(python3 -c "import json;print(len(json.load(open('$SPS2/capability/registry.json'))['capabilities']))" 2>/dev/null || echo -1)
-[ "$NCAP" = "0" ] && pass "production capability registry still empty after P2" \
-                 || fail "registry has $NCAP entries; research leaked into production"
+# Since P3 the registry may be populated by legitimately promoted capabilities,
+# but P2 research output must never appear there. The invariant is provenance,
+# not emptiness: every registered capability must trace to a P3 promotion gate
+# result, never be a P2 research record.
+python3 - "$SPS2" > "$TMP/leak" 2>&1 <<'PY'
+import json, os, sys
+B = sys.argv[1]
+reg = json.load(open(B + '/capability/registry.json'))
+ex = json.load(open(B + '/research/P2-CAPABILITY-EXTRACTION.json'))
+research_only = {c['capability_id'] for c in ex['capabilities']}
+for c in reg.get('capabilities', []):
+    cid = c.get('capability_id')
+    if cid in research_only:
+        print("RESEARCH_ONLY_LEAK: %s is a P2 research record" % cid)
+    if str(c.get('origin', '')).upper() == 'RESEARCH_ONLY':
+        print("RESEARCH_ONLY_LEAK: %s declares origin RESEARCH_ONLY" % cid)
+    if not c.get('provenance', {}).get('commit'):
+        print("UNTRACEABLE_PROVENANCE: %s has no commit" % cid)
+PY
+if [ -s "$TMP/leak" ]; then
+  while IFS= read -r l; do fail "$l"; done < "$TMP/leak"
+else
+  pass "no P2 research record appears in the production registry"
+fi
 LEAK=$(python3 -c "
 import json
 d=json.load(open('$SPS2/research/P2-CAPABILITY-EXTRACTION.json'))
 print(sum(1 for c in d['capabilities'] if c.get('in_production_registry')))" 2>/dev/null || echo 1)
-[ "$LEAK" = "0" ] && pass "no extracted capability is flagged as in-registry" \
-                 || fail "$LEAK capabilities claim registry membership"
+[ "$LEAK" = "0" ] && pass "no P2 extraction claims registry membership" \
+                 || fail "$LEAK P2 capabilities claim registry membership"
+# Every registered capability must pass the P3 promotion gate.
+python3 - "$SPS2" > "$TMP/gatechk" 2>&1 <<'PY'
+import json, sys
+sys.path.insert(0, sys.argv[1] + '/capability')
+import engine
+reg = json.load(open(sys.argv[1] + '/capability/registry.json'))
+for c in reg.get('capabilities', []):
+    ok, reasons = engine.promote(c)
+    if not ok:
+        print("PROMOTION_GATE_FAIL: %s: %s" % (c['capability_id'], "; ".join(reasons)))
+PY
+if [ -s "$TMP/gatechk" ]; then
+  while IFS= read -r l; do fail "$l"; done < "$TMP/gatechk"
+else
+  pass "every registered capability passes the P3 promotion gate"
+fi
 
 sect "5. Unresolved conflicts recorded, not reconciled"
 jq -e '.conflicts | length > 0' "$SPS2/research/P2-SOURCES.json" >/dev/null 2>&1 \
@@ -182,10 +219,30 @@ jq -e '.approval_scope.production_capability_registry | test("NOT_APPROVED")' \
   "$SPS2/handoff/HANDOFF-P2.json" >/dev/null 2>&1 \
   && pass "registry explicitly recorded as NOT approved" || fail "registry scope missing"
 
-# Approving P2 research must NOT populate the production registry.
-NCAP2=$(python3 -c "import json;print(len(json.load(open('$SPS2/capability/registry.json'))['capabilities']))" 2>/dev/null || echo -1)
-[ "$NCAP2" = "0" ] && pass "production registry still empty after P2 approval" \
-                   || fail "P2 approval populated the production registry"
+# Approving P2 research must NOT have populated the registry at approval time.
+# Since P3 the registry may legitimately hold promoted capabilities, so the
+# check is provenance (every entry traces to a promotion gate), not emptiness.
+if python3 - "$SPS2/capability/registry.json" <<'PY' >/dev/null 2>&1
+import json, sys
+reg = json.load(open(sys.argv[1]))
+raise SystemExit(1 if any(not c.get('provenance', {}).get('commit')
+                         for c in reg.get('capabilities', [])) else 0)
+PY
+then
+  pass "every registry entry carries a traceable commit"
+else
+  fail "a registry entry lacks traceable provenance"
+fi
+# P2 extraction must still claim zero registry membership.
+LEAKN=$(python3 -c "
+import json
+d=json.load(open('$SPS2/research/P2-CAPABILITY-EXTRACTION.json'))
+print(sum(1 for c in d['capabilities'] if c.get('in_production_registry')))" 2>/dev/null || echo -1)
+if [ "$LEAKN" = "0" ]; then
+  pass "P2 research records still claim no registry membership"
+else
+  fail "$LEAKN P2 research records claim registry membership"
+fi
 
 # Unresolved research gaps must survive the approval unchanged.
 jq -e '.conflicts[0].resolution | test("UNRESOLVED")' \

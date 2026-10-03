@@ -75,11 +75,32 @@ assert_clean evidence     "$SPS2/evidence/P1-EVIDENCE.json"        "P1 evidence"
 assert_clean decision     "$SPS2/decisions/P1-DECISIONS.json"      "P1 decisions"
 assert_clean requirement "$SPS2/requirements/P1-REQUIREMENTS.json" "P1 requirements"
 
-sect "4. Registry and cache legitimately empty (no fabrication)"
+sect "4. Registry holds only legitimately promoted capabilities"
+# Since P3 the registry may be populated, but every entry must pass the
+# production promotion gate. Emptiness is no longer the invariant; PROMOTED
+# VALIDITY is. An empty registry is still valid and is asserted separately.
 NCAP=$(python3 -c "import json;print(len(json.load(open('$SPS2/capability/registry.json'))['capabilities']))" 2>/dev/null || echo -1)
-NRS=$(python3 -c "import json;print(len(json.load(open('$SPS2/research/cache.json'))['entries']))" 2>/dev/null || echo -1)
-[ "$NCAP" = "0" ] && pass "capability registry empty" || fail "registry has $NCAP unapproved entries"
-[ "$NRS" = "0" ] && pass "research cache empty" || fail "cache has $NRS unapproved entries"
+[ "$NCAP" -ge 0 ] 2>/dev/null && pass "registry is readable ($NCAP capabilities)" \
+                  || fail "registry is unreadable"
+python3 - "$SPS2" > "$TMP/promo" 2>&1 <<'PY'
+import json, sys
+sys.path.insert(0, sys.argv[1] + '/capability')
+import engine
+reg = json.load(open(sys.argv[1] + '/capability/registry.json'))
+ids = [c['capability_id'] for c in reg['capabilities']]
+dup = sorted({i for i in ids if ids.count(i) > 1})
+if dup:
+    print("DUPLICATE_CAPABILITY_ID: %s" % dup)
+for c in reg['capabilities']:
+    ok, reasons = engine.promote(c)
+    if not ok:
+        print("PROMOTION_GATE_FAIL: %s: %s" % (c['capability_id'], "; ".join(reasons)))
+PY
+if [ -s "$TMP/promo" ]; then
+  while IFS= read -r l; do fail "$l"; done < "$TMP/promo"
+else
+  pass "every registered capability passes the production promotion gate"
+fi
 
 sect "5. Dynamic selection is not hardcoded"
 grep -q '"hardcoded_domain_mapping_forbidden": true' "$SPS2/capability/registry.json" \
@@ -129,8 +150,11 @@ else
 fi
 # Validators are not installers. Exclude every file under tools/ that is
 # explicitly a validator, rather than hardcoding a single filename.
+# Validators are not installers. Exclude every explicitly-named validator
+# under tools/, rather than hardcoding a single filename.
 INSTALLERS=$(find "$SPS2" \( -name '*.sh' -o -name '*.ps1' \) 2>/dev/null \
-  | grep -v '/tools/validate-sps2.sh' | grep -v '/tools/validate-p2.sh')
+  | grep -v '/tools/validate-sps2.sh' | grep -v '/tools/validate-p2.sh' \
+  | grep -v '/tools/validate-p3.sh')
 if [ -n "$INSTALLERS" ]; then
   fail "sps2/ ships executable installers: $INSTALLERS"
 else

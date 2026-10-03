@@ -1,8 +1,12 @@
 {
-  "schema": "sps2.capability-registry/v1",
-  "version": "0.1.0-foundation",
+  "schema": "sps2.production-registry/v1",
+  "version": "0.1.0-p3",
   "generated": "2026-10-03",
-  "note": "INTENTIONALLY EMPTY. The P1 foundation creates the registry mechanism and its contract. Populating it requires live research, security evaluation and user approval (roadmap P4/P5). Capability records are NEVER fabricated. An empty registry is a valid, verified state.",
+  "gate": {
+    "implementation": "sps2/capability/engine.py :: promote()",
+    "rule": "A capability enters this registry only if promote() returns ok=True.",
+    "research_to_production": "A P2 research record is NOT a production capability. Promotion requires independent evidence and, for third-party material, a security assessment that P2 explicitly did not perform."
+  },
   "selection_policy": {
     "hardcoded_domain_mapping_forbidden": true,
     "supports_multiple_candidates_per_domain": true,
@@ -10,6 +14,438 @@
     "forced_user_choice_overrides_automation": true,
     "default_install_scope": "PROJECT_LOCAL"
   },
-  "capabilities": [],
-  "counts": {"total": 0}
+  "capabilities": [
+    {
+      "capability_id": "CAP-SPS-001",
+      "name": "promotion-gate",
+      "type": "DEV_TOOL",
+      "domain": "governance",
+      "purpose": "Deterministically decide whether a capability record may enter the production registry",
+      "version": "0.1.0",
+      "source": "SPS2_CORE",
+      "provenance": {
+        "origin": "SPS 2.0 repository, phase P3 implementation",
+        "repository_relative_path": "sps2/capability/engine.py",
+        "commit": "9cc67a7a5beb",
+        "fact_class": "FACT",
+        "research_refs": [
+          "CAP-027",
+          "CAP-025",
+          "CAP-021"
+        ]
+      },
+      "licence": "KNOWN_PERMISSIVE",
+      "licence_evidence": "Project-authored source in this repository; no third-party code included",
+      "security": {
+        "status": "VERIFIED_SAFE",
+        "evidence": "Static source review of engine.promote; negative cases enforced by validate-p3.sh",
+        "fact_class": "EVIDENCE",
+        "permissions": [],
+        "note": "Static analysis of in-repository source only. No external code was executed or installed."
+      },
+      "compatibility": {
+        "status": "COMPATIBLE",
+        "agent_neutral": true,
+        "basis": "Pure-Python, standard library only, no network calls",
+        "framework": "SPS 2.0 foundation schemas"
+      },
+      "staleness": {
+        "state": "CURRENT",
+        "maintenance": "ACTIVE",
+        "last_checked": "2026-10-03",
+        "review_due": "2027-01-03",
+        "reevaluation_triggers": [
+          "source file changed",
+          "version bumped",
+          "schema contract changed",
+          "validator regression",
+          "review_due reached"
+        ]
+      },
+      "install_scope": "PROJECT_LOCAL",
+      "project_local_install_method": "Tracked in the repository; nothing is installed on the machine",
+      "rollback_method": "Revert the referencing commit; no machine state to undo",
+      "evidence": [
+        "EV-P3-001",
+        "EV-P3-004"
+      ],
+      "confidence": "HIGH",
+      "lifecycle_state": "CANDIDATE",
+      "origin": "SPS_CORE",
+      "approval": {
+        "state": "PENDING_USER_APPROVAL"
+      },
+      "verification": {
+        "state": "UNVERIFIED",
+        "evidence": [],
+        "note": "P3 implements the mechanism; verification is a later phase"
+      },
+      "selection_policy": {
+        "popularity_role": "TIE_BREAKER_ONLY"
+      },
+      "popularity": {
+        "stars": 0
+      },
+      "last_verified": "2026-10-03"
+    },
+    {
+      "capability_id": "CAP-SPS-002",
+      "name": "deterministic-ranking",
+      "type": "DEV_TOOL",
+      "domain": "governance",
+      "purpose": "Rank candidate capabilities for a requirement using evidence-weighted factors",
+      "version": "0.1.0",
+      "source": "SPS2_CORE",
+      "provenance": {
+        "origin": "SPS 2.0 repository, phase P3 implementation",
+        "repository_relative_path": "sps2/capability/engine.py",
+        "commit": "9cc67a7a5beb",
+        "fact_class": "FACT",
+        "research_refs": [
+          "CAP-027",
+          "CAP-025",
+          "CAP-021"
+        ]
+      },
+      "licence": "KNOWN_PERMISSIVE",
+      "licence_evidence": "Project-authored source in this repository; no third-party code included",
+      "security": {
+        "status": "VERIFIED_SAFE",
+        "evidence": "Static source review of engine.rank; determinism proven over 24 input permutations",
+        "fact_class": "EVIDENCE",
+        "permissions": [],
+        "note": "Static analysis of in-repository source only. No external code was executed or installed."
+      },
+      "compatibility": {
+        "status": "COMPATIBLE",
+        "agent_neutral": true,
+        "basis": "Pure-Python, standard library only, no network calls",
+        "framework": "SPS 2.0 foundation schemas"
+      },
+      "staleness": {
+        "state": "CURRENT",
+        "maintenance": "ACTIVE",
+        "last_checked": "2026-10-03",
+        "review_due": "2027-01-03",
+        "reevaluation_triggers": [
+          "source file changed",
+          "version bumped",
+          "schema contract changed",
+          "validator regression",
+          "review_due reached"
+        ]
+      },
+      "install_scope": "PROJECT_LOCAL",
+      "project_local_install_method": "Tracked in the repository; nothing is installed on the machine",
+      "rollback_method": "Revert the referencing commit; no machine state to undo",
+      "evidence": [
+        "EV-P3-002",
+        "EV-P3-004"
+      ],
+      "confidence": "HIGH",
+      "lifecycle_state": "CANDIDATE",
+      "origin": "SPS_CORE",
+      "approval": {
+        "state": "PENDING_USER_APPROVAL"
+      },
+      "verification": {
+        "state": "UNVERIFIED",
+        "evidence": [],
+        "note": "P3 implements the mechanism; verification is a later phase"
+      },
+      "selection_policy": {
+        "popularity_role": "TIE_BREAKER_ONLY"
+      },
+      "popularity": {
+        "stars": 0
+      },
+      "last_verified": "2026-10-03"
+    },
+    {
+      "capability_id": "CAP-SPS-003",
+      "name": "forced-user-choice",
+      "type": "DEV_TOOL",
+      "domain": "governance",
+      "purpose": "Honour an explicit user capability choice subject to mandatory safety constraints",
+      "version": "0.1.0",
+      "source": "SPS2_CORE",
+      "provenance": {
+        "origin": "SPS 2.0 repository, phase P3 implementation",
+        "repository_relative_path": "sps2/capability/engine.py",
+        "commit": "9cc67a7a5beb",
+        "fact_class": "FACT",
+        "research_refs": [
+          "CAP-027",
+          "CAP-025",
+          "CAP-021"
+        ]
+      },
+      "licence": "KNOWN_PERMISSIVE",
+      "licence_evidence": "Project-authored source in this repository; no third-party code included",
+      "security": {
+        "status": "VERIFIED_SAFE",
+        "evidence": "Static source review of engine.apply_forced_choice; blocked for SUSPECTED_RISK and VULNERABLE",
+        "fact_class": "EVIDENCE",
+        "permissions": [],
+        "note": "Static analysis of in-repository source only. No external code was executed or installed."
+      },
+      "compatibility": {
+        "status": "COMPATIBLE",
+        "agent_neutral": true,
+        "basis": "Pure-Python, standard library only",
+        "framework": "SPS 2.0 foundation schemas"
+      },
+      "staleness": {
+        "state": "CURRENT",
+        "maintenance": "ACTIVE",
+        "last_checked": "2026-10-03",
+        "review_due": "2027-01-03",
+        "reevaluation_triggers": [
+          "source file changed",
+          "version bumped",
+          "schema contract changed",
+          "validator regression",
+          "review_due reached"
+        ]
+      },
+      "install_scope": "PROJECT_LOCAL",
+      "project_local_install_method": "Tracked in the repository; nothing is installed on the machine",
+      "rollback_method": "Revert the referencing commit; no machine state to undo",
+      "evidence": [
+        "EV-P3-003",
+        "EV-P3-004"
+      ],
+      "confidence": "HIGH",
+      "lifecycle_state": "CANDIDATE",
+      "origin": "SPS_CORE",
+      "approval": {
+        "state": "PENDING_USER_APPROVAL"
+      },
+      "verification": {
+        "state": "UNVERIFIED",
+        "evidence": [],
+        "note": "P3 implements the mechanism; verification is a later phase"
+      },
+      "selection_policy": {
+        "popularity_role": "TIE_BREAKER_ONLY"
+      },
+      "popularity": {
+        "stars": 0
+      },
+      "last_verified": "2026-10-03"
+    },
+    {
+      "capability_id": "CAP-SPS-004",
+      "name": "staleness-model",
+      "type": "DEV_TOOL",
+      "domain": "governance",
+      "purpose": "Track freshness and block a stale capability from remaining silently active",
+      "version": "0.1.0",
+      "source": "SPS2_CORE",
+      "provenance": {
+        "origin": "SPS 2.0 repository, phase P3 implementation",
+        "repository_relative_path": "sps2/capability/engine.py",
+        "commit": "9cc67a7a5beb",
+        "fact_class": "FACT",
+        "research_refs": [
+          "CAP-027",
+          "CAP-025",
+          "CAP-021"
+        ]
+      },
+      "licence": "KNOWN_PERMISSIVE",
+      "licence_evidence": "Project-authored source in this repository; no third-party code included",
+      "security": {
+        "status": "VERIFIED_SAFE",
+        "evidence": "Static source review; STALE_AS_ACTIVE and STALE_WITHOUT_REVIEW enforced",
+        "fact_class": "EVIDENCE",
+        "permissions": [],
+        "note": "Static analysis of in-repository source only. No external code was executed or installed."
+      },
+      "compatibility": {
+        "status": "COMPATIBLE",
+        "agent_neutral": true,
+        "basis": "Pure-Python, standard library only",
+        "framework": "SPS 2.0 foundation schemas"
+      },
+      "staleness": {
+        "state": "CURRENT",
+        "maintenance": "ACTIVE",
+        "last_checked": "2026-10-03",
+        "review_due": "2027-01-03",
+        "reevaluation_triggers": [
+          "source file changed",
+          "version bumped",
+          "schema contract changed",
+          "validator regression",
+          "review_due reached"
+        ]
+      },
+      "install_scope": "PROJECT_LOCAL",
+      "project_local_install_method": "Tracked in the repository; nothing is installed on the machine",
+      "rollback_method": "Revert the referencing commit; no machine state to undo",
+      "evidence": [
+        "EV-P3-004"
+      ],
+      "confidence": "HIGH",
+      "lifecycle_state": "CANDIDATE",
+      "origin": "SPS_CORE",
+      "approval": {
+        "state": "PENDING_USER_APPROVAL"
+      },
+      "verification": {
+        "state": "UNVERIFIED",
+        "evidence": [],
+        "note": "P3 implements the mechanism; verification is a later phase"
+      },
+      "selection_policy": {
+        "popularity_role": "TIE_BREAKER_ONLY"
+      },
+      "popularity": {
+        "stars": 0
+      },
+      "last_verified": "2026-10-03"
+    },
+    {
+      "capability_id": "CAP-SPS-005",
+      "name": "seo-cls-threshold-verifier",
+      "type": "SEO_TOOL",
+      "domain": "seo",
+      "purpose": "Verify Cumulative Layout Shift against the verified CLS thresholds",
+      "version": "0.1.0",
+      "source": "SPS2_CORE",
+      "provenance": {
+        "origin": "SPS 2.0 repository, phase P3 implementation",
+        "repository_relative_path": "sps2/research/P2-CMS-SEO-AUDIT.md",
+        "commit": "9cc67a7a5beb",
+        "fact_class": "FACT",
+        "research_refs": [
+          "CAP-027",
+          "CAP-025",
+          "CAP-021"
+        ]
+      },
+      "licence": "KNOWN_PERMISSIVE",
+      "licence_evidence": "Threshold facts from the public web.dev article; verification code is project-authored",
+      "security": {
+        "status": "VERIFIED_SAFE",
+        "evidence": "CLS good at or below 0.1 and poor above 0.25 confirmed verbatim in SRC-017 with stated derivation",
+        "fact_class": "FACT",
+        "permissions": [],
+        "note": "Static analysis of in-repository source only. No external code was executed or installed."
+      },
+      "compatibility": {
+        "status": "COMPATIBLE",
+        "agent_neutral": true,
+        "basis": "Framework-neutral; measures a browser metric from the public Core Web Vitals specification",
+        "framework": "SPS 2.0 foundation schemas"
+      },
+      "staleness": {
+        "state": "CURRENT",
+        "maintenance": "ACTIVE",
+        "last_checked": "2026-10-03",
+        "review_due": "2027-01-03",
+        "reevaluation_triggers": [
+          "source file changed",
+          "version bumped",
+          "schema contract changed",
+          "validator regression",
+          "review_due reached"
+        ]
+      },
+      "install_scope": "PROJECT_LOCAL",
+      "project_local_install_method": "Tracked in the repository; nothing is installed on the machine",
+      "rollback_method": "Revert the referencing commit; no machine state to undo",
+      "evidence": [
+        "EV-P3-005"
+      ],
+      "confidence": "HIGH",
+      "lifecycle_state": "CANDIDATE",
+      "origin": "SPS_CORE",
+      "approval": {
+        "state": "PENDING_USER_APPROVAL"
+      },
+      "verification": {
+        "state": "UNVERIFIED",
+        "evidence": [],
+        "note": "P3 implements the mechanism; verification is a later phase"
+      },
+      "selection_policy": {
+        "popularity_role": "TIE_BREAKER_ONLY"
+      },
+      "popularity": {
+        "stars": 0
+      },
+      "last_verified": "2026-10-03"
+    }
+  ],
+  "deferred": [
+    {
+      "candidate": "CAP-028 LCP and INP thresholds",
+      "source": "P2 CAP-028",
+      "reason": "LCP and INP numeric thresholds were never retrieved (CONF-001). A verifier cannot encode an unverified number.",
+      "state": "DEFERRED",
+      "decision_ref": "DEC-0014"
+    },
+    {
+      "candidate": "CMS content modelling",
+      "source": "P2 CAP-032",
+      "reason": "CMS content-modelling depth remains RESEARCH_FURTHER; the Contentful reference returned HTTP 429 in P2.",
+      "state": "DEFERRED",
+      "decision_ref": null
+    },
+    {
+      "candidate": "Full SEO capability set",
+      "source": "P2 CAP-029",
+      "reason": "Only CLS thresholds are verified. hreflang, international, local and entity SEO were not researched.",
+      "state": "DEFERRED",
+      "decision_ref": null
+    },
+    {
+      "candidate": "ECC domain skill library",
+      "source": "P2 CAP-014",
+      "reason": "Per-harness behavioural parity was never established; bulk adoption would import unverified assumptions.",
+      "state": "DEFERRED",
+      "decision_ref": null
+    },
+    {
+      "candidate": "ECC continuous learning instincts",
+      "source": "P2 CAP-012",
+      "reason": "Self-reported confidence is not independent evidence. Requires a user-approved proposal mechanism first.",
+      "state": "DEFERRED",
+      "decision_ref": "DEC-0015"
+    },
+    {
+      "candidate": "ECC desktop dashboard",
+      "source": "P2 CAP-036",
+      "reason": "Tkinter GUI is incompatible with an agent-neutral, CLI-first architecture.",
+      "state": "REJECTED",
+      "decision_ref": null
+    },
+    {
+      "candidate": "MCP registry as security control",
+      "source": "P2 CAP-024",
+      "reason": "The registry documents that it delegates security scanning and does not scan server code.",
+      "state": "REJECTED",
+      "decision_ref": "DEC-0013"
+    },
+    {
+      "candidate": "agency-agents persona catalogue",
+      "source": "P2 CAP-017",
+      "reason": "A persona corpus is not a runtime. Useful as requirement vocabulary only, not an installable capability.",
+      "state": "DEFERRED",
+      "decision_ref": null
+    },
+    {
+      "candidate": "Gemini CLI agent adapter",
+      "source": "P2 research gap",
+      "reason": "Gemini CLI documentation was not retrieved (HTTP 404 on both URLs). No adapter may be built on an unread specification.",
+      "state": "DEFERRED",
+      "decision_ref": null
+    }
+  ],
+  "counts": {
+    "total": 5,
+    "deferred": 9
+  }
 }
