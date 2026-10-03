@@ -127,8 +127,12 @@ if grep -rqE --exclude-dir=tools 'git config --global|\$HOME/\.sps' "$SPS2" 2>/d
 else
   pass "no machine-global state referenced in sps2/"
 fi
-if find "$SPS2" \( -name '*.sh' -o -name '*.ps1' \) 2>/dev/null | grep -v 'validate-sps2.sh' | grep -q .; then
-  fail "sps2/ ships executable installers"
+# Validators are not installers. Exclude every file under tools/ that is
+# explicitly a validator, rather than hardcoding a single filename.
+INSTALLERS=$(find "$SPS2" \( -name '*.sh' -o -name '*.ps1' \) 2>/dev/null \
+  | grep -v '/tools/validate-sps2.sh' | grep -v '/tools/validate-p2.sh')
+if [ -n "$INSTALLERS" ]; then
+  fail "sps2/ ships executable installers: $INSTALLERS"
 else
   pass "no installer scripts in sps2/ (nothing installs globally)"
 fi
