@@ -42,6 +42,10 @@ assert_clean() {  # kind file label
   fi
 }
 
+# Negative-suite counters are initialised unconditionally: the tail structural
+# cases run even in --negative mode and must not hit an unbound variable.
+NEG_PASS=0; NEG_FAIL=0
+
 if [ "$NEG_ONLY" != true ]; then
 
 sect "1. Required structure"
@@ -147,9 +151,11 @@ sect "10. Git provenance"
 cd "$REPO" || exit 2
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 && pass "git repository present" || fail "not a git repository"
 BR=$(git rev-parse --abbrev-ref HEAD 2>/dev/null); [ -n "$BR" ] && pass "branch: $BR" || warn "no branch"
+fi  # end structural (sections 1-10 only)
+
 # ══ NEGATIVE SUITE ═══════════════════════════════════════════════════════════
+# Runs in BOTH modes: --negative executes this suite alone, skipping sections 1-10.
 sect "NEGATIVE TESTS — invalid states must be rejected"
-NEG_PASS=0; NEG_FAIL=0
 
 # neg <kind> <label> <expect-regex> <python-mutation>
 neg() {
@@ -266,8 +272,6 @@ neg decision "G2 decision APPROVED by an agent" "non-user" \
     "a=d['decisions'][0]['approval'];a['state']='APPROVED';a['decided_by']='agent'"
 neg decision "   decision missing reason" "missing reason or evidence" \
     "d['decisions'][0]['reason']=''"
-
-fi  # end structural
 
 # --- malformed structured data ---
 printf '{ this is not valid json' > "$TMP/malformed.json"

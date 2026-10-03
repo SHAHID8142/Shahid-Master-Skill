@@ -3,7 +3,7 @@
   "phase": "P1",
   "title": "SPS 2.0 Repository Foundation",
   "generated": "2026-10-03",
-  "note": "P1 approval is NOT recorded here; it awaits a separate user instruction.",
+  "note": "P1 approved by User on 2026-10-03. This approval is bound to P1 only and confers no approval of P2.",
   "requirements": [
     {
       "requirement_id": "REQ-P1-01",
@@ -12,7 +12,7 @@
       "description": "Enforced by validate-sps2.sh section 8 and the portability contract.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": [
         "validate-sps2.sh section 8 reports no vendor reference in core/ outside adapters/",
         "An adapter contract schema and registry exist",
@@ -39,7 +39,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03",
+        "state": "APPROVED"
       }
     },
     {
@@ -49,7 +52,7 @@
       "description": "Contract-first foundation; six JSON Schemas under governance/SCHEMAS.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": [
         "Six schema files exist and declare an $id and required fields",
         "validate-sps2.sh section 2 confirms each contract is valid",
@@ -75,7 +78,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03",
+        "state": "APPROVED"
       }
     },
     {
@@ -85,7 +91,7 @@
       "description": "validate-sps2.sh plus check_sps2.py; positive control plus per-mechanism negatives.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": [
         "Every enforcement mechanism has an invalid fixture that fails",
         "A positive control proves valid fixtures are still accepted",
@@ -112,7 +118,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03",
+        "state": "APPROVED"
       }
     },
     {
@@ -122,7 +131,7 @@
       "description": "Default install scope is PROJECT_LOCAL; GLOBAL requires an explicit user authorizer.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": [
         "No installer scripts ship in sps2/",
         "No machine-global path or global git config is referenced",
@@ -149,7 +158,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03",
+        "state": "APPROVED"
       }
     },
     {
@@ -159,7 +171,7 @@
       "description": "Declared in governance/policies/NO-EMOJI.md and enforced by a repository scan.",
       "scope": "IN_SCOPE",
       "risk": "MEDIUM",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": [
         "A scan of every sps2/ file finds zero emoji",
         "CASE O proves the scan detects a planted violation",
@@ -185,7 +197,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03",
+        "state": "APPROVED"
       }
     },
     {
@@ -195,7 +210,7 @@
       "description": "validate-sps2.sh section 9 asserts an empty diff against legacy paths.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": [
         "git diff over skills, scripts, plugins and installers is empty",
         "A legacy protection manifest documents what must never be copied",
@@ -221,7 +236,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03",
+        "state": "APPROVED"
       }
     },
     {
@@ -231,7 +249,7 @@
       "description": "Registry declares the policy; multiple candidates per domain are supported.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": [
         "Registry forbids hardcoded domain mapping and supports multiple candidates",
         "No global installer or static allow-list exists under sps2",
@@ -257,7 +275,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03",
+        "state": "APPROVED"
       }
     },
     {
@@ -267,7 +288,7 @@
       "description": "research/cache.json declares the ten coverage areas and source-rank rules.",
       "scope": "IN_SCOPE",
       "risk": "MEDIUM",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": [
         "The cache declares all ten required coverage areas and a rank<=4 source rule",
         "The cache is empty and research findings are never fabricated",
@@ -293,7 +314,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03",
+        "state": "APPROVED"
       }
     }
   ]

@@ -2,7 +2,7 @@
   "schema": "sps2.decision-set/v1",
   "phase": "P1",
   "generated": "2026-10-03",
-  "note": "DEC-0009 and DEC-0010 await separate user approval.",
+  "note": "DEC-0009 and DEC-0010 approved by User on 2026-10-03.",
   "decisions": [
     {
       "decision_id": "DEC-0009",
@@ -22,10 +22,13 @@
           "rejected_because": "No approved destination; would write outside project-local scope."
         }
       ],
-      "status": "PROPOSED",
+      "status": "ACTIVE",
       "approval": {
         "required": true,
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03"
       }
     },
     {
@@ -46,10 +49,13 @@
           "rejected_because": "No approved destination; would write outside project-local scope."
         }
       ],
-      "status": "PROPOSED",
+      "status": "ACTIVE",
       "approval": {
         "required": true,
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03"
       }
     }
   ]
