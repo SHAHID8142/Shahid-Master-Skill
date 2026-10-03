@@ -7,7 +7,7 @@ Index of audit reports plus the standing register of known issues discovered but
 
 | `PHASE-01` | [`../../AUDIT-PHASE-01-BASELINE-FORENSIC.md`](../../AUDIT-PHASE-01-BASELINE-FORENSIC.md) | Read-only forensic audit | `VERIFIED` |
 | `PHASE-02` | [`../../AUDIT-PHASE-02-GOVERNANCE-IMPLEMENTATION.md`](../../AUDIT-PHASE-02-GOVERNANCE-IMPLEMENTATION.md) | Governance implementation report | `APPROVED` (User, 2026-10-03) |
-| `PHASE-03` | [`../../AUDIT-PHASE-03-ENFORCEMENT-CONTROL.md`](../../AUDIT-PHASE-03-ENFORCEMENT-CONTROL.md) | Enforcement & control foundation | `AWAITING_USER_APPROVAL` |
+| `PHASE-03` | [`../../AUDIT-PHASE-03-ENFORCEMENT-CONTROL.md`](../../AUDIT-PHASE-03-ENFORCEMENT-CONTROL.md) | Enforcement & control foundation | `APPROVED` (User, 2026-10-03) |
 | `PHASE-04` | — | — | `NOT_STARTED` — needs a new explicit instruction |
 
 > **Report-vs-state note.** The Phase 02 report states its approval was pending, because that

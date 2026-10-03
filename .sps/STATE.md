@@ -18,18 +18,22 @@ Cline, Claude, Codex, Antigravity, Gemini, OpenCode, any model, or any IDE.
 |---|---|
 | Phase ID | `PHASE-03` |
 | Phase name | Enforcement & Control Foundation |
-| Phase status | `AWAITING_USER_APPROVAL` |
+| Phase status | `APPROVED` |
 | Completion | `COMPLETE` |
 | Verification | `VERIFIED` |
-| **Approval** | **`AWAITING_USER_APPROVAL`** — not granted |
+| **Approval** | **`APPROVED`** — granted by User, 2026-10-03 |
+| Approved by | User (explicit approval) |
+| Approval basis | Phase 03 implementation and verification were independently reviewed and accepted |
 | Started | 2026-10-03 |
+| Approved | 2026-10-03 |
 | Previous phase | `PHASE-02` — Governance, Git & Evidence Foundation (`APPROVED` 2026-10-03) |
 | Next phase | `PHASE-04` — **`NOT_STARTED`, `NOT_APPROVED`** — needs a new explicit instruction |
 
-> **Three axes, recorded separately.** Phase 03 is `COMPLETE` (work performed) and `VERIFIED`
-> (control validator: 49 checks, 8 negative cases). It is **not approved**. Only the user may
-> change that field. Phase 02's approval did **not** carry forward — a new instruction was
-> required, and the phase gate correctly held until one arrived.
+> **Three axes, recorded separately.** Phase 03 is `COMPLETE` (work performed), `VERIFIED`
+> (control validator 49/49 + 8 negative cases; governance 49/49; lint PASSED), and now
+> `APPROVED` (the user accepted it on 2026-10-03). These were established separately and in
+> that order. Approval of Phase 03 does **not** carry forward: `PHASE-04` remains unapproved
+> and requires a new explicit instruction.
 
 > **Three axes, recorded separately:** this phase is `COMPLETE` (work performed),
 > `VERIFIED` (evidence proves it), and now `APPROVED` (the user accepted it on
@@ -54,6 +58,9 @@ PHASE-01 (audit)  ──►  PHASE-02 (governance)  ──►  PHASE-03 (enforce
 | `PHASE-02` | `APPROVED` | User | 2026-10-03 | Independent review and acceptance |
 | `DEC-0001` git remote | `APPROVED` → `KEEP_LOCAL_ONLY` | User | 2026-10-03 | Do not configure a remote now |
 | `DEC-0002` git identity | `APPROVED` → `DEFER_IDENTITY_UPDATE` | User | 2026-10-03 | Replace before external publication |
+| `PHASE-03` | `APPROVED` | User | 2026-10-03 | Implementation and verification independently reviewed and accepted |
+| `DEC-0003` lifecycle extends status model | `APPROVED` | User | 2026-10-03 | Accepted as implemented |
+| `DEC-0004` evidence immutability scope | `APPROVED` | User | 2026-10-03 | Accepted as detection-based, not prevention-based |
 
 **Standing obligation carried by `DEC-0002`:** the Git identity placeholder must be replaced
 **before this repository is published or shared externally**. Not yet due, because `DEC-0001`
@@ -82,7 +89,7 @@ Never collapse these into a single field.
 |---|---|---|---|
 | `PHASE-01` | Read-only forensic audit | `VERIFIED` | `AUDIT-PHASE-01-BASELINE-FORENSIC.md` |
 | `PHASE-02` | Governance + Git + evidence foundation | `APPROVED` (2026-10-03) | `AUDIT-PHASE-02-GOVERNANCE-IMPLEMENTATION.md` |
-| `PHASE-03` | Enforcement & control foundation | `AWAITING_USER_APPROVAL` | `AUDIT-PHASE-03-ENFORCEMENT-CONTROL.md` |
+| `PHASE-03` | Enforcement & control foundation | `APPROVED` (2026-10-03) | `AUDIT-PHASE-03-ENFORCEMENT-CONTROL.md` |
 | `PHASE-04` | — | `NOT_STARTED` — not approved | — |
 
 ## Governance Map

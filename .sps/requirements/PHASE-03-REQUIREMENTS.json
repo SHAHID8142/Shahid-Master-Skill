@@ -3,7 +3,7 @@
   "phase": "PHASE-03",
   "title": "Enforcement & Control Foundation",
   "generated": "2026-10-03",
-  "note": "Every requirement is a real Phase 03 obligation, not an illustrative sample. Statuses distinguish DECLARED/IMPLEMENTED/VERIFIED/USER_APPROVED per CONTROL-MODEL.md s2. All are PENDING_USER_APPROVAL: this agent may not approve them.",
+  "note": "Every requirement is a real Phase 03 obligation, not an illustrative sample. Statuses distinguish DECLARED/IMPLEMENTED/VERIFIED/USER_APPROVED per CONTROL-MODEL.md s2. All were APPROVED by the User on 2026-10-03; the agent implemented them but did not approve them.",
   "requirements": [
     {
       "requirement_id": "REQ-P03-01",
@@ -27,8 +27,8 @@
       "verification_refs": [
         "VER-P03-001"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [
         "EV-P03-001"
@@ -38,7 +38,9 @@
       ],
       "related_decisions": [
         "DEC-0003"
-      ]
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P03-02",
@@ -65,8 +67,8 @@
         "VER-P03-001",
         "VER-P03-004"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [
         "EV-P03-001",
@@ -78,7 +80,9 @@
       ],
       "related_decisions": [
         "DEC-0003"
-      ]
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P03-03",
@@ -104,8 +108,8 @@
         "VER-P03-002",
         "VER-P03-003"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [
         "EV-P03-002",
@@ -115,7 +119,9 @@
         "PHASE-03-T02",
         "PHASE-03-T03"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P03-04",
@@ -140,8 +146,8 @@
       "verification_refs": [
         "VER-P03-001"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [
         "EV-P03-001"
@@ -149,7 +155,9 @@
       "related_tasks": [
         "PHASE-03-T01"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P03-05",
@@ -175,8 +183,8 @@
       "verification_refs": [
         "VER-P03-005"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [
         "EV-P03-005"
@@ -185,7 +193,9 @@
         "PHASE-03-T01",
         "PHASE-03-T03"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P03-06",
@@ -211,8 +221,8 @@
       "verification_refs": [
         "VER-P03-001"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [
         "EV-P03-001"
@@ -220,7 +230,9 @@
       "related_tasks": [
         "PHASE-03-T01"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P03-07",
@@ -246,8 +258,8 @@
       "verification_refs": [
         "VER-P03-001"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [
         "EV-P03-001"
@@ -255,7 +267,9 @@
       "related_tasks": [
         "PHASE-03-T01"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P03-08",
@@ -282,8 +296,8 @@
       "verification_refs": [
         "VER-P03-006"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [
         "EV-P03-006"
@@ -294,7 +308,9 @@
       ],
       "related_decisions": [
         "DEC-0004"
-      ]
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P03-09",
@@ -320,8 +336,8 @@
       "verification_refs": [
         "VER-P03-001"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [
         "EV-P03-001"
@@ -330,7 +346,9 @@
         "PHASE-03-T01",
         "PHASE-03-T05"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
     },
     {
       "requirement_id": "REQ-P03-10",
@@ -356,8 +374,8 @@
       "verification_refs": [
         "VER-P03-001"
       ],
-      "approval_status": "PENDING_USER_APPROVAL",
-      "approval_decided_by": "",
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
       "blockers": [],
       "evidence": [
         "EV-P03-001"
@@ -365,7 +383,9 @@
       "related_tasks": [
         "PHASE-03-T01"
       ],
-      "related_decisions": []
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
     }
   ],
   "verifications": [

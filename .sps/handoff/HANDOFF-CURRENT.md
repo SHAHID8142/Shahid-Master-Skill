@@ -11,9 +11,15 @@
 |---|---|
 | `CURRENT_PHASE` *(P3)* | `PHASE-03` — Enforcement & Control Foundation |
 | `CURRENT_TASK` *(P3)* | Phase complete; awaiting user approval |
-| `CURRENT_STATE` *(P3)* | `AWAITING_USER_APPROVAL` |
-| `USER_APPROVAL` *(P3)* | **`PENDING_USER_APPROVAL`** — not granted |
+| `CURRENT_STATE` *(P3)* | `APPROVED` |
+| `USER_APPROVAL` *(P3)* | **`APPROVED` by User, 2026-10-03** |
 | `BLOCKERS` *(P3)* | none |
+
+**Phase 03 approval:** granted by the User on 2026-10-03, on the basis that its implementation
+and verification were independently reviewed and accepted. `DEC-0003` and `DEC-0004` are
+resolved as `APPROVED` on the same basis.
+
+**Approval does not carry forward.** `PHASE-04` is `NOT_STARTED` / `NOT_APPROVED`.
 
 ### `NEXT_ALLOWED_ACTION` *(P3 — mandatory)*
 
@@ -29,7 +35,7 @@
 |---|---|
 | Action class | `WRITE`, `INSTALL`, `EXECUTE`(installers), `DELETE`, `DEPLOY`, `PUBLISH`, `DESTRUCTIVE` |
 | What | Do **not** start `PHASE-04`; do not fix any Phase 01 finding (`KI-01`–`KI-14`); do not run `install.sh`/`uninstall.sh`/`sps-update.sh`; do not configure a remote or push (`DEC-0001`); do not install skills/MCPs; do not modify CMS/SEO/backend/frontend. |
-| Why | Phase 03 is not approved, and these areas are out of scope (Phase 03 §2). |
+| Why | Phase 03 is approved but **Phase 04 is not**; approval never carries forward, and these areas are out of Phase 03 scope (§2). |
 | Risk | `HIGH` |
 
 ### Phase 03 summary
@@ -46,7 +52,8 @@
 - **NOT done:** no Phase 01 finding fixed; no machine gate on phase transitions (Level 0);
   no natural-language approval parsing; no conversational planner; no automated rollback;
   no multi-agent verifier system; no signed evidence (`DEC-0004`).
-- **Approval required:** Phase 03 + `DEC-0003` + `DEC-0004`.
+- **Approval recorded:** Phase 03 `APPROVED` (User, 2026-10-03); `DEC-0003` and `DEC-0004`
+  resolved as `APPROVED` on the same basis.
 
 ---
 

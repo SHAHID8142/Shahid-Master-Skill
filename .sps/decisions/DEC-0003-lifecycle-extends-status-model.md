@@ -2,7 +2,7 @@
 
 - **Date:** 2026-10-03
 - **Status:** Active
-- **Approval:** `PENDING_USER_APPROVAL`
+- **Approval:** `APPROVED`
 - **Phase / Task:** `PHASE-03` / `PHASE-03-T01`
 - **Evidence:** `EV-P03-001`
 - **Supersedes:** none
@@ -44,7 +44,13 @@ levels in `CONTROL-MODEL.md`; removing any one fails the check.
 ## Approval
 
 **Required:** yes — architecture decision affecting all future phases.
-**Status:** `PENDING_USER_APPROVAL`
-**Decided by:** _(none — awaiting user)_
+**Status:** `APPROVED`
+**Decided by:** User (explicit user approval, 2026-10-03)
+**Approval basis:** Phase 03 implementation and verification were independently reviewed and accepted.
 
-This agent implemented the decision but may not approve it.
+The user explicitly approved this decision on 2026-10-03. The lifecycle extends the Phase 02
+status model; it does not replace it. `CONTROL-MODEL.md` §3 carries the mapping table, and
+`validate-control.sh` enforces the presence of the lifecycle and truth vocabulary.
+
+**Consequence:** all future phases may reference lifecycle stage and status independently.
+Two vocabularies for "where are we" are now explicitly prevented by `DEC-0003`.

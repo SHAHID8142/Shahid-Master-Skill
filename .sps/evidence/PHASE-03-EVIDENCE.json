@@ -3,7 +3,7 @@
   "phase": "PHASE-03",
   "phase_title": "Enforcement & Control Foundation",
   "generated": "2026-10-03",
-  "note": "Append-only. Records are never edited to change a result; a changed outcome requires a new record with 'supersedes'. All Phase 03 approval fields remain PENDING_USER_APPROVAL - this agent may not approve its own work.",
+  "note": "Append-only. Records are never edited to change a result; a changed outcome requires a new record with 'supersedes'. PHASE-03 was APPROVED by the User on 2026-10-03. The agent implemented the work but did not approve it; approval was recorded only from the user's explicit instruction.",
   "records": [
     {
       "id": "EV-P03-001",
@@ -156,6 +156,48 @@
       "timestamp": "2026-10-03T00:00:00Z",
       "file": null,
       "test": "three-validator-suite",
+      "commit": null,
+      "maturity": "VERIFIED"
+    },
+    {
+      "id": "EV-P03-012",
+      "task": "PHASE-03-T07",
+      "requirement": "REQ-P03-02",
+      "command": "record user approval of PHASE-03 in STATE.md, DEC-0003, DEC-0004, tasks, handoff, requirements",
+      "expected": "Record the user's EXPLICIT approval with attribution, date and basis; do not infer it",
+      "actual": "Approval recorded as genuine user approval on 2026-10-03 with basis 'Phase 03 implementation and verification were independently reviewed and accepted'. Updated: STATE.md (phase status APPROVED, Approval/Approved by/Approval basis/Approved rows, phase inventory, Approval Record table); DEC-0003 and DEC-0004 (PENDING -> APPROVED, Decided by: User); all 10 requirements (approval_status APPROVED, approval_decided_by User, approved_at, approval_basis); PHASE-03-TASKS.md (header + 6 task approval cells); HANDOFF-CURRENT.md (CURRENT_STATE, USER_APPROVAL, FORBIDDEN_NEXT_ACTION rationale); audits/README.md. PHASE-04 remains NOT_STARTED / NOT_APPROVED - approval was not carried forward.",
+      "result": "PASS",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "file": ".sps/STATE.md",
+      "test": "approval-transition",
+      "commit": null,
+      "maturity": "VERIFIED"
+    },
+    {
+      "id": "EV-P03-013",
+      "task": "PHASE-03-T07",
+      "requirement": "REQ-P03-02",
+      "command": "bash scripts/lint-sps.sh ; bash .sps/tools/validate-governance.sh ; bash .sps/tools/validate-control.sh",
+      "expected": "All validators and the negative suite pass after the approval transition",
+      "actual": "SPS lint PASSED (exit 0). Governance validator: 50/50, exit 0 - the count rose from 49 because STATE.md is now APPROVED, which activates the per-record user-attribution branch across all 4 decision records. Control validator: 49/49 plus 8 negative cases (CASE A-F), exit 0.",
+      "result": "PASS",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "file": null,
+      "test": "three-validator-suite-post-approval",
+      "commit": null,
+      "maturity": "VERIFIED"
+    },
+    {
+      "id": "EV-P03-014",
+      "task": "PHASE-03-T07",
+      "requirement": "REQ-P03-02",
+      "command": "negative test of the approval transition: (T1) attribute DEC-0003 to an agent; (T2) set a requirement's approval_decided_by to 'agent'; (T3) strip User attribution from DEC-0004",
+      "expected": "A fabricated or unattributed approval must be rejected after the transition",
+      "actual": "All three REJECTED, exit 1: T1 'DEC-0003 is APPROVED but not attributed to the User'; T2 'REQ-P03-01: APPROVED attributed to agent/model, not a user'; T3 'DEC-0004 is APPROVED but not attributed to the User'. All files restored from backup afterwards; both validators returned to exit 0.",
+      "result": "PASS",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "file": ".sps/tools/validate-governance.sh",
+      "test": "approval-transition-negative",
       "commit": null,
       "maturity": "VERIFIED"
     }

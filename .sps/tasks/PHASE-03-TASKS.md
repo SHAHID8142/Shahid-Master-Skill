@@ -1,12 +1,13 @@
 # PHASE-03 Task Register
 
 **Phase:** `PHASE-03` — Enforcement & Control Foundation
-**Status:** `AWAITING_USER_APPROVAL` (implementation `COMPLETE`, verification `VERIFIED`)
-**Approval:** **`PENDING_USER_APPROVAL`** — explicit user approval, not inferred
+**Status:** `APPROVED` (implementation `COMPLETE`, verification `VERIFIED`)
+**Approval:** **`APPROVED` by User, 2026-10-03** — explicit user approval, not inferred
 **Contract:** `.sps/SCHEMA.md` §6–§10 · **Model:** `.sps/control/CONTROL-MODEL.md`
 
 > Reminder: `completion`, `verification` and `approval` are independent axes. This phase is
-> the first two only. Only the user may set the third.
+> all three — but they were established separately, in that order. Approval of Phase 03 does
+> not authorise Phase 04.
 
 ---
 
@@ -14,12 +15,13 @@
 
 | ID | Title | Requirements | Status | Completion | Verification | Approval |
 |---|---|---|---|---|---|---|
-| `PHASE-03-T01` | Define control model, lifecycle, enforcement levels | `REQ-P03-01,02,04,06,07,09,10` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-03-T02` | Machine-readable contracts + requirement register | `REQ-P03-03` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-03-T03` | Requirement validator + negative suite (CASE A–E) | `REQ-P03-02,03,05` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-03-T04` | Evidence append-only enforcement + CASE F | `REQ-P03-08` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-03-T05` | Handoff extension (`NEXT_ALLOWED_ACTION`) | `REQ-P03-09` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
-| `PHASE-03-T06` | Validation, scope discipline, existing-SPS audit | all | `VERIFIED` | `COMPLETE` | `VERIFIED` | `PENDING_USER_APPROVAL` |
+| `PHASE-03-T01` | Define control model, lifecycle, enforcement levels | `REQ-P03-01,02,04,06,07,09,10` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-03-T02` | Machine-readable contracts + requirement register | `REQ-P03-03` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-03-T03` | Requirement validator + negative suite (CASE A–E) | `REQ-P03-02,03,05` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-03-T04` | Evidence append-only enforcement + CASE F | `REQ-P03-08` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-03-T05` | Handoff extension (`NEXT_ALLOWED_ACTION`) | `REQ-P03-09` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-03-T06` | Validation, scope discipline, existing-SPS audit | all | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` (User, 2026-10-03) |
+| `PHASE-03-T07` | Record user approval + resolve DEC-0003/0004 | `REQ-P03-02` | `VERIFIED` | `COMPLETE` | `VERIFIED` | `APPROVED` (User, 2026-10-03) |
 
 ---
 
@@ -70,3 +72,19 @@
   mechanically; no machine-global change; focused audit of existing SPS in
   `AUDIT-PHASE-03-ENFORCEMENT-CONTROL.md` §19.
 - **Not done:** no Phase 01 finding fixed. `KI-01` (hardcoded secret) remains open by design.
+
+## T07 — Record user approval and resolve pending decisions
+
+- **Evidence:** `EV-P03-012` – `EV-P03-014`
+- **Status:** `VERIFIED` · **Approval:** `APPROVED` (User, 2026-10-03)
+- **What was done:** Recorded the user's explicit Phase 03 approval as genuine user approval
+  (never inferred), and resolved both pending decisions: `DEC-0003` and `DEC-0004` →
+  `APPROVED`, attributed to the User with the stated approval basis. All 10 requirements
+  moved to `APPROVED` / `approval_decided_by: User`.
+- **Validator effect:** governance check count rose 49 → 50 because `STATE.md` becoming
+  `APPROVED` activates the per-record user-attribution branch across all 4 decision records.
+- **Negative-tested:** 3 fabricated-approval variants (agent-attributed decision,
+  agent-attributed requirement, stripped attribution) were **all rejected**, exit 1
+  (`EV-P03-014`). Files restored; validators returned to exit 0.
+- **Not done:** `PHASE-04` was **not** started. It remains `NOT_STARTED` / `NOT_APPROVED` —
+  approval was explicitly **not** carried forward.

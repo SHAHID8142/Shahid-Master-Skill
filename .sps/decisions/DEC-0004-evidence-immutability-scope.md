@@ -2,7 +2,7 @@
 
 - **Date:** 2026-10-03
 - **Status:** Active
-- **Approval:** `PENDING_USER_APPROVAL`
+- **Approval:** `APPROVED`
 - **Phase / Task:** `PHASE-03` / `PHASE-03-T04`
 - **Evidence:** `EV-P03-006`
 - **Supersedes:** none
@@ -51,5 +51,22 @@ three signals. Suite result: 8 negative cases correctly rejected, 0 missed.
 ## Approval
 
 **Required:** yes — this bounds a core Phase 03 guarantee.
-**Status:** `PENDING_USER_APPROVAL`
-**Decided by:** _(none — awaiting user)_
+**Status:** `APPROVED`
+**Decided by:** User (explicit user approval, 2026-10-03)
+**Approval basis:** Phase 03 implementation and verification were independently reviewed and accepted.
+
+The user explicitly approved this decision on 2026-10-03, accepting evidence immutability as
+**detection-based, not prevention-based**.
+
+### What this approval does and does not settle
+
+| Question | Status |
+|---|---|
+| Are structural append-only checks enforced? | **Yes** — Level 2, negative-tested (CASE F) |
+| Does git provide tamper-evidence for committed records? | **Yes** — detection |
+| Is pre-commit rewriting prevented? | **No** — out of scope, honestly recorded |
+| Should signed/anchored evidence be built later? | **Open** — a future phase decision |
+
+**Standing limitation (unchanged by this approval):** an agent with write access can still
+rewrite an evidence file *before* commit. This remains a Known Limitation of Phase 03 and is
+recorded as such in `AUDIT-PHASE-03-ENFORCEMENT-CONTROL.md` §22 item 2.
