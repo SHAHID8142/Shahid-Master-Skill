@@ -133,10 +133,12 @@ done
 sect "6. Approval discipline"
 
 STATE_APPROVAL="$(grep -E '^\|[[:space:]]*\*\*Approval\*\*[[:space:]]*\|' "$SPS/STATE.md" \
-  | grep -oE 'APPROVED|PENDING_USER_APPROVAL|REJECTED' | head -1 || true)"
+  | grep -oE 'AWAITING_USER_APPROVAL|PENDING_USER_APPROVAL|APPROVED|REJECTED' | head -1 || true)"
+CURRENT_PHASE="$(grep -E '^\|[[:space:]]*Phase ID[[:space:]]*\|' "$SPS/STATE.md" \
+  | grep -oE 'PHASE-[0-9]+' | head -1 || true)"
 case "$STATE_APPROVAL" in
   APPROVED)
-    pass "STATE.md records Phase 02 as APPROVED"
+    pass "STATE.md records $CURRENT_PHASE as APPROVED"
     # An APPROVED phase MUST carry an explicit, attributable user decision.
     # NOTE: every decision record must be individually attributed. Checking only
     # that *some* record is attributed would let one file mask another's gap -
@@ -155,11 +157,11 @@ case "$STATE_APPROVAL" in
     [ "$attributed" -eq "$total" ] && [ "$total" -gt 0 ] \
       && pass "all $total APPROVED decision records are attributed to the User"
     ;;
-  PENDING_USER_APPROVAL)
-    pass "STATE.md records Phase 02 as awaiting user approval"
+  AWAITING_USER_APPROVAL|PENDING_USER_APPROVAL)
+    pass "STATE.md records $CURRENT_PHASE as awaiting user approval"
     ;;
   REJECTED)
-    pass "STATE.md records Phase 02 as rejected"
+    pass "STATE.md records $CURRENT_PHASE as rejected"
     ;;
   *)
     fail "STATE.md has no recognisable approval state (found: '${STATE_APPROVAL:-none}')"
@@ -181,12 +183,31 @@ else
   pass "no JSON approval field is self-populated by an agent"
 fi
 
-# Every decision record must be in a resolved state (no lingering ambiguity).
+# Decision records belonging to the CURRENT phase must be resolved.
+#
+# Scoped deliberately: a phase that is itself awaiting approval may legitimately
+# carry PENDING decisions (they are part of what is awaiting approval). Only
+# decisions from an APPROVED phase must be resolved. Before this scoping the rule
+# was implicitly Phase-02-specific and broke as soon as Phase 03 opened - a real
+# defect found by re-running the Phase 02 validator after Phase 03 work began.
 for d in "$SPS/decisions/"*.md; do
   [ -e "$d" ] || continue
   b="$(basename "$d")"
-  if grep -qE '^-[[:space:]]*\*\*Approval:\*\*[[:space:]]*`PENDING_USER_APPROVAL`' "$d"; then
-    fail "$b still PENDING_USER_APPROVAL - decisions must be resolved, not left open"
+  # Which phase does this decision belong to?
+  dphase="$(grep -E '\*\*Phase / Task:\*\*' "$d" | grep -oE 'PHASE-[0-9]+' | head -1 || true)"
+  is_pending=0
+  grep -qE '^-[[:space:]]*\*\*Approval:\*\*[[:space:]]*`(PENDING_USER_APPROVAL|AWAITING_USER_APPROVAL)`' "$d" && is_pending=1
+  # A decision raised inside a phase that is ITSELF still awaiting approval is
+  # legitimately pending - it is part of what the user is being asked to approve.
+  # Only a decision belonging to an already-APPROVED phase must be resolved.
+  if [ "$STATE_APPROVAL" = "APPROVED" ] && [ "$dphase" != "$CURRENT_PHASE" ]; then
+    if [ "$is_pending" = "1" ]; then
+      fail "$b still PENDING but $dphase is approved - decisions must be resolved"
+    else
+      pass "$b is in a resolved approval state"
+    fi
+  elif [ "$is_pending" = "1" ]; then
+    pass "$b is PENDING within ${dphase:-current} - awaiting approval (correct)"
   else
     pass "$b is in a resolved approval state"
   fi

@@ -1,5 +1,57 @@
 # HANDOFF — Current
 
+**Contract:** `.sps/SCHEMA.md` §4 (Phase 02) extended by §10 (Phase 03)
+**Rules:** `.sps/GOVERNANCE.md` · `.sps/control/ENFORCEMENT.md`
+
+---
+
+## PHASE 03 EXTENSION (fields marked *(P3)*)
+
+| Field | Value |
+|---|---|
+| `CURRENT_PHASE` *(P3)* | `PHASE-03` — Enforcement & Control Foundation |
+| `CURRENT_TASK` *(P3)* | Phase complete; awaiting user approval |
+| `CURRENT_STATE` *(P3)* | `AWAITING_USER_APPROVAL` |
+| `USER_APPROVAL` *(P3)* | **`PENDING_USER_APPROVAL`** — not granted |
+| `BLOCKERS` *(P3)* | none |
+
+### `NEXT_ALLOWED_ACTION` *(P3 — mandatory)*
+
+| Field | Value |
+|---|---|
+| Action class | `READ`, `ANALYZE` |
+| What | Review `AUDIT-PHASE-03-ENFORCEMENT-CONTROL.md`, `.sps/control/*`, the requirements/evidence JSON, and the commit diff. Approve or reject via the decision mechanism. |
+| Risk | `LOW` |
+
+### `FORBIDDEN_NEXT_ACTION` *(P3 — mandatory)*
+
+| Field | Value |
+|---|---|
+| Action class | `WRITE`, `INSTALL`, `EXECUTE`(installers), `DELETE`, `DEPLOY`, `PUBLISH`, `DESTRUCTIVE` |
+| What | Do **not** start `PHASE-04`; do not fix any Phase 01 finding (`KI-01`–`KI-14`); do not run `install.sh`/`uninstall.sh`/`sps-update.sh`; do not configure a remote or push (`DEC-0001`); do not install skills/MCPs; do not modify CMS/SEO/backend/frontend. |
+| Why | Phase 03 is not approved, and these areas are out of scope (Phase 03 §2). |
+| Risk | `HIGH` |
+
+### Phase 03 summary
+
+- **Implemented:** lifecycle (11 stages, mapped onto Phase 02 statuses — no duplicate system),
+  four truths, requirement/verification/action/rollback contracts, enforcement levels 0–4,
+  10 stop conditions, phase gate, no-assumption rule, append-only evidence, verifier classes.
+- **Files:** `.sps/control/{CONTROL-MODEL,ENFORCEMENT,ENFORCEMENT-VS-INSTRUCTION}.md`,
+  `.sps/requirements/PHASE-03-REQUIREMENTS.json`, `.sps/evidence/PHASE-03-EVIDENCE.json`,
+  `.sps/tools/validate-control.sh`, `.sps/tasks/PHASE-03-TASKS.md`,
+  `.sps/decisions/DEC-0003-*.md`, `DEC-0004-*.md`, `.sps/SCHEMA.md` (§6–§11).
+- **Verified:** control validator 49/49 + 8 negative cases (CASE A–F) enforced, exit 0;
+  SPS lint PASSED; Phase 02 validator 48/48.
+- **NOT done:** no Phase 01 finding fixed; no machine gate on phase transitions (Level 0);
+  no natural-language approval parsing; no conversational planner; no automated rollback;
+  no multi-agent verifier system; no signed evidence (`DEC-0004`).
+- **Approval required:** Phase 03 + `DEC-0003` + `DEC-0004`.
+
+---
+
+## PHASE 02 RECORD (superseded as current state, retained for history)
+
 **Contract:** `.sps/SCHEMA.md` §4 · **Rules:** `.sps/GOVERNANCE.md` §6
 **Format:** agent-agnostic Markdown. No agent, model, or IDE is required to read this.
 

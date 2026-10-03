@@ -16,18 +16,20 @@ Cline, Claude, Codex, Antigravity, Gemini, OpenCode, any model, or any IDE.
 
 | Field | Value |
 |---|---|
-| Phase ID | `PHASE-02` |
-| Phase name | Governance, Git & Evidence Foundation |
-| Phase status | `APPROVED` |
+| Phase ID | `PHASE-03` |
+| Phase name | Enforcement & Control Foundation |
+| Phase status | `AWAITING_USER_APPROVAL` |
 | Completion | `COMPLETE` |
 | Verification | `VERIFIED` |
-| **Approval** | **`APPROVED`** — granted by User, 2026-10-03 |
-| Approved by | User (explicit approval) |
-| Approval basis | Phase 02 implementation and verification were independently reviewed and accepted |
+| **Approval** | **`AWAITING_USER_APPROVAL`** — not granted |
 | Started | 2026-10-03 |
-| Approved | 2026-10-03 |
-| Previous phase | `PHASE-01` — Baseline Forensic Audit (`VERIFIED`, read-only) |
-| Next phase | `PHASE-03` — **`NOT_STARTED`, `NOT_APPROVED`** — needs a new explicit instruction |
+| Previous phase | `PHASE-02` — Governance, Git & Evidence Foundation (`APPROVED` 2026-10-03) |
+| Next phase | `PHASE-04` — **`NOT_STARTED`, `NOT_APPROVED`** — needs a new explicit instruction |
+
+> **Three axes, recorded separately.** Phase 03 is `COMPLETE` (work performed) and `VERIFIED`
+> (control validator: 49 checks, 8 negative cases). It is **not approved**. Only the user may
+> change that field. Phase 02's approval did **not** carry forward — a new instruction was
+> required, and the phase gate correctly held until one arrived.
 
 > **Three axes, recorded separately:** this phase is `COMPLETE` (work performed),
 > `VERIFIED` (evidence proves it), and now `APPROVED` (the user accepted it on
@@ -80,7 +82,8 @@ Never collapse these into a single field.
 |---|---|---|---|
 | `PHASE-01` | Read-only forensic audit | `VERIFIED` | `AUDIT-PHASE-01-BASELINE-FORENSIC.md` |
 | `PHASE-02` | Governance + Git + evidence foundation | `APPROVED` (2026-10-03) | `AUDIT-PHASE-02-GOVERNANCE-IMPLEMENTATION.md` |
-| `PHASE-03` | Enforcement & control foundation | `NOT_STARTED` — not approved | — |
+| `PHASE-03` | Enforcement & control foundation | `AWAITING_USER_APPROVAL` | `AUDIT-PHASE-03-ENFORCEMENT-CONTROL.md` |
+| `PHASE-04` | — | `NOT_STARTED` — not approved | — |
 
 ## Governance Map
 
