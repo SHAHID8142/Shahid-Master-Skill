@@ -3,7 +3,7 @@
   "phase": "P2",
   "generated": "2026-10-03",
   "title": "Capability Intelligence and Comparative Audit",
-  "note": "P2 approval is NOT recorded here. No research finding is user-approved until a separate explicit instruction.",
+  "note": "P2 research phase approved by User on 2026-10-03. This approval is bound to the P2 research and audit phase only. It does NOT approve or populate the production capability registry, and it confers no approval of P3.",
   "requirements": [
     {
       "requirement_id": "REQ-P2-01",
@@ -12,7 +12,7 @@
       "description": "Sources ranked 1-4 by hierarchy; popularity is never sufficient.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": "EV-P2-002",
       "dependencies": [],
       "implementation": {
@@ -43,7 +43,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only.",
+        "state": "APPROVED"
       }
     },
     {
@@ -53,7 +56,7 @@
       "description": "Avoids the failure mode of recording that a project is good rather than what it does.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": "EV-P2-003",
       "dependencies": [],
       "implementation": {
@@ -83,7 +86,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only.",
+        "state": "APPROVED"
       }
     },
     {
@@ -93,7 +99,7 @@
       "description": "Evidence shows packaging breadth is not behavioural parity.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": "EV-P2-004",
       "dependencies": [],
       "implementation": {
@@ -123,7 +129,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only.",
+        "state": "APPROVED"
       }
     },
     {
@@ -133,7 +142,7 @@
       "description": "Research is not evidence of SPS-installability.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": "EV-P2-005",
       "dependencies": [],
       "implementation": {
@@ -164,7 +173,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only.",
+        "state": "APPROVED"
       }
     },
     {
@@ -174,7 +186,7 @@
       "description": "These are standing user requirements, not research findings.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": "EV-P2-006",
       "dependencies": [],
       "implementation": {
@@ -205,7 +217,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only.",
+        "state": "APPROVED"
       }
     },
     {
@@ -215,7 +230,7 @@
       "description": "Silently reconciling uncertainty is prohibited by the evidence policy.",
       "scope": "IN_SCOPE",
       "risk": "MEDIUM",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": "EV-P2-007",
       "dependencies": [],
       "implementation": {
@@ -245,7 +260,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only.",
+        "state": "APPROVED"
       }
     },
     {
@@ -255,7 +273,7 @@
       "description": "External repositories are untrusted input.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": "EV-P2-008",
       "dependencies": [],
       "implementation": {
@@ -285,7 +303,10 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only.",
+        "state": "APPROVED"
       }
     },
     {
@@ -295,7 +316,7 @@
       "description": "A validator that only rejects bad input is insufficient.",
       "scope": "IN_SCOPE",
       "risk": "HIGH",
-      "status": "VERIFIED",
+      "status": "APPROVED",
       "acceptance_criteria": "EV-P2-009",
       "dependencies": [],
       "implementation": {
@@ -325,8 +346,17 @@
         ]
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only.",
+        "state": "APPROVED"
       }
     }
-  ]
+  ],
+  "approval_scope": {
+    "phase": "P2",
+    "type": "RESEARCH_AND_AUDIT",
+    "production_capability_registry": "NOT APPROVED - remains empty",
+    "p3": "NOT APPROVED"
+  }
 }

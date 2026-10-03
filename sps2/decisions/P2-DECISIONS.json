@@ -2,7 +2,7 @@
   "schema": "sps2.decision-set/v1",
   "phase": "P2",
   "generated": "2026-10-03",
-  "note": "DEC-0011 to DEC-0015 await separate user approval.",
+  "note": "DEC-0011 to DEC-0015 approved by User on 2026-10-03 as part of the P2 research approval.",
   "decisions": [
     {
       "decision_id": "DEC-0011",
@@ -20,10 +20,13 @@
           "rejected_because": "It would add a sixth competing format and reduce portability."
         }
       ],
-      "status": "PROPOSED",
+      "status": "ACTIVE",
       "approval": {
         "required": true,
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only."
       }
     },
     {
@@ -43,10 +46,13 @@
           "rejected_because": "Would make correctness depend on uneven harness hook support."
         }
       ],
-      "status": "PROPOSED",
+      "status": "ACTIVE",
       "approval": {
         "required": true,
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only."
       }
     },
     {
@@ -64,10 +70,13 @@
           "rejected_because": "The registry documents that it performs no code scanning."
         }
       ],
-      "status": "PROPOSED",
+      "status": "ACTIVE",
       "approval": {
         "required": true,
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only."
       }
     },
     {
@@ -85,10 +94,13 @@
           "rejected_because": "Unverifiable from the consulted sources; prohibited by the no-assumption requirement."
         }
       ],
-      "status": "PROPOSED",
+      "status": "ACTIVE",
       "approval": {
         "required": true,
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only."
       }
     },
     {
@@ -105,10 +117,13 @@
           "rejected_because": "Self-scored rules bypass user approval and generalise poorly across projects."
         }
       ],
-      "status": "PROPOSED",
+      "status": "ACTIVE",
       "approval": {
         "required": true,
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only."
       }
     }
   ]

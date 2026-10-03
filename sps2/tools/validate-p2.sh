@@ -157,16 +157,47 @@ else
   pass "no external build artefact or dependency lock in sps2"
 fi
 
-sect "9. P2 not self-approved"
-jq -e '[.requirements[].approval.state] | all(. == "PENDING_USER_APPROVAL")' \
+sect "9. Approval is genuine, user-attributed and bounded"
+# Approval may only ever be attributed to the user, never to an agent.
+jq -e '[.requirements[] | select(.approval.state == "APPROVED")
+        | .approval.decided_by] | length > 0 and all(. == "User")' \
   "$SPS2/requirements/P2-REQUIREMENTS.json" >/dev/null 2>&1 \
-  && pass "all P2 requirements remain PENDING_USER_APPROVAL" || fail "P2 requirement approval state changed"
-jq -e '[.decisions[].approval.state] | all(. == "PENDING_USER_APPROVAL")' \
+  && pass "every approved P2 requirement is attributed to User" \
+  || fail "a P2 requirement approval is not user-attributed"
+jq -e '[.decisions[] | select(.approval.state == "APPROVED")
+        | .approval.decided_by] | length > 0 and all(. == "User")' \
   "$SPS2/decisions/P2-DECISIONS.json" >/dev/null 2>&1 \
-  && pass "all P2 decisions remain PENDING_USER_APPROVAL" || fail "P2 decision approval state changed"
-jq -e '.handoffs[0].current_state | test("AWAITING_USER_APPROVAL")' \
+  && pass "every approved P2 decision is attributed to User" \
+  || fail "a P2 decision approval is not user-attributed"
+jq -e '.handoffs[0].user_approval == "APPROVED"
+       and (.handoffs[0].current_state | test("APPROVED"))' \
   "$SPS2/handoff/HANDOFF-P2.json" >/dev/null 2>&1 \
-  && pass "P2 handoff reads AWAITING_USER_APPROVAL" || fail "P2 handoff state is wrong"
+  && pass "P2 handoff reads APPROVED" || fail "P2 handoff state is wrong"
+
+# The approval must be bounded: P2 research only, P3 not approved.
+jq -e '.approval_scope.p3 == "NOT_APPROVED"' \
+  "$SPS2/handoff/HANDOFF-P2.json" >/dev/null 2>&1 \
+  && pass "P3 explicitly recorded as NOT_APPROVED" || fail "P3 approval scope missing"
+jq -e '.approval_scope.production_capability_registry | test("NOT_APPROVED")' \
+  "$SPS2/handoff/HANDOFF-P2.json" >/dev/null 2>&1 \
+  && pass "registry explicitly recorded as NOT approved" || fail "registry scope missing"
+
+# Approving P2 research must NOT populate the production registry.
+NCAP2=$(python3 -c "import json;print(len(json.load(open('$SPS2/capability/registry.json'))['capabilities']))" 2>/dev/null || echo -1)
+[ "$NCAP2" = "0" ] && pass "production registry still empty after P2 approval" \
+                   || fail "P2 approval populated the production registry"
+
+# Unresolved research gaps must survive the approval unchanged.
+jq -e '.conflicts[0].resolution | test("UNRESOLVED")' \
+  "$SPS2/research/P2-SOURCES.json" >/dev/null 2>&1 \
+  && pass "CONF-001 still UNRESOLVED after approval" || fail "CONF-001 was silently closed"
+jq -e '.capabilities[] | select(.capability_id=="CAP-028")
+       | .sps_recommendation == "RESEARCH_FURTHER" and .status == "UNVERIFIED"' \
+  "$SPS2/research/P2-CAPABILITY-EXTRACTION.json" >/dev/null 2>&1 \
+  && pass "CAP-028 gap preserved (UNVERIFIED, RESEARCH_FURTHER)" \
+  || fail "CAP-028 gap was altered by approval"
+grep -q 'PARTIAL' "$SPS2/tasks/P2-TASKS.md" \
+  && pass "PARTIAL research tasks preserved as documented" || fail "PARTIAL tasks were removed"
 
 fi  # end structural
 # ══ NEGATIVE SUITE ═══════════════════════════════════════════════════════════
