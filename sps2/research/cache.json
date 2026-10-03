@@ -1,0 +1,19 @@
+{
+  "schema": "sps2.research/v1",
+  "version": "0.1.0-foundation",
+  "generated": "2026-10-03",
+  "note": "INTENTIONALLY EMPTY. P1 creates the research gate mechanism only. P6 populates it. Research findings are NEVER fabricated.",
+  "gate": {
+    "rule": "A technology must not be selected until a research entry exists with readiness SUFFICIENT.",
+    "sufficiency_requires": "All ten coverage areas COVERED AND at least one source of rank <= 4.",
+    "required_coverage": ["official_documentation", "current_version", "compatibility",
+      "ecosystem", "recommended_practices", "security_considerations", "relevant_tooling",
+      "mcp_tool_availability", "testing_approach", "deployment_implications"],
+    "source_rank": {"1": "official documentation", "2": "official repository",
+      "3": "official package registry", "4": "maintainer docs",
+      "5": "independent technical source",
+      "6": "community (signal only; never establishes correctness)"}
+  },
+  "entries": [],
+  "counts": {"total": 0, "sufficient": 0}
+}

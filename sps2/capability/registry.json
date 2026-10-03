@@ -1,0 +1,15 @@
+{
+  "schema": "sps2.capability-registry/v1",
+  "version": "0.1.0-foundation",
+  "generated": "2026-10-03",
+  "note": "INTENTIONALLY EMPTY. The P1 foundation creates the registry mechanism and its contract. Populating it requires live research, security evaluation and user approval (roadmap P4/P5). Capability records are NEVER fabricated. An empty registry is a valid, verified state.",
+  "selection_policy": {
+    "hardcoded_domain_mapping_forbidden": true,
+    "supports_multiple_candidates_per_domain": true,
+    "popularity_is_tie_breaker_only": true,
+    "forced_user_choice_overrides_automation": true,
+    "default_install_scope": "PROJECT_LOCAL"
+  },
+  "capabilities": [],
+  "counts": {"total": 0}
+}
