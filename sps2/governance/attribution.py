@@ -24,6 +24,12 @@ def approval_is_user_attributable(approval):
 
     Requires an APPROVED state, a non-empty decider that is not an agent name,
     and a decision date. Any missing element is not an approval.
+
+    The date is accepted under either established field name. Capability and
+    requirement records use `decided_on`; the decision records DEC-0011 to
+    DEC-0015 use `decided_at`. Both are accepted so that attribution is judged
+    on WHO and WHEN, not on a spelling difference. A missing date under either
+    name is still rejected, and an agent decider is still rejected.
     """
     a = approval or {}
     if a.get("state") != "APPROVED":
@@ -31,7 +37,7 @@ def approval_is_user_attributable(approval):
     who = (a.get("decided_by") or "").strip()
     if not who or AGENTISH.search(who):
         return False
-    return bool((a.get("decided_on") or "").strip())
+    return bool((a.get("decided_on") or a.get("decided_at") or "").strip())
 
 
 def reason_not_attributable(approval):
@@ -44,6 +50,6 @@ def reason_not_attributable(approval):
         return "APPROVED without decided_by"
     if AGENTISH.search(who):
         return "APPROVED by an agent, not a user: %r" % who
-    if not (a.get("decided_on") or "").strip():
-        return "APPROVED without decided_on"
+    if not (a.get("decided_on") or a.get("decided_at") or "").strip():
+        return "APPROVED without decided_on or decided_at"
     return ""

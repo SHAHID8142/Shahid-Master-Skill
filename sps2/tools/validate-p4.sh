@@ -354,10 +354,45 @@ if not p5_authorised:
     for p in P5_ARTEFACTS:
         if os.path.exists(os.path.join(B, p)):
             print("P5_ARTIFACT_WITHOUT_AUTHORISATION: %s" % p)
-for p in ('requirements/P6-REQUIREMENTS.json', 'evidence/P6-EVIDENCE.json',
-          'tasks/P6-TASKS.md', 'handoff/HANDOFF-P6.json'):
+# P6 boundary, revised after the User resolved D-P6-1 and D-P6-2.
+#
+# OBSOLETE INVARIANT: these P6 paths must never exist. That encoded "P6 has
+# not started", which became false once the User authorised P6 research.
+#
+# STRONGER PHASE-AWARE REPLACEMENT: P6 artefacts are permitted only when a
+# P6 decision record exists and is attributable to an identifiable User. The
+# unconditional prohibitions below are retained and extended: P7 is now also
+# forbidden outright, and CAP-P03-005 must remain deferred and unpromoted.
+_p6dec = os.path.join(B, 'decisions/P6-DECISIONS.json')
+_p6open = False
+if os.path.exists(_p6dec):
+    _ids = {x.get('decision_id'): x for x in
+            (json.load(open(_p6dec)).get('decisions') or [])}
+    _ok = True
+    for _d in ('D-P6-1', 'D-P6-2'):
+        _x = _ids.get(_d) or {}
+        _a = _x.get('approval') or {}
+        _who = (_a.get('decided_by') or '').strip()
+        _when = (_a.get('decided_on') or _a.get('decided_at') or '').strip()
+        if _a.get('state') != 'APPROVED' or not _who or not _when or \
+                any(w in _who.lower() for w in
+                    ('agent', 'assistant', 'model', 'bot')):
+            print("P6_DECISION_NOT_USER_ATTRIBUTABLE: %s" % _d)
+            _ok = False
+    _p6open = _ok
+if not _p6open:
+    for p in ('requirements/P6-REQUIREMENTS.json', 'evidence/P6-EVIDENCE.json',
+              'tasks/P6-TASKS.md', 'handoff/HANDOFF-P6.json',
+              'handoff/HANDOFF-P6.md', 'decisions/P6-DECISIONS.json',
+              'core/technology_readiness.py', 'tools/validate-p6.py'):
+        if os.path.exists(os.path.join(B, p)):
+            print("P6_ARTIFACT_WITHOUT_AUTHORISATION: %s" % p)
+# Unconditional: no phase beyond P6 may begin.
+for p in ('requirements/P7-REQUIREMENTS.json', 'evidence/P7-EVIDENCE.json',
+          'tasks/P7-TASKS.md', 'handoff/HANDOFF-P7.json',
+          'decisions/P7-DECISIONS.json'):
     if os.path.exists(os.path.join(B, p)):
-        print("P6_ARTIFACT_CREATED: %s" % p)
+        print("P7_ARTIFACT_CREATED: %s" % p)
 if ho.get('current_state') != 'APPROVED':
     print("HANDOFF_STATE: %s" % ho.get('current_state'))
 notapp = ho.get('approval_scope', {}).get('explicitly_not_approved', [])

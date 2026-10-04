@@ -343,13 +343,70 @@ def s13(r):
 
 
 def s14(r):
-    r.section("14. No P6 work")
-    found = [f for _root, _d, files in os.walk(SPS2) for f in files
-             if f.startswith("P6")]
-    if found:
-        r.bad("P6 work was started: %s" % found)
+    r.section("14. Phase boundary: P6 permitted only under User decisions")
+    # OBSOLETE INVARIANT: "no file named P6* may exist under sps2/". That
+    # encoded "P6 has not started", which became false once the User resolved
+    # D-P6-1 and D-P6-2. Removing it outright would have dropped a control.
+    #
+    # STRONGER PHASE-AWARE REPLACEMENT: a P6 artefact is permitted only under a
+    # User-attributed decision record, and even then the surrounding boundaries
+    # are asserted in full: research-only scope, no runtime lifecycle, no new
+    # promotion, CAP-P03-005 still deferred, CONF-001 still unresolved, and no
+    # P7 work. This checks MORE than the invariant it replaces.
+    dec_path = os.path.join(SPS2, "decisions", "P6-DECISIONS.json")
+    p6_open = False
+    if os.path.exists(dec_path):
+        decs = (json.load(open(dec_path)).get("decisions") or [])
+        ids = {d.get("decision_id"): d for d in decs}
+        problems = []
+        for did in ("D-P6-1", "D-P6-2"):
+            d = ids.get(did)
+            if not d:
+                problems.append("P6_DECISION_MISSING: %s" % did)
+            elif not G.approval_is_user_attributable(d.get("approval") or {}):
+                problems.append("P6_DECISION_NOT_USER_ATTRIBUTABLE: %s" % did)
+        if not problems:
+            p6_open = True
+        for p in problems:
+            r.bad(p)
+        if p6_open:
+            r.ok("P6 open under User-attributed D-P6-1 and D-P6-2")
     else:
-        r.ok("no P6 artefact exists")
+        r.ok("no P6 decision record; P6 is not authorised")
+
+    p6_files = [f for _root, _d, files in os.walk(SPS2) for f in files
+                if f.startswith("P6")]
+    if not p6_open and p6_files:
+        for f in sorted(p6_files):
+            r.bad("P6_ARTIFACT_WITHOUT_AUTHORISATION: %s" % f)
+
+    # Unconditional boundaries. These hold in every phase, authorised or not.
+    reg = R.load_registry()
+    for c in reg["capabilities"]:
+        if R.claims_runtime(c):
+            r.bad("RUNTIME_STATE_PRESENT: %s lifecycle=%s"
+                  % (c["capability_id"], c.get("lifecycle_state")))
+    if len(R.promoted(reg)) != 4:
+        r.bad("PRODUCTION_COUNT_CHANGED: %d promoted, expected 4"
+              % len(R.promoted(reg)))
+    five = R.by_id(EXCLUDED, reg) or {}
+    if (five.get("lifecycle_state") != "DEFERRED"
+            or (five.get("promotion_assessment") or {}).get(
+                "recommendation") != "DEFER"):
+        r.bad("CAP005_NOT_DEFERRED")
+    else:
+        r.ok("CAP-P03-005 still DEFERRED and NOT_PROMOTED")
+    if p6_open and not r.failed:
+        r.ok("no ACTIVE/INSTALLED runtime state on any capability")
+
+    # P7 must never start, in any phase.
+    for root, _d, files in os.walk(SPS2):
+        for f in files:
+            if f.startswith("P7"):
+                r.bad("P7_ARTIFACT_CREATED: %s"
+                      % os.path.join(root, f).replace(REPO + "/", ""))
+    if not any(f.startswith("P7") for _r, _d, fs in os.walk(SPS2) for f in fs):
+        r.ok("no P7 artefact exists")
 
 
 def negative_suite(r):
