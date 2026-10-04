@@ -23,10 +23,13 @@
           "rejected_because": "Choosing a licence is a legal and ownership decision reserved to the user."
         }
       ],
-      "status": "PROPOSED",
+      "status": "DECIDED",
       "approval": {
         "required": true,
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
       }
     },
     {
@@ -45,10 +48,46 @@
           "rejected_because": "Verification of a fact is not verification of a capability."
         }
       ],
-      "status": "PROPOSED",
+      "status": "DECIDED",
       "approval": {
         "required": true,
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
+      }
+    },
+    {
+      "decision_id": "DEC-0022",
+      "title": "The repository licence remains unresolved and was not chosen",
+      "decision": "No licence was selected, added or inferred. The repository licence is recorded as UNRESOLVED and gate D continues to block every production promotion until the User makes an explicit licence decision.",
+      "reason": "The user instructed that the licence must not be invented or assumed, and that it be recorded as unresolved unless an explicit licence decision is provided. Selecting a licence is a legal and ownership decision reserved to the User.",
+      "evidence": [
+        "EV-P4-018"
+      ],
+      "alternatives": [
+        {
+          "option": "Infer MIT or another permissive licence from the project-authored source",
+          "rejected_because": "The user explicitly prohibited assuming a licence. An unlicensed repository is all-rights-reserved by default."
+        },
+        {
+          "option": "Add a LICENSE file to unblock gate D",
+          "rejected_because": "Choosing a licence is a legal decision reserved to the user and was explicitly withheld."
+        }
+      ],
+      "status": "DECIDED",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
+      },
+      "unresolved": {
+        "item": "repository_licence",
+        "state": "UNRESOLVED",
+        "resolved_by": "User explicit licence decision (not yet given)",
+        "blocking_gate": "D"
       }
     }
   ]

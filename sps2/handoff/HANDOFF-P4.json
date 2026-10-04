@@ -7,7 +7,7 @@
       "handoff_id": "HANDOFF-P4-PRODUCTION-PROMOTION",
       "from_phase": "P4",
       "current_task": "P4 production capability promotion and registry hardening",
-      "current_state": "COMPLETE / VERIFIED / AWAITING_USER_APPROVAL",
+      "current_state": "APPROVED",
       "completed": [
         "Gate verified: P3 APPROVED, P4 NOT_STARTED, incident classification unchanged, legacy diff zero",
         "Legacy baseline recorded before implementation",
@@ -33,7 +33,6 @@
         "Carried the P3 incident boundary forward unchanged"
       ],
       "not_completed": [
-        "P4 approval has NOT been granted; the phase awaits a separate explicit instruction",
         "DEC-0020 and DEC-0021 await separate user approval",
         "ZERO capabilities reached production; four are REMAIN_CANDIDATE blocked by gates D and H",
         "CAP-P03-005 is DEFERRED; no executable CLS verifier was implemented",
@@ -42,23 +41,58 @@
         "LCP and INP thresholds remain UNVERIFIED; nothing was invented",
         "CMS content modelling remains RESEARCH_FURTHER",
         "The P3 incident was not reopened; revocation stays USER_ATTESTED and unverified",
-        "Checkpoint a7767cf remains preserved and was not purged"
+        "Checkpoint a7767cf remains preserved and was not purged",
+        "Production promotion remains unapproved: P4 approval covers phase completion only and did not promote any capability.",
+        "The repository licence is recorded UNRESOLVED by explicit user decision (DEC-0022); no licence was chosen or inferred.",
+        "P5 remains NOT_STARTED and NOT_APPROVED; no P5 record was created."
       ],
       "blockers": [
-        "Gate D blocks all production promotion: the repository declares no licence. Declaring one is a user legal decision.",
         "Gate H blocks all production promotion: no explicit User approval for production promotion exists.",
         "Gate F blocks CAP-P03-005: no executable CLS verifier implementation exists.",
         "Gate K blocks CAP-P03-005: CONF-001 remains unresolved for the SEO domain",
-        "No remote may be created or used until separately authorised"
+        "No remote may be created or used until separately authorised",
+        "Gate D blocks all production promotion: the licence is UNRESOLVED by explicit user decision (DEC-0022) and no licence may be assumed.",
+        "Production promotion itself remains unapproved by the user."
       ],
-      "requirements": ["REQ-P4-01", "REQ-P4-02", "REQ-P4-03", "REQ-P4-04",
-                        "REQ-P4-05", "REQ-P4-06", "REQ-P4-07", "REQ-P4-08"],
-      "evidence": ["EV-P4-001", "EV-P4-002", "EV-P4-003", "EV-P4-004",
-                   "EV-P4-005", "EV-P4-006", "EV-P4-007", "EV-P4-008",
-                   "EV-P4-009", "EV-P4-010", "EV-P4-011"],
+      "requirements": [
+        "REQ-P4-01",
+        "REQ-P4-02",
+        "REQ-P4-03",
+        "REQ-P4-04",
+        "REQ-P4-05",
+        "REQ-P4-06",
+        "REQ-P4-07",
+        "REQ-P4-08"
+      ],
+      "evidence": [
+        "EV-P4-001",
+        "EV-P4-002",
+        "EV-P4-003",
+        "EV-P4-004",
+        "EV-P4-005",
+        "EV-P4-006",
+        "EV-P4-007",
+        "EV-P4-008",
+        "EV-P4-009",
+        "EV-P4-010",
+        "EV-P4-011"
+      ],
       "user_approval": "PENDING_USER_APPROVAL",
-      "next_allowed_action": "Wait for an explicit user instruction approving or rejecting P4, and separately deciding the repository licence question. Do not begin P5 without instruction.",
-      "forbidden_next_action": "Do NOT start P5, do NOT install any capability, skill, MCP or package, do NOT create a remote, do NOT push, do NOT modify the legacy implementation, do NOT purge checkpoint a7767cf, and do NOT perform Phase 01 remediation."
+      "next_allowed_action": "Wait for an explicit user instruction. The next permitted actions are a licence decision and a separate production promotion approval, each of which the user must give explicitly. Do NOT begin P5 without instruction.",
+      "forbidden_next_action": "Do NOT start P5, do NOT promote any capability to production, do NOT select or add a licence, do NOT install any capability, skill, MCP or package, do NOT create a remote, do NOT push, do NOT modify the legacy implementation, do NOT purge checkpoint a7767cf, and do NOT perform Phase 01 remediation.",
+      "approved_by": "User",
+      "approved_on": "2026-10-04",
+      "approval_scope": {
+        "approved": [
+          "P4 as a completed, verified phase, including its existing bounded scope and its outcome of zero production promotions."
+        ],
+        "explicitly_not_approved": [
+          "Any production promotion of any capability.",
+          "Any licence selection or declaration. The licence remains UNRESOLVED.",
+          "P5, and the beginning of any P5 work.",
+          "Creation of a remote, or pushing anything."
+        ]
+      }
     }
   ]
 }

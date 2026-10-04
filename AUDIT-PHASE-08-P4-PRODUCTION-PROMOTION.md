@@ -124,7 +124,7 @@ for the User rather than a P4 fix.
 
 | Validator | Result |
 |---|---|
-| P4 | 53 checks passed, 0 failed, 25 negative cases rejected, 0 missed |
+| P4 | 53 checks passed, 0 failed, 22 negative cases rejected, 0 missed |
 | P3 | 67 checks + 18 controls |
 | P2 | 69 checks + 22 negatives |
 | P1 | 73 checks + 25 negatives |
@@ -134,6 +134,44 @@ for the User rather than a P4 fix.
 
 ## 13. Phase state
 
-**P4: `COMPLETE / VERIFIED / AWAITING_USER_APPROVAL`** — not self-approved.
+**P4: `APPROVED`** by the User on 2026-10-04, as a completed, verified phase,
+including its existing bounded scope and its outcome of **zero production
+promotions**.
 
-**P5: `NOT_STARTED / NOT_APPROVED`**.
+The approval is explicitly bounded and does **not** authorise:
+
+- promotion of any capability to production;
+- any licence selection or declaration (the licence stays `UNRESOLVED`);
+- P5, or the beginning of any P5 work;
+- creating a remote or pushing anything.
+
+Each approval is attributed to the User by name and date. `validate-p4.sh`
+rejects any approval attributed to an agent, a model or a self-reference, and
+carries a positive control (`POSCTRL-D`) proving that rejection is real.
+
+**P5: `NOT_STARTED / NOT_APPROVED`** — no P5 artefact exists.
+
+### 13.1 Licence state
+
+`UNRESOLVED`, recorded as an explicit User decision in `DEC-0022`. No licence
+was selected, added or inferred. Gate D continues to block every promotion.
+An unlicensed repository is all-rights-reserved by default; that default was
+not overridden.
+
+### 13.2 Capability promotion state
+
+`0 of 5 promoted`, unchanged by the approval. Four remain `REMAIN_CANDIDATE`
+(blocked by gates D and H) and one remains `DEFER` (CAP-P03-005, additionally
+blocked by gates F and K).
+
+### 13.3 Discrepancy found during the approval transition
+
+The P4 validator's negative-suite summary reused the global `NP`/`NF` counters
+that positive controls also incremented. A failing positive control was
+therefore reported as a missed negative case, and the inline cases N18-N20 were
+counted as controls rather than negative cases. This made the reported totals
+wrong in both directions while the underlying assertions were correct.
+
+Fixed by giving the negative suite its own `NNP`/`NNF` counters. The suite now
+reports **22 negative cases rejected, 0 missed, 3 controls enforced**, which
+matches the 19 `gate_case` invocations plus the 3 inline cases.

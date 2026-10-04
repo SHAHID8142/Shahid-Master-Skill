@@ -49,7 +49,11 @@
         "observed_result": "sps2/capability/promotion_gates.py evaluates eleven gates A to K per capability. All five candidates were evaluated. validate-p4.sh reports 52 structural checks passed with 0 failed and 25 negative cases correctly rejected with 0 missed. Every gate result is computed from the record at run time; none is asserted."
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "required": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
       }
     },
     {
@@ -86,7 +90,11 @@
         "observed_result": "The gate is enforced, not advisory. A capability cannot reach ACTIVE while any gate blocks it: check_p3.py and validate-p4.sh both recompute the gate and fail on any mismatch between a stored assessment and a fresh run. Tampering with a stored assessment was demonstrated to produce a STALE_ASSESSMENT failure rather than a silent pass."
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "required": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
       }
     },
     {
@@ -122,7 +130,11 @@
         "observed_result": "Deterministic ranking is preserved. CAP-P03-002 was evaluated and its ranking was identical across repeated runs, with no tie resolved by wall-clock time or random input. The capability is implemented in the project-local engine rather than asserted."
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "required": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
       }
     },
     {
@@ -158,7 +170,11 @@
         "observed_result": "Forced user choice is preserved and bounded. CAP-P03-003 was evaluated and the User decision boundary is implemented in the engine, so no ambiguous default is applied without an explicit User decision."
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "required": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
       }
     },
     {
@@ -197,7 +213,11 @@
         "observed_result": "Staleness cannot silently persist. CAP-P03-004 was evaluated. Staleness is computed rather than assumed, and no stale capability reached an ACTIVE lifecycle state during P4."
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "required": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
       }
     },
     {
@@ -235,7 +255,11 @@
         "observed_result": "SEO capability semantics stay precise. The registry records a retrieved CLS threshold and contains no LCP or INP threshold because none was retrieved. CONF-001 remains UNRESOLVED and CAP-028 remains UNVERIFIED, so no threshold was fabricated to close the gap."
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "required": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
       }
     },
     {
@@ -271,7 +295,11 @@
         "observed_result": "The no-emoji rule is machine-enforced with a positive control. check_emoji.py reported scanned=81 violations=0 across sps2, and a positive control containing a genuine emoji code point was confirmed to be detected, so the zero result is not vacuous."
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "required": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
       }
     },
     {
@@ -308,7 +336,11 @@
         "observed_result": "The P3 incident boundary is carried forward unchanged. Commit a7767cf remains reachable and was not purged, credential_revocation remains USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED, and the checkpoint remains recorded PRESERVED. P4 changed neither value. A credential was found re-present in .claude/settings.json during P4 and re-contained; see EV-P4-019."
       },
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "required": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
       }
     }
   ]

@@ -71,9 +71,9 @@ gate_case() {
   mk "$1"
   local out; out="$(python3 "$CHECK" "$TMP/c.json" 2>&1)"
   if printf '%s\n' "$out" | grep -qE "^  $2 .*FAIL"; then
-    info "REJECTED -> $3"; NP=$((NP+1)); pass "$3 -> rejected"
+    info "REJECTED -> $3"; NNP=$((NNP+1)); pass "$3 -> rejected"
   else
-    info "NOT REJECTED (defect!) -> $3"; NF=$((NF+1))
+    info "NOT REJECTED (defect!) -> $3"; NNF=$((NNF+1))
     fail "$3 -> NOT rejected"
   fi
 }
@@ -216,19 +216,115 @@ else
   fail "checkpoint a7767cf was purged"
 fi
 
-sect "9. P4 is not self-approved"
-jq -e '[.requirements[].approval.state] | all(. == "PENDING_USER_APPROVAL")' \
-  "$SPS2/requirements/P4-REQUIREMENTS.json" >/dev/null 2>&1 \
-  && pass "all P4 requirements PENDING_USER_APPROVAL" || fail "a P4 requirement is approved"
-jq -e '[.decisions[].approval.state] | all(. == "PENDING_USER_APPROVAL")' \
-  "$SPS2/decisions/P4-DECISIONS.json" >/dev/null 2>&1 \
-  && pass "all P4 decisions PENDING_USER_APPROVAL" || fail "a P4 decision is approved"
+sect "9. P4 approval is bounded, attributable, and promotes nothing"
+python3 - "$SPS2" > "$TMP/appr" 2>&1 <<'PY'
+import json, os, re, sys
+B = sys.argv[1]
+req = json.load(open(B + '/requirements/P4-REQUIREMENTS.json'))
+dec = json.load(open(B + '/decisions/P4-DECISIONS.json'))
+ho = json.load(open(B + '/handoff/HANDOFF-P4.json'))['handoffs'][0]
+AGENT = re.compile(r'\b(agent|ai|assistant|model|cline|copilot|bot|'
+                   r'self|script|autonomous)\b', re.I)
+
+def approval_ok(a, where):
+    """An approval is valid only when attributable to an identifiable User."""
+    if (a or {}).get('state') != 'APPROVED':
+        print("NOT_APPROVED: %s state=%s" % (where, (a or {}).get('state')))
+        return False
+    who = (a.get('approved_by') or '').strip()
+    if not who:
+        print("APPROVAL_UNATTRIBUTED: %s" % where); return False
+    if AGENT.search(who):
+        print("APPROVAL_ATTRIBUTED_TO_AGENT: %s -> %s" % (where, who)); return False
+    if not (a.get('approved_on') or '').strip():
+        print("APPROVAL_UNDATED: %s" % where); return False
+    return True
+
+for r in req['requirements']:
+    approval_ok(r.get('approval'), r['requirement_id'])
+for d in dec['decisions']:
+    approval_ok(d.get('approval'), d['decision_id'])
+
+# P4 approval must NOT have silently promoted anything.
+reg = json.load(open(B + '/capability/registry.json'))
+if reg['counts']['promoted'] != 0:
+    print("APPROVAL_PROMOTED_SOMETHING: %d promoted" % reg['counts']['promoted'])
+for c in reg['capabilities']:
+    if c.get('lifecycle_state') in ('ACTIVE', 'EVALUATED', 'PROMOTED'):
+        print("APPROVAL_CHANGED_LIFECYCLE: %s -> %s"
+              % (c['capability_id'], c['lifecycle_state']))
+
+# The licence must remain UNRESOLVED and unchosen.
+lic = [d for d in dec['decisions'] if d.get('unresolved', {}).get('item')
+       == 'repository_licence']
+if not lic:
+    print("LICENCE_DECISION_RECORD_MISSING")
+elif lic[0]['unresolved']['state'] != 'UNRESOLVED':
+    print("LICENCE_SILENTLY_RESOLVED: %s" % lic[0]['unresolved']['state'])
+if any((c.get('licence') or '') in ('MIT', 'Apache-2.0', 'BSD-3-Clause',
+                                    'GPL-3.0', 'ISC') for c in reg['capabilities']):
+    print("LICENCE_INVENTED: a permissive licence was written into the registry")
+for root, _, files in os.walk(B):
+    for f in files:
+        if f.upper() in ('LICENSE', 'LICENCE', 'COPYING'):
+            print("LICENCE_FILE_ADDED: %s" % os.path.join(root, f))
+
+# P5 must not exist and must not be approved.
+for p in ('requirements/P5-REQUIREMENTS.json', 'handoff/HANDOFF-P5.json',
+          'decisions/P5-DECISIONS.json', 'evidence/P5-EVIDENCE.json',
+          'tasks/P5-TASKS.md'):
+    if os.path.exists(os.path.join(B, p)):
+        print("P5_ARTIFACT_CREATED: %s" % p)
+if ho.get('current_state') != 'APPROVED':
+    print("HANDOFF_STATE: %s" % ho.get('current_state'))
+notapp = ho.get('approval_scope', {}).get('explicitly_not_approved', [])
+for must in ('Any production promotion', 'Any licence selection',
+             'P5, and the beginning'):
+    if not any(must in s for s in notapp):
+        print("APPROVAL_SCOPE_INCOMPLETE: missing explicit exclusion %r" % must)
+
+# Research gaps, incident classification and checkpoint must be intact.
+src = json.load(open(B + '/research/P2-SOURCES.json'))
+if not any('UNRESOLVED' in (c.get('resolution') or '')
+           for c in src.get('conflicts', [])):
+    print("RESEARCH_GAP_LOST: CONF-001 is no longer UNRESOLVED")
+p3 = json.load(open(B + '/handoff/HANDOFF-P3.json'))
+if p3['approval_scope']['credential_revocation'] != \
+   'USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED':
+    print("INCIDENT_CLASSIFICATION_CHANGED")
+PY
+if [ -s "$TMP/appr" ]; then
+  while IFS= read -r l; do fail "$l"; done < "$TMP/appr"
+else
+  pass "P4 approval is attributable to the User and promotes nothing"
+fi
+# A fabricated approval must be rejected (positive control). Exits 0 only
+# when the agent-attributed approval is correctly detected and rejected.
+python3 -c "
+import json
+d=json.load(open('$SPS2/requirements/P4-REQUIREMENTS.json'))
+d['requirements'][0]['approval']['approved_by']='Agent (self-approved)'
+json.dump(d,open('$TMP/appr2.json','w'))
+"
+if python3 - "$TMP/appr2.json" <<'PY'
+import json, re, sys
+AGENT = re.compile(r'\b(agent|ai|assistant|model|bot|self|script)\b', re.I)
+d = json.load(open(sys.argv[1]))
+rejected = any(AGENT.search((r['approval'].get('approved_by') or ''))
+               for r in d['requirements'])
+sys.exit(0 if rejected else 1)
+PY
+then
+  pass "POSCTRL-D  an agent-attributed approval is rejected"
+else
+  fail "POSCTRL-D  agent-attributed approval was NOT rejected"
+fi
 PROM=$(python3 -c "
 import json
 print(json.load(open('$REG'))['counts']['promoted'])")
 [ "$PROM" = "0" ] \
-  && pass "zero capabilities promoted without a User licence declaration and approval" \
-  || warn "$PROM promoted - confirm a User approval exists"
+  && pass "zero capabilities promoted; P4 approval promoted nothing" \
+  || fail "$PROM promoted - approval must not promote"
 
 sect "10. Legacy protection"
 DIFF=$(cd "$REPO" && git diff --name-only c11da27 -- skills scripts plugins .github \
@@ -308,8 +404,11 @@ fi
 
 fi  # end structural
 
-# ══ NEGATIVE SUITE: 20 mandated cases + positive controls ═══════════════════
+# ══ NEGATIVE SUITE: 20 mandated cases ═══════════════════════════════════════
+# The negative suite keeps its own counters so that a positive control failing
+# elsewhere can never be mis-reported as a missed negative case.
 sect "NEGATIVE TESTS — invalid promotion states must be rejected"
+NNP=0; NNF=0
 
 gate_case "B['capability_id']=''"                     A "N01 missing capability id"
 gate_case "B['capability_id']='bad id'"               A "N02 malformed capability id"
@@ -343,38 +442,38 @@ if python3 "$CHECK" "$TMP/dup.json" 2>&1 | grep -q 'DUPLICATE' \
 import json,sys
 a=json.load(open('$TMP/dup.json'))['capabilities']
 sys.exit(0 if len({c['capability_id'] for c in a})<len(a) else 1)"; then
-  NP=$((NP+1)); pass "N18 duplicate capability id -> rejected"
+  NNP=$((NNP+1)); pass "N18 duplicate capability id -> rejected"
 else
-  NF=$((NF+1)); fail "N18 duplicate capability id NOT rejected"
+  NNF=$((NNF+1)); fail "N18 duplicate capability id NOT rejected"
 fi
 
 # N19: emoji violation
 mkdir -p "$TMP/em" && printf 'x \360\237\216\257\n' > "$TMP/em/a.md"
 if python3 "$EMOJI" "$TMP/em" >/dev/null 2>&1; then
-  NF=$((NF+1)); fail "N19 emoji violation NOT rejected"
+  NNF=$((NNF+1)); fail "N19 emoji violation NOT rejected"
 else
-  NP=$((NP+1)); pass "N19 emoji violation -> rejected"
+  NNP=$((NNP+1)); pass "N19 emoji violation -> rejected"
 fi
 rm -rf "$TMP/em"
 
 # N20: malformed structured input
 printf '{ not json' > "$TMP/bad.json"
 if python3 "$CHECK" "$TMP/bad.json" 2>&1 | grep -q 'GATE_ERROR'; then
-  NP=$((NP+1)); pass "N20 malformed JSON -> rejected"
+  NNP=$((NNP+1)); pass "N20 malformed JSON -> rejected"
 else
-  NF=$((NF+1)); fail "N20 malformed JSON NOT rejected"
+  NNF=$((NNF+1)); fail "N20 malformed JSON NOT rejected"
 fi
 
 echo ""
-if [ "$NF" -eq 0 ]; then
-  echo -e "${GREEN}${BOLD}== P4 NEGATIVE SUITE: $NP cases correctly rejected, 0 missed ==${NC}"
+if [ "$NNF" -eq 0 ]; then
+  echo -e "${GREEN}${BOLD}== P4 NEGATIVE SUITE: $NNP cases correctly rejected, 0 missed ==${NC}"
 else
-  echo -e "${RED}${BOLD}== P4 NEGATIVE SUITE: $NP rejected, $NF MISSED ==${NC}"
+  echo -e "${RED}${BOLD}== P4 NEGATIVE SUITE: $NNP rejected, $NNF MISSED ==${NC}"
 fi
 echo ""
-if [ "$FAIL" -eq 0 ] && [ "$NF" -eq 0 ]; then
-  echo -e "${GREEN}${BOLD}== P4 PROMOTION VALID: $PASS checks passed, 0 failed, $NP controls enforced ==${NC}"
+if [ "$FAIL" -eq 0 ] && [ "$NNF" -eq 0 ]; then
+  echo -e "${GREEN}${BOLD}== P4 PROMOTION VALID: $PASS checks passed, 0 failed, $NNP negative cases rejected, $NP controls enforced ==${NC}"
   exit 0
 fi
-echo -e "${RED}${BOLD}== P4 PROMOTION INVALID: $PASS passed, $FAIL failed, $NF missed ==${NC}"
+echo -e "${RED}${BOLD}== P4 PROMOTION INVALID: $PASS passed, $FAIL failed, $NNF missed ==${NC}"
 exit 1
