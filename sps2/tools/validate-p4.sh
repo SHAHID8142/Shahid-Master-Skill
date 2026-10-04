@@ -325,12 +325,39 @@ for c in reg['capabilities']:
     if c.get('licence_decided_on') is None:
         print("LICENCE_REGISTRY_UNDATED: %s" % c['capability_id'])
 
-# P5 must not exist and must not be approved.
-for p in ('requirements/P5-REQUIREMENTS.json', 'handoff/HANDOFF-P5.json',
-          'decisions/P5-DECISIONS.json', 'evidence/P5-EVIDENCE.json',
-          'tasks/P5-TASKS.md'):
+# Phase-boundary invariant, revised after explicit User P5 authorisation.
+#
+# OBSOLETE INVARIANT: "no P5 artefact may exist". That encoded "P5 has not
+# started", true while P4 was the newest phase but false once the User
+# explicitly authorised P5. It would have failed on legitimate approved work.
+#
+# STRONGER REPLACEMENT: a P5 artefact is permitted only when a P5 authorisation
+# record exists AND is attributable to an identifiable User. An unauthorised P5
+# artefact is still a failure, so the check is conditional rather than removed.
+# P6 stays forbidden outright: no P6 approval exists.
+AGENTWORDS = ('agent', 'assistant', 'model', 'bot', 'ai ')
+P5_AUTH = os.path.join(B, 'evidence/P5-EVIDENCE.json')
+p5_authorised = False
+if os.path.exists(P5_AUTH):
+    pa = json.load(open(P5_AUTH)).get('phase_approval') or {}
+    who = (pa.get('authorised_by') or '').strip().lower()
+    if pa.get('scope') == 'P5 implementation/integration' and who \
+            and not any(w in who for w in AGENTWORDS):
+        p5_authorised = True
+    else:
+        print("P5_AUTHORISATION_NOT_USER_ATTRIBUTABLE: %r" % who)
+P5_ARTEFACTS = ('requirements/P5-REQUIREMENTS.json',
+                'handoff/HANDOFF-P5.json', 'handoff/HANDOFF-P5.md',
+                'decisions/P5-DECISIONS.json', 'evidence/P5-EVIDENCE.json',
+                'tasks/P5-TASKS.md', 'tools/validate-p5.py')
+if not p5_authorised:
+    for p in P5_ARTEFACTS:
+        if os.path.exists(os.path.join(B, p)):
+            print("P5_ARTIFACT_WITHOUT_AUTHORISATION: %s" % p)
+for p in ('requirements/P6-REQUIREMENTS.json', 'evidence/P6-EVIDENCE.json',
+          'tasks/P6-TASKS.md', 'handoff/HANDOFF-P6.json'):
     if os.path.exists(os.path.join(B, p)):
-        print("P5_ARTIFACT_CREATED: %s" % p)
+        print("P6_ARTIFACT_CREATED: %s" % p)
 if ho.get('current_state') != 'APPROVED':
     print("HANDOFF_STATE: %s" % ho.get('current_state'))
 notapp = ho.get('approval_scope', {}).get('explicitly_not_approved', [])
@@ -674,12 +701,41 @@ if reg['counts']['promoted'] != len(promoted):
     print("PROMOTED_COUNT_MISMATCH: %s vs %s"
           % (reg['counts']['promoted'], len(promoted)))
 
-# No P5 artefact may exist, and CONF-001 must remain unresolved.
-for p in ('requirements/P5-REQUIREMENTS.json', 'handoff/HANDOFF-P5.json',
-          'decisions/P5-DECISIONS.json', 'evidence/P5-EVIDENCE.json',
-          'tasks/P5-TASKS.md', 'tools/validate-p5.sh'):
-    if os.path.exists(os.path.join(B, p)):
-        print("P5_ARTIFACT_CREATED: %s" % p)
+# A P5 artefact must never appear without User authorisation. This block runs in
+# its own interpreter, so the authorisation test is re-derived here rather than
+# carried over. It is conditional for the reason documented in the first block.
+# P6 remains forbidden outright. CAP-P03-005 must stay deferred in every phase.
+AGENTWORDS = ('agent', 'assistant', 'model', 'bot', 'ai ')
+p5_authorised = False
+_pa = os.path.join(B, 'evidence/P5-EVIDENCE.json')
+if os.path.exists(_pa):
+    _rec = json.load(open(_pa)).get('phase_approval') or {}
+    _who = (_rec.get('authorised_by') or '').strip().lower()
+    if _rec.get('scope') == 'P5 implementation/integration' and _who \
+            and not any(w in _who for w in AGENTWORDS):
+        p5_authorised = True
+P5_ARTEFACTS = ('requirements/P5-REQUIREMENTS.json',
+                'handoff/HANDOFF-P5.json', 'handoff/HANDOFF-P5.md',
+                'decisions/P5-DECISIONS.json', 'evidence/P5-EVIDENCE.json',
+                'tasks/P5-TASKS.md', 'tools/validate-p5.py')
+if not p5_authorised:
+    for p in P5_ARTEFACTS:
+        if os.path.exists(os.path.join(B, p)):
+            print("P5_ARTIFACT_WITHOUT_AUTHORISATION: %s" % p)
+for c in reg['capabilities']:
+    if c['capability_id'] == 'CAP-P03-005':
+        if c.get('lifecycle_state') != 'DEFERRED':
+            print("CAP005_LIFECYCLE_CHANGED: %s" % c.get('lifecycle_state'))
+        if set((c.get('promotion_assessment') or {}).get(
+                'blocking_gates') or []) != {'F', 'H', 'K'}:
+            print("CAP005_BLOCKING_GATES_CHANGED: %s"
+                  % (c.get('promotion_assessment') or {}).get(
+                      'blocking_gates'))
+        if (c.get('promotion_assessment') or {}).get(
+                'promotion_decision') not in (None, 'NOT_PROMOTED'):
+            print("CAP005_PROMOTED: %s"
+                  % (c.get('promotion_assessment') or {}).get(
+                      'promotion_decision'))
 src = json.load(open(B + '/research/P2-SOURCES.json'))
 if not any('UNRESOLVED' in (c.get('resolution') or '')
            for c in src.get('conflicts', [])):

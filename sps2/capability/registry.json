@@ -244,6 +244,12 @@
           "research interest",
           "recency of verification"
         ]
+      },
+      "selection": {
+        "selection_id": "SELECTION-P5-0001",
+        "project_local": true,
+        "rank": 1,
+        "ranking_fingerprint": "9c32a5482a67496a"
       }
     },
     {
@@ -475,6 +481,12 @@
           "research interest",
           "recency of verification"
         ]
+      },
+      "selection": {
+        "selection_id": "SELECTION-P5-0001",
+        "project_local": true,
+        "rank": 2,
+        "ranking_fingerprint": "9c32a5482a67496a"
       }
     },
     {
@@ -706,6 +718,12 @@
           "research interest",
           "recency of verification"
         ]
+      },
+      "selection": {
+        "selection_id": "SELECTION-P5-0001",
+        "project_local": true,
+        "rank": 3,
+        "ranking_fingerprint": "9c32a5482a67496a"
       }
     },
     {
@@ -937,6 +955,12 @@
           "research interest",
           "recency of verification"
         ]
+      },
+      "selection": {
+        "selection_id": "SELECTION-P5-0001",
+        "project_local": true,
+        "rank": 4,
+        "ranking_fingerprint": "9c32a5482a67496a"
       }
     },
     {
@@ -1108,6 +1132,11 @@
         "state": "DEFER",
         "reason": "Gates F and K unsatisfied: no executable CLS verifier exists, and CONF-001 is unresolved. Gate H approval was withheld by the User. Neither gate was bypassed.",
         "classified_on": "2026-10-04"
+      },
+      "selection": {
+        "selection_id": null,
+        "project_local": true,
+        "excluded_reason": "not promoted: blocked by gate(s) F,H,K"
       }
     }
   ],
