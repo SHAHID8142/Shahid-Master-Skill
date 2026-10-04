@@ -117,16 +117,31 @@ d=json.load(open('$SPS2/research/P2-CAPABILITY-EXTRACTION.json'))
 print(sum(1 for c in d['capabilities'] if c.get('in_production_registry')))" 2>/dev/null || echo 1)
 [ "$LEAK" = "0" ] && pass "no P2 extraction claims registry membership" \
                  || fail "$LEAK P2 capabilities claim registry membership"
-# Every registered capability must pass the P3 promotion gate.
+# Every registered capability must carry a promotion assessment consistent
+# with the CURRENT production gate (hardened A-K since P4).
 python3 - "$SPS2" > "$TMP/gatechk" 2>&1 <<'PY'
-import json, sys
-sys.path.insert(0, sys.argv[1] + '/capability')
-import engine
-reg = json.load(open(sys.argv[1] + '/capability/registry.json'))
-for c in reg.get('capabilities', []):
-    ok, reasons = engine.promote(c)
-    if not ok:
-        print("PROMOTION_GATE_FAIL: %s: %s" % (c['capability_id'], "; ".join(reasons)))
+import importlib.util, json, os, sys
+B = sys.argv[1]
+reg = json.load(open(B + '/capability/registry.json'))
+pg_path = os.path.join(B, 'capability', 'promotion_gates.py')
+if os.path.isfile(pg_path):
+    spec = importlib.util.spec_from_file_location("pg", pg_path)
+    pg = importlib.util.module_from_spec(spec); spec.loader.exec_module(pg)
+    for c in reg.get('capabilities', []):
+        res, blocking = pg.evaluate(c)
+        stored = (c.get('promotion_assessment') or {}).get('blocking_gates')
+        if stored is None:
+            print("ASSESSMENT_MISSING: %s" % c['capability_id'])
+        elif sorted(stored) != sorted(blocking):
+            print("ASSESSMENT_STALE: %s" % c['capability_id'])
+else:
+    sys.path.insert(0, B + '/capability')
+    import engine
+    for c in reg.get('capabilities', []):
+        ok, reasons = engine.promote(c)
+        if not ok:
+            print("PROMOTION_GATE_FAIL: %s: %s"
+                  % (c['capability_id'], "; ".join(reasons)))
 PY
 if [ -s "$TMP/gatechk" ]; then
   while IFS= read -r l; do fail "$l"; done < "$TMP/gatechk"

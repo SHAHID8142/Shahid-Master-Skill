@@ -29,11 +29,40 @@ def check_registry(reg):
     ids = [c.get("capability_id") for c in caps]
     for i in sorted({x for x in ids if ids.count(x) > 1}):
         err("DUPLICATE_CAPABILITY_ID: %s" % i)
+
+    # P4 superseded the P3 engine gate with the hardened A-K promotion gate.
+    # Validate against the CURRENT production gate, not the superseded one.
+    pg_path = os.path.join(CAP, "promotion_gates.py")
+    if os.path.isfile(pg_path):
+        import importlib.util
+        _spec = importlib.util.spec_from_file_location("pg", pg_path)
+        _pg = importlib.util.module_from_spec(_spec)
+        _spec.loader.exec_module(_pg)
+        # Since P4 the registry legitimately holds candidates whose promotion
+        # is blocked by a gate (currently D and H). The invariant is therefore
+        # CONSISTENCY: the stored assessment must match a fresh gate run, and
+        # a capability may only be EVALUATED/ACTIVE if the gate unblocked it.
+        for c in caps:
+            _res, _blocking = _pg.evaluate(c)
+            _stored = (c.get("promotion_assessment") or {}).get("blocking_gates")
+            if _stored is None:
+                err("ASSESSMENT_MISSING: %s" % c.get("capability_id"))
+            elif sorted(_stored) != sorted(_blocking):
+                err("ASSESSMENT_STALE: %s stored=%s computed=%s"
+                    % (c.get("capability_id"), _stored, _blocking))
+            if _blocking and c.get("lifecycle_state") in (
+                    "EVALUATED", "ACTIVE", "VERIFIED"):
+                err("LIFECYCLE_WITHOUT_PROMOTION: %s state=%s blocking=%s"
+                    % (c.get("capability_id"), c.get("lifecycle_state"),
+                       ",".join(_blocking)))
+    else:
+        for c in caps:
+            ok, reasons = engine.promote(c)
+            if not ok:
+                err("PROMOTION_GATE_FAIL: %s: %s"
+                    % (c.get("capability_id"), "; ".join(reasons)))
+
     for c in caps:
-        ok, reasons = engine.promote(c)
-        if not ok:
-            err("PROMOTION_GATE_FAIL: %s: %s" % (c.get("capability_id"),
-                                                "; ".join(reasons)))
         if c.get("install_scope") == "GLOBAL":
             err("GLOBAL_SCOPE_PRESENT: %s is not project-local"
                 % c.get("capability_id"))

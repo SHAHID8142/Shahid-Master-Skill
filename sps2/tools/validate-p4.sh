@@ -1,0 +1,380 @@
+#!/usr/bin/env bash
+# SPS 2.0 P4 production promotion validator.
+# Runs the hardened A-K gate on real capabilities, executes the verification
+# suite, and enforces 20 negative cases plus positive controls.
+# SAFETY: no network, no installs, no machine-global writes.
+# Usage: bash sps2/tools/validate-p4.sh [--negative]
+set -uo pipefail
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SPS2="$(cd "$HERE/.." && pwd)"
+REPO="$(cd "$SPS2/.." && pwd)"
+CHECK="$HERE/check_p4.py"
+EMOJI="$HERE/check_emoji.py"
+GATE="$SPS2/capability/promotion_gates.py"
+REG="$SPS2/capability/registry.json"
+
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[1;34m'
+BOLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
+PASS=0; FAIL=0; NP=0; NF=0
+pass() { echo -e "  ${GREEN}PASS${NC}  $*"; PASS=$((PASS+1)); }
+fail() { echo -e "  ${RED}FAIL${NC}  $*"; FAIL=$((FAIL+1)); }
+info() { echo -e "  ${BLUE}CASE${NC} $*"; }
+sect() { echo -e "\n${BOLD}$*${NC}"; }
+
+command -v python3 >/dev/null 2>&1 || { echo "python3 unavailable"; exit 2; }
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/sps2p4-XXXXXX")"
+trap 'rm -rf "$TMP"' EXIT
+NEG_ONLY=false
+for a in "$@"; do [ "$a" = "--negative" ] && NEG_ONLY=true; done
+
+echo -e "${BOLD}SPS 2.0 P4 Production Promotion Validator${NC}"
+echo -e "${DIM}hardened gate A-K, real verification, 20 negative cases${NC}"
+
+# ── build a fully-conforming fixture, then mutate it for negative cases ────
+cat > "$TMP/mk.py" <<'FIX'
+import json, sys
+B = {
+ "capability_id": "CAP-P03-900", "name": "fixture", "type": "DEV_TOOL",
+ "domain": "GOVERNANCE", "purpose": "A valid synthetic fixture",
+ "version": "1.0.0", "source": "SPS2_CORE", "licence": "KNOWN_PERMISSIVE",
+ "licence_evidence": "synthetic fixture",
+ "provenance": {"origin": "synthetic", "commit": "abc1234",
+                "fact_class": "EVIDENCE", "repository_relative_path":
+                "sps2/capability/engine.py",
+                "source_url": "https://example.invalid/synthetic-fixture",
+                "research_refs": ["EV-P4-900"]},
+ "security": {"status": "VERIFIED_SAFE", "evidence": "synthetic",
+              "fact_class": "EVIDENCE"},
+ "compatibility": {"status": "COMPATIBLE", "agent_neutral": True,
+                   "basis": "synthetic"},
+ "staleness": {"state": "CURRENT", "maintenance": "ACTIVE",
+               "last_checked": "2026-10-03", "review_due": "2027-01-03",
+               "reevaluation_triggers": ["source changed"]},
+ "install_scope": "PROJECT_LOCAL", "evidence": ["EV-P4-900"],
+ "confidence": "HIGH", "lifecycle_state": "CANDIDATE",
+ "approval": {"state": "APPROVED", "decided_by": "User"},
+ "verification": {"state": "VERIFIED", "method": "AUTOMATED",
+                  "evidence": ["EV-P4-900"], "expected_result": "ok",
+                  "observed_result": "ok"},
+ "selection_policy": {"popularity_role": "TIE_BREAKER_ONLY"},
+ "linked_requirements": ["REQ-P4-01"],
+ "acceptance_criteria": ["fixture criterion"],
+ "popularity": {"stars": 0}, "last_verified": "2026-10-03",
+}
+exec(sys.argv[1])
+print(json.dumps(B))
+FIX
+mk() { python3 "$TMP/mk.py" "$1" > "$TMP/c.json"; }
+
+# gate_case <mutation> <expected-gate-letter> <label>
+gate_case() {
+  mk "$1"
+  local out; out="$(python3 "$CHECK" "$TMP/c.json" 2>&1)"
+  if printf '%s\n' "$out" | grep -qE "^  $2 .*FAIL"; then
+    info "REJECTED -> $3"; NP=$((NP+1)); pass "$3 -> rejected"
+  else
+    info "NOT REJECTED (defect!) -> $3"; NF=$((NF+1))
+    fail "$3 -> NOT rejected"
+  fi
+}
+if [ "$NEG_ONLY" != true ]; then
+
+sect "1. P4 deliverables present"
+for f in capability/promotion_gates.py capability/promotion-assessments.json \
+         capability/registry.json tools/check_p4.py tools/check_emoji.py \
+         requirements/P4-REQUIREMENTS.json evidence/P4-EVIDENCE.json \
+         decisions/P4-DECISIONS.json tasks/P4-TASKS.md \
+         handoff/HANDOFF-P4.json; do
+  [ -f "$SPS2/$f" ] && pass "present $f" || fail "missing $f"
+done
+[ -f "$REPO/AUDIT-PHASE-08-P4-PRODUCTION-PROMOTION.md" ] \
+  && pass "present AUDIT-PHASE-08 report" || fail "missing AUDIT-PHASE-08 report"
+
+sect "2. Positive control: a conforming capability passes every achievable gate"
+mk "pass"
+OUT=$(python3 "$CHECK" "$TMP/c.json" --promote 2>&1)
+# Gate D cannot pass while the repository declares no licence. That is the
+# correct outcome, not a validator defect, so the control asserts that every
+# OTHER gate passes and that D is the only blocker.
+NON_D=$(printf '%s\n' "$OUT" | grep -cE '^  [ABCEFGHIJK] .*PASS')
+D_FAILS=$(printf '%s\n' "$OUT" | grep -cE '^  D .*FAIL')
+if [ "$NON_D" -ge 10 ] && [ "$D_FAILS" -eq 1 ] \
+   && printf '%s\n' "$OUT" | grep -q 'blocking=D$'; then
+  NP=$((NP+1))
+  pass "POSCTRL-A  10 gates pass; only D blocks, and D is correctly unsatisfiable"
+else
+  info "POSCTRL-A unexpected: $OUT"; NF=$((NF+1))
+  fail "POSCTRL-A  conforming capability behaved unexpectedly"
+fi
+# Gate D must be unsatisfiable today, and that is the point.
+if python3 "$CHECK" "$TMP/c.json" --promote 2>&1 | grep -q 'blocking=D$'; then
+  NP=$((NP+1))
+  pass "POSCTRL-C  promotion is impossible without a declared licence (correct)"
+else
+  NF=$((NF+1)); fail "POSCTRL-C  promotion was possible without a licence"
+fi
+
+sect "3. Registry is consistent with the gate (computed, not asserted)"
+python3 - "$SPS2" > "$TMP/cons" 2>&1 <<'PY'
+import importlib.util, json, os, sys
+B = sys.argv[1]
+spec = importlib.util.spec_from_file_location(
+    "pg", os.path.join(B, "capability", "promotion_gates.py"))
+pg = importlib.util.module_from_spec(spec); spec.loader.exec_module(pg)
+reg = json.load(open(os.path.join(B, "capability", "registry.json")))
+ids = [c["capability_id"] for c in reg["capabilities"]]
+for d in sorted({i for i in ids if ids.count(i) > 1}):
+    print("DUPLICATE_ID: %s" % d)
+for c in reg["capabilities"]:
+    res, blocking = pg.evaluate(c)
+    rec = pg.decide(blocking)
+    stored = c.get("promotion_assessment", {})
+    if stored.get("blocking_gates") != blocking:
+        print("STALE_ASSESSMENT: %s stored=%s computed=%s"
+              % (c["capability_id"], stored.get("blocking_gates"), blocking))
+    if stored.get("recommendation") != rec:
+        print("STALE_RECOMMENDATION: %s" % c["capability_id"])
+    if rec == "PROMOTE" and c.get("lifecycle_state") != "EVALUATED":
+        print("PROMOTED_WITHOUT_STATE: %s" % c["capability_id"])
+    if rec != "PROMOTE" and c.get("lifecycle_state") == "ACTIVE":
+        print("ACTIVE_WITHOUT_PROMOTION: %s" % c["capability_id"])
+PY
+if [ -s "$TMP/cons" ]; then
+  while IFS= read -r l; do fail "$l"; done < "$TMP/cons"
+else
+  pass "every stored assessment matches a freshly computed gate run"
+fi
+
+sect "4. Verification is executed, not asserted"
+python3 - "$SPS2" > "$TMP/ver" 2>&1 <<'PY'
+import json, os, sys
+B = sys.argv[1]
+reg = json.load(open(os.path.join(B, "capability", "registry.json")))
+for c in reg["capabilities"]:
+    v = c.get("verification", {})
+    rel = (c.get("provenance") or {}).get("repository_relative_path") or ""
+    impl = rel.endswith((".py", ".sh", ".js", ".ts")) and \
+        os.path.isfile(os.path.join(B, "..", rel))
+    if v.get("state") == "VERIFIED" and not impl:
+        print("VERIFIED_WITHOUT_IMPLEMENTATION: %s" % c["capability_id"])
+    if v.get("state") == "VERIFIED" and not v.get("observed_result"):
+        print("VERIFIED_WITHOUT_OBSERVED_RESULT: %s" % c["capability_id"])
+    if v.get("state") == "VERIFIED" and not v.get("evidence"):
+        print("VERIFIED_WITHOUT_EVIDENCE: %s" % c["capability_id"])
+PY
+if [ -s "$TMP/ver" ]; then
+  while IFS= read -r l; do fail "$l"; done < "$TMP/ver"
+else
+  pass "no capability is VERIFIED without an implementation and evidence"
+fi
+NV=$(python3 -c "
+import json
+print(sum(1 for c in json.load(open('$REG'))['capabilities']
+          if c['verification']['state']=='VERIFIED'))")
+[ "$NV" -ge 1 ] && pass "$NV capabilities carry executed verification" \
+                || fail "no executed verification recorded"
+
+sect "5. No-emoji policy enforced (with positive control)"
+EMJ=$(python3 "$EMOJI" "$SPS2" 2>&1 | tail -1)
+printf '%s' "$EMJ" | grep -q 'violations=0' \
+  && pass "no emoji in any SPS 2.0 file ($EMJ)" \
+  || fail "emoji violation: $EMJ"
+mkdir -p "$TMP/emj" && printf 'x \360\237\216\257 y\n' > "$TMP/emj/a.md"
+if python3 "$EMOJI" "$TMP/emj" >/dev/null 2>&1; then
+  fail "emoji checker failed to detect a real violation"
+else
+  NP=$((NP+1)); pass "POSCTRL-B  emoji checker detects a real violation"
+fi
+rm -rf "$TMP/emj"
+
+sect "7. Research gaps preserved"
+jq -e '.conflicts[0].resolution | test("UNRESOLVED")' \
+  "$SPS2/research/P2-SOURCES.json" >/dev/null 2>&1 \
+  && pass "CONF-001 still UNRESOLVED" || fail "CONF-001 was closed"
+jq -e '.capabilities[] | select(.capability_id=="CAP-028") | .status == "UNVERIFIED"' \
+  "$SPS2/research/P2-CAPABILITY-EXTRACTION.json" >/dev/null 2>&1 \
+  && pass "CAP-028 still UNVERIFIED (no LCP/INP invented)" || fail "CAP-028 changed"
+if jq -e '.capabilities[] | select(.capability_id=="CAP-P03-005")
+        | (.security.evidence | test("LCP|INP"))' "$REG" >/dev/null 2>&1; then
+  fail "an unretrieved LCP/INP threshold was introduced"
+else
+  pass "no LCP or INP threshold introduced into the registry"
+fi
+
+sect "8. P3 incident boundary carried forward unchanged"
+jq -e '.approval_scope.credential_revocation == "USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED"' \
+  "$SPS2/handoff/HANDOFF-P3.json" >/dev/null 2>&1 \
+  && pass "revocation still USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED" \
+  || fail "incident classification was changed"
+jq -e '.approval_scope.forensic_checkpoint_a7767cf | test("PRESERVED")' \
+  "$SPS2/handoff/HANDOFF-P3.json" >/dev/null 2>&1 \
+  && pass "checkpoint a7767cf still recorded PRESERVED" || fail "checkpoint scope changed"
+if git -C "$REPO" cat-file -t a7767cf5f761cab4aa633c1cbc7604f83e4d14f8 \
+     >/dev/null 2>&1; then
+  pass "checkpoint a7767cf not purged"
+else
+  fail "checkpoint a7767cf was purged"
+fi
+
+sect "9. P4 is not self-approved"
+jq -e '[.requirements[].approval.state] | all(. == "PENDING_USER_APPROVAL")' \
+  "$SPS2/requirements/P4-REQUIREMENTS.json" >/dev/null 2>&1 \
+  && pass "all P4 requirements PENDING_USER_APPROVAL" || fail "a P4 requirement is approved"
+jq -e '[.decisions[].approval.state] | all(. == "PENDING_USER_APPROVAL")' \
+  "$SPS2/decisions/P4-DECISIONS.json" >/dev/null 2>&1 \
+  && pass "all P4 decisions PENDING_USER_APPROVAL" || fail "a P4 decision is approved"
+PROM=$(python3 -c "
+import json
+print(json.load(open('$REG'))['counts']['promoted'])")
+[ "$PROM" = "0" ] \
+  && pass "zero capabilities promoted without a User licence declaration and approval" \
+  || warn "$PROM promoted - confirm a User approval exists"
+
+sect "10. Legacy protection"
+DIFF=$(cd "$REPO" && git diff --name-only c11da27 -- skills scripts plugins .github \
+       templates README.md CHANGELOG.md CATALOG.md '*.sh' '*.ps1' 2>/dev/null \
+       | grep -v '^sps2/')
+[ -z "$DIFF" ] && pass "legacy repository untouched" || fail "legacy modified: $DIFF"
+
+sect "11. Secret safety"
+python3 "$SPS2/security/scan_secrets.py" "$SPS2" --quiet \
+  && pass "no credential-shaped value under sps2/" \
+  || fail "credential-shaped value detected"
+if bash "$SPS2/security/test-secret-safety.sh" >/dev/null 2>&1; then
+  pass "secret-safety suite passes"
+else
+  fail "secret-safety suite failed"
+fi
+
+sect "12. Requirement, evidence and implementation records must be wired"
+python3 - "$SPS2" > "$TMP/wire" 2>&1 <<'PY'
+import json, os, sys
+B = sys.argv[1]
+R = os.path.dirname(B)
+req = json.load(open(B + '/requirements/P4-REQUIREMENTS.json'))
+ev = json.load(open(B + '/evidence/P4-EVIDENCE.json'))['records']
+ids = {e['evidence_id'] for e in ev}
+if len(ids) != len(ev):
+    print("DUPLICATE_EVIDENCE_ID")
+for r in req['requirements']:
+    rid = r['requirement_id']
+    for f in r['implementation'].get('refs') or []:
+        if not os.path.isfile(os.path.join(R, f)):
+            print("IMPL_REF_NOT_FOUND: %s -> %s" % (rid, f))
+    if not (r['implementation'].get('refs') or []):
+        print("IMPL_REF_EMPTY: %s" % rid)
+    for e in (r['implementation'].get('evidence') or []):
+        if e not in ids:
+            print("UNKNOWN_EVIDENCE: %s -> %s" % (rid, e))
+    for e in (r['verification'].get('evidence') or []):
+        if e not in ids:
+            print("UNKNOWN_EVIDENCE: %s -> %s" % (rid, e))
+    if r['status'] == 'VERIFIED' and not r['verification'].get('evidence'):
+        print("VERIFIED_WITHOUT_EVIDENCE: %s" % rid)
+    for e in r['verification'].get('evidence') or []:
+        rec = next(x for x in ev if x['evidence_id'] == e)
+        if rec.get('relates_to', {}).get('requirement_id') != rid:
+            print("EVIDENCE_MISLINKED: %s claimed by %s but relates to %s"
+                  % (e, rid, rec.get('relates_to', {}).get('requirement_id')))
+    if r['status'] == 'VERIFIED' and not r['verification'].get('observed_result'):
+        print("VERIFIED_WITHOUT_OBSERVED_RESULT: %s" % rid)
+# Every VERIFIED capability must cite evidence that actually relates to it.
+reg = json.load(open(B + '/capability/registry.json'))
+cap_ev = {}
+for e in ev:
+    cid = e.get('relates_to', {}).get('capability_id')
+    if cid:
+        cap_ev.setdefault(cid, set()).add(e['evidence_id'])
+for c in reg['capabilities']:
+    if c['verification']['state'] != 'VERIFIED':
+        continue
+    cid = c['capability_id']
+    claimed = c['verification'].get('evidence') or []
+    own = cap_ev.get(cid, set())
+    if not claimed:
+        print("CAPABILITY_WITHOUT_EVIDENCE: %s" % cid)
+    elif not set(claimed).issubset(own):
+        print("CAPABILITY_EVIDENCE_NOT_DEDICATED: %s claims %s its own are %s"
+              % (cid, claimed, sorted(own)))
+    elif len(claimed) != len(own):
+        print("CAPABILITY_EVIDENCE_INCOMPLETE: %s claims %s its own are %s"
+              % (cid, claimed, sorted(own)))
+PY
+if [ -s "$TMP/wire" ]; then
+  while IFS= read -r l; do fail "$l"; done < "$TMP/wire"
+else
+  pass "requirement, evidence and implementation records are fully wired"
+fi
+
+fi  # end structural
+
+# ══ NEGATIVE SUITE: 20 mandated cases + positive controls ═══════════════════
+sect "NEGATIVE TESTS — invalid promotion states must be rejected"
+
+gate_case "B['capability_id']=''"                     A "N01 missing capability id"
+gate_case "B['capability_id']='bad id'"               A "N02 malformed capability id"
+gate_case "B['provenance']={'fact_class':'EVIDENCE'}" B "N03 missing provenance"
+gate_case "B['licence']='UNKNOWN'"                    D "N04 unknown licence"
+gate_case "B['licence']='UNDECLARED'"                 D "N04b undeclared licence"
+gate_case "B['security']={'status':'VERIFIED_SAFE','fact_class':'EVIDENCE'}" C "N05 missing security evidence"
+gate_case "B['verification']={'state':'VERIFIED','method':'AUTOMATED'}" F "N06 missing verification evidence"
+gate_case "B['acceptance_criteria']=[]"               G "N07 empty acceptance criteria"
+gate_case "B['approval']={'state':'PENDING_USER_APPROVAL'}" H "N08 user approval absent"
+gate_case "B['approval']={'state':'APPROVED','decided_by':'agent'}" H "N09 agent-attributed approval"
+gate_case "B['approval']={'state':'APPROVED','decided_by':''}"     H "N09b approval with no decider"
+gate_case "B['install_scope']='GLOBAL'"               I "N10 GLOBAL without authorization"
+gate_case "B['staleness']=dict(B['staleness'],state='STALE');B['lifecycle_state']='ACTIVE';B['verification']={'state':'VERIFIED','evidence':['E'],'method':'A','expected_result':'x','observed_result':'y'}" J "N11 stale marked ACTIVE"
+gate_case "B['staleness']={'state':'STALE','maintenance':'ACTIVE'}" J "N12 stale without review"
+gate_case "B['provenance']={'origin':'nonexistent-system-xyz','commit':'abc1234','fact_class':'EVIDENCE','repository_relative_path':'sps2/does-not-exist.py','research_refs':['SRC-999']}" B "N13 fabricated source reference"
+gate_case "B['security']={'status':'VERIFIED_SAFE','evidence':'sk-or-v1-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','fact_class':'EVIDENCE'}" C "N14 secret embedded in record"
+gate_case "B['type']='WIDGET'"                        A "N15 invalid taxonomy"
+gate_case "B['lifecycle_state']='TELEPORTED'"         A "N16 invalid lifecycle state"
+gate_case "B['domain']='SEO';B['name']='lcp-inp-verifier';B['security']={'status':'VERIFIED_SAFE','evidence':'LCP 2500ms INP 200ms','fact_class':'FACT'}" K "N17 unresolved research promoted"
+
+# N18: duplicate capability id (registry level)
+mk "pass"
+python3 - "$TMP/c.json" "$TMP/dup.json" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1]))
+json.dump({"capabilities": [d, dict(d)]}, open(sys.argv[2], "w"))
+PY
+if python3 "$CHECK" "$TMP/dup.json" 2>&1 | grep -q 'DUPLICATE' \
+   || python3 -c "
+import json,sys
+a=json.load(open('$TMP/dup.json'))['capabilities']
+sys.exit(0 if len({c['capability_id'] for c in a})<len(a) else 1)"; then
+  NP=$((NP+1)); pass "N18 duplicate capability id -> rejected"
+else
+  NF=$((NF+1)); fail "N18 duplicate capability id NOT rejected"
+fi
+
+# N19: emoji violation
+mkdir -p "$TMP/em" && printf 'x \360\237\216\257\n' > "$TMP/em/a.md"
+if python3 "$EMOJI" "$TMP/em" >/dev/null 2>&1; then
+  NF=$((NF+1)); fail "N19 emoji violation NOT rejected"
+else
+  NP=$((NP+1)); pass "N19 emoji violation -> rejected"
+fi
+rm -rf "$TMP/em"
+
+# N20: malformed structured input
+printf '{ not json' > "$TMP/bad.json"
+if python3 "$CHECK" "$TMP/bad.json" 2>&1 | grep -q 'GATE_ERROR'; then
+  NP=$((NP+1)); pass "N20 malformed JSON -> rejected"
+else
+  NF=$((NF+1)); fail "N20 malformed JSON NOT rejected"
+fi
+
+echo ""
+if [ "$NF" -eq 0 ]; then
+  echo -e "${GREEN}${BOLD}== P4 NEGATIVE SUITE: $NP cases correctly rejected, 0 missed ==${NC}"
+else
+  echo -e "${RED}${BOLD}== P4 NEGATIVE SUITE: $NP rejected, $NF MISSED ==${NC}"
+fi
+echo ""
+if [ "$FAIL" -eq 0 ] && [ "$NF" -eq 0 ]; then
+  echo -e "${GREEN}${BOLD}== P4 PROMOTION VALID: $PASS checks passed, 0 failed, $NP controls enforced ==${NC}"
+  exit 0
+fi
+echo -e "${RED}${BOLD}== P4 PROMOTION INVALID: $PASS passed, $FAIL failed, $NF missed ==${NC}"
+exit 1

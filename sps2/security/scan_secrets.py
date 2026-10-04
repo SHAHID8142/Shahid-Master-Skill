@@ -30,6 +30,10 @@ SKIP_DIRS = {".git", "node_modules", "__pycache__"}
 SELF_REFERENTIAL_SUFFIXES = (
     "/security/scan_secrets.py",
     "/security/test-secret-safety.sh",
+    # Contains a SYNTHETIC credential-shaped string as a negative-test fixture
+    # (case N14, which must be detectable to prove gate C rejects embedded
+    # secrets). Exempted explicitly, never by a blanket skip.
+    "/tools/validate-p4.sh",
 )
 
 

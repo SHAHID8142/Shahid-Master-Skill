@@ -1,0 +1,55 @@
+{
+  "schema": "sps2.decision-set/v1",
+  "phase": "P4",
+  "generated": "2026-10-03",
+  "note": "DEC-0020 and DEC-0021 await separate user approval.",
+  "decisions": [
+    {
+      "decision_id": "DEC-0020",
+      "title": "Production promotion is blocked pending a repository licence declaration",
+      "decision": "No capability may be promoted to production until the repository declares a licence and the user explicitly approves production promotion.",
+      "reason": "The repository contains no LICENSE or COPYING file, so the applicable licence is UNRESOLVED. The P4 gate treats an unknown licence as a hard block. P3 recorded KNOWN_PERMISSIVE on the assumption that project-authored source implies a permissive licence; that assumption was unverified and P4 corrected it to UNDECLARED.",
+      "evidence": [
+        "Gate D computed result",
+        "git ls-files shows no LICENCE or COPYING file"
+      ],
+      "alternatives": [
+        {
+          "option": "Assume project-authored source is permissive",
+          "rejected_because": "An unlicensed repository is all-rights-reserved by default, not permissive."
+        },
+        {
+          "option": "Add a LICENSE file on the agent's own initiative",
+          "rejected_because": "Choosing a licence is a legal and ownership decision reserved to the user."
+        }
+      ],
+      "status": "PROPOSED",
+      "approval": {
+        "required": true,
+        "state": "PENDING_USER_APPROVAL"
+      }
+    },
+    {
+      "decision_id": "DEC-0021",
+      "title": "The SEO CLS verifier is deferred, not promoted",
+      "decision": "CAP-P03-005 remains a candidate because no executable CLS verifier exists and an unresolved research conflict touches the SEO domain.",
+      "reason": "The CLS threshold fact is verified from SRC-017, but a verified fact is not an implemented capability. Its provenance pointed at a Markdown research file, not code. Gate F and gate K both fail.",
+      "evidence": [
+        "Gate F result",
+        "Gate K result CONF-001",
+        "no LCP or INP retrieved"
+      ],
+      "alternatives": [
+        {
+          "option": "Promote it because the thresholds are verified",
+          "rejected_because": "Verification of a fact is not verification of a capability."
+        }
+      ],
+      "status": "PROPOSED",
+      "approval": {
+        "required": true,
+        "state": "PENDING_USER_APPROVAL"
+      }
+    }
+  ]
+}

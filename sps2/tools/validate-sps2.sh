@@ -83,18 +83,38 @@ NCAP=$(python3 -c "import json;print(len(json.load(open('$SPS2/capability/regist
 [ "$NCAP" -ge 0 ] 2>/dev/null && pass "registry is readable ($NCAP capabilities)" \
                   || fail "registry is unreadable"
 python3 - "$SPS2" > "$TMP/promo" 2>&1 <<'PY'
-import json, sys
-sys.path.insert(0, sys.argv[1] + '/capability')
-import engine
-reg = json.load(open(sys.argv[1] + '/capability/registry.json'))
+import importlib.util, json, os, sys
+B = sys.argv[1]
+reg = json.load(open(B + '/capability/registry.json'))
 ids = [c['capability_id'] for c in reg['capabilities']]
 dup = sorted({i for i in ids if ids.count(i) > 1})
 if dup:
     print("DUPLICATE_CAPABILITY_ID: %s" % dup)
-for c in reg['capabilities']:
-    ok, reasons = engine.promote(c)
-    if not ok:
-        print("PROMOTION_GATE_FAIL: %s: %s" % (c['capability_id'], "; ".join(reasons)))
+# Since P4 the production gate is the hardened A-K promotion gate. The
+# invariant is that each stored assessment matches a fresh gate run, not that
+# every capability is already promoted.
+pg_path = os.path.join(B, 'capability', 'promotion_gates.py')
+if os.path.isfile(pg_path):
+    spec = importlib.util.spec_from_file_location("pg", pg_path)
+    pg = importlib.util.module_from_spec(spec); spec.loader.exec_module(pg)
+    for c in reg['capabilities']:
+        res, blocking = pg.evaluate(c)
+        stored = (c.get('promotion_assessment') or {}).get('blocking_gates')
+        if stored is None:
+            print("ASSESSMENT_MISSING: %s" % c['capability_id'])
+        elif sorted(stored) != sorted(blocking):
+            print("ASSESSMENT_STALE: %s" % c['capability_id'])
+        for k, v in res.items():
+            if not v['pass'] and k not in blocking:
+                print("GATE_INCONSISTENCY: %s" % c['capability_id'])
+else:
+    sys.path.insert(0, B + '/capability')
+    import engine
+    for c in reg['capabilities']:
+        ok, reasons = engine.promote(c)
+        if not ok:
+            print("PROMOTION_GATE_FAIL: %s: %s"
+                  % (c['capability_id'], "; ".join(reasons)))
 PY
 if [ -s "$TMP/promo" ]; then
   while IFS= read -r l; do fail "$l"; done < "$TMP/promo"
@@ -154,7 +174,7 @@ fi
 # test harness under tools/ and security/, rather than hardcoding one filename.
 INSTALLERS=$(find "$SPS2" \( -name '*.sh' -o -name '*.ps1' \) 2>/dev/null \
   | grep -v '/tools/validate-sps2.sh' | grep -v '/tools/validate-p2.sh' \
-  | grep -v '/tools/validate-p3.sh' \
+  | grep -v '/tools/validate-p3.sh' | grep -v '/tools/validate-p4.sh' \
   | grep -v '/security/test-secret-safety.sh')
 if [ -n "$INSTALLERS" ]; then
   fail "sps2/ ships executable installers: $INSTALLERS"
