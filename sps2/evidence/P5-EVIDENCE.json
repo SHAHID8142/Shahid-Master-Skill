@@ -16,7 +16,36 @@
       "history rewriting",
       "credential revocation or probing",
       "resolving CONF-001"
-    ]
+    ],
+    "completion": {
+      "state": "APPROVED",
+      "decided_by": "User",
+      "decided_on": "2026-10-04",
+      "scope": "P5 implementation/integration only",
+      "approved_scope": [
+        "P5 implementation/integration",
+        "CAP-P03-001, CAP-P03-002, CAP-P03-003, CAP-P03-004 (already production-promoted under the earlier Gate H decision)",
+        "project-local deterministic selection",
+        "agent-neutral core integration",
+        "governance and evidence wiring",
+        "validation and test infrastructure"
+      ],
+      "explicitly_not_approved": [
+        "P6 or any later phase",
+        "runtime activation of any capability",
+        "installing capabilities",
+        "installing MCP servers",
+        "new capability promotion",
+        "CAP-P03-005 promotion",
+        "resolving CONF-001 by assumption",
+        "inventing LCP or INP thresholds",
+        "legacy SPS modification",
+        "machine-global changes",
+        "history rewriting",
+        "purging checkpoint a7767cf",
+        "credential probing or transmission"
+      ]
+    }
   },
   "evidence": [
     {
@@ -100,8 +129,7 @@
       "command": "python3 sps2/tests/test_p5.py",
       "observed": "Ran 39 tests, OK.",
       "result": "PASS"
-    }
-,
+    },
     {
       "id": "EV-P5-011",
       "type": "VERIFICATION",
@@ -181,6 +209,34 @@
       "claim": "No P6 artefact exists.",
       "command": "python3 sps2/tools/validate-p5.py",
       "observed": "Section 14 reported PASS.",
+      "result": "PASS"
+    },
+    {
+      "id": "EV-P5-021",
+      "type": "APPROVAL",
+      "claim": "P5 implementation/integration is approved by the User.",
+      "decided_by": "User",
+      "decided_on": "2026-10-04",
+      "observed": "Recorded from an explicit User instruction. Scope is limited to P5. P6, runtime activation, capability installation, MCP installation, new promotion and CAP-P03-005 promotion are all explicitly not approved.",
+      "result": "APPROVED"
+    },
+    {
+      "id": "EV-P5-022",
+      "type": "RECORD_INTEGRITY",
+      "claim": "Historical gate snapshot is distinguished from current gate evaluation.",
+      "observed": "promotion_record.gate_results_at_promotion is a HISTORICAL PRE_APPROVAL snapshot in which Gate H correctly recorded false. promotion_assessment.gates is the CURRENT evaluation. The difference is declared per capability in promotion_record.gate_snapshot_declaration. No historical evidence, approval, or promotion decision was rewritten.",
+      "validator_invariants": [
+        "GATE_SNAPSHOT_NOT_DECLARED",
+        "SNAPSHOT_NOT_MARKED_HISTORICAL",
+        "CURRENT_EVALUATION_NOT_MARKED",
+        "SNAPSHOT_CLAIMS_MODIFICATION",
+        "SNAPSHOT_DIFFERENCE_UNDECLARED",
+        "SNAPSHOT_DIFFERENCE_FLAG_WRONG",
+        "SNAPSHOT_DIFFERENCE_WITHOUT_REASON",
+        "SNAPSHOT_CLAIMS_UNBACKED_APPROVAL",
+        "CURRENT_GATES_STALE_OR_FALSE"
+      ],
+      "mutation_tests": "sps2/tools/test-snapshot-integrity.sh: 9 mutations, 9 caught, 0 missed. The gate logic in promotion_gates.py was not changed.",
       "result": "PASS"
     }
   ]

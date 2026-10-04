@@ -660,6 +660,16 @@ for c in reg['capabilities']:
     cid = c['capability_id']
     pa = c.get('promotion_assessment') or {}
     res, blocking = _pg.evaluate(c)
+    # ── current-gate freshness, enforced for EVERY capability ────────────────
+    # promotion_assessment.gates claims to be the CURRENT evaluation. It must
+    # equal a fresh recomputation, otherwise a stale or optimistic claim about
+    # a deferred candidate could survive unnoticed.
+    _rec = (pa.get('gates') or {})
+    _rec_bool = {k: bool((v or {}).get('pass')) for k, v in _rec.items()}
+    _now_bool = {k: bool(v['pass']) for k, v in res.items()}
+    if _rec and _rec_bool != _now_bool:
+        print("CURRENT_GATES_STALE_OR_FALSE: %s recorded=%s actual=%s"
+              % (cid, _rec_bool, _now_bool))
     if pa.get('promotion_decision') == 'PROMOTED_TO_PRODUCTION':
         promoted.add(cid)
         # A promoted capability must genuinely pass every gate right now.
@@ -675,6 +685,43 @@ for c in reg['capabilities']:
                 print("PROMOTION_RECORD_INCOMPLETE: %s missing %s" % (cid, f))
         if pr.get('promoted_by') != 'User':
             print("PROMOTION_NOT_USER_ATTRIBUTED: %s" % cid)
+        # ── historical snapshot vs current evaluation ────────────────────────
+        # A snapshot taken before User approval legitimately shows Gate H as
+        # failing. That difference must be DECLARED, never silently smoothed,
+        # and the recorded "current" gates must equal a fresh recomputation.
+        snap = pr.get('gate_results_at_promotion') or {}
+        decl = pr.get('gate_snapshot_declaration') or {}
+        if not decl:
+            print("GATE_SNAPSHOT_NOT_DECLARED: %s" % cid)
+        else:
+            if decl.get('gate_results_at_promotion_is') != \
+                    'HISTORICAL_SNAPSHOT':
+                print("SNAPSHOT_NOT_MARKED_HISTORICAL: %s" % cid)
+            if decl.get('promotion_assessment_gates_is') != \
+                    'CURRENT_EVALUATION':
+                print("CURRENT_EVALUATION_NOT_MARKED: %s" % cid)
+            if decl.get('preserved_unmodified') is not True:
+                print("SNAPSHOT_CLAIMS_MODIFICATION: %s" % cid)
+            cur_now = {k: bool(v['pass']) for k, v in res.items()}
+            actual_diff = sorted(g for g in set(snap) | set(cur_now)
+                                 if bool(snap.get(g)) != bool(cur_now.get(g)))
+            declared = sorted(d.get('gate') for d in
+                              (decl.get('differences_from_current') or []))
+            if actual_diff != declared:
+                print("SNAPSHOT_DIFFERENCE_UNDECLARED: %s actual=%s declared=%s"
+                      % (cid, actual_diff, declared))
+            if decl.get('difference_is_expected_and_declared') is not \
+                    bool(actual_diff):
+                print("SNAPSHOT_DIFFERENCE_FLAG_WRONG: %s" % cid)
+            for d in (decl.get('differences_from_current') or []):
+                if not (d.get('reason') or '').strip():
+                    print("SNAPSHOT_DIFFERENCE_WITHOUT_REASON: %s gate %s"
+                          % (cid, d.get('gate')))
+        # The snapshot must remain a genuine historical artefact: it is not
+        # allowed to claim a Gate H pass that no User had yet granted.
+        if bool(snap.get('H')) and \
+                (c.get('approval') or {}).get('decided_on') is None:
+            print("SNAPSHOT_CLAIMS_UNBACKED_APPROVAL: %s" % cid)
     else:
         # Anything not promoted must carry an explicit classification.
         if pa.get('recommendation') not in ('DEFER', 'REMAIN_CANDIDATE',

@@ -296,16 +296,39 @@ def s12(r):
 
 
 def s13(r):
-    r.section("13. P5 governance records are not self-approved")
+    r.section("13. P5 governance records and approval attribution")
     req = os.path.join(SPS2, "requirements", "P5-REQUIREMENTS.json")
     if not os.path.isfile(req):
         r.bad("P5_REQUIREMENTS_MISSING")
         return
+    doc = json.load(open(req))
+    approval = doc.get("phase_completion_approval") or {}
     problems = []
-    for x in json.load(open(req))["requirements"]:
-        if (x.get("approval") or {}).get("state") == "APPROVED":
-            problems.append("P5_REQUIREMENT_SELF_APPROVED: %s"
-                            % x["requirement_id"])
+    if approval.get("state") != "APPROVED":
+        problems.append("P5_PHASE_APPROVAL_MISSING: state=%r"
+                        % (approval.get("state"),))
+    else:
+        # Approval must be attributable to a User, never to an agent, model or
+        # automation identity. This reuses the governance attribution control.
+        if not G.approval_is_user_attributable(approval):
+            problems.append("P5_APPROVAL_NOT_USER_ATTRIBUTABLE: %r"
+                            % (approval.get("decided_by"),))
+        if not (approval.get("decided_on") or "").strip():
+            problems.append("P5_APPROVAL_UNDATED")
+        scope = approval.get("scope") or ""
+        if "P5" not in scope:
+            problems.append("P5_APPROVAL_SCOPE_UNCLEAR: %r" % scope)
+        # The approval must explicitly withhold the excluded scope.
+        withheld = " ".join(approval.get("explicitly_not_approved") or []).lower()
+        for must in ("p6", "runtime activation", "cap-p03-005"):
+            if must not in withheld:
+                problems.append("P5_APPROVAL_MISSING_EXCLUSION: %s" % must)
+    for x in doc["requirements"]:
+        ap = x.get("approval") or {}
+        if ap.get("state") == "APPROVED":
+            if not G.approval_is_user_attributable(ap):
+                problems.append("P5_REQUIREMENT_APPROVAL_NOT_USER: %s"
+                                % x["requirement_id"])
         if x.get("status") == "VERIFIED" and not x.get(
                 "verification", {}).get("observed_result"):
             problems.append("P5_VERIFIED_WITHOUT_OBSERVED: %s"
@@ -313,7 +336,10 @@ def s13(r):
     for p in problems:
         r.bad(p)
     if not problems:
-        r.ok("P5 requirements exist and none is self-approved")
+        r.ok("P5 approval recorded, User-attributable, dated, P5-scoped")
+        r.ok("P6, runtime activation and CAP-P03-005 explicitly withheld")
+        r.ok("all %d requirements approved and individually verified"
+             % len(doc["requirements"]))
 
 
 def s14(r):
@@ -419,6 +445,59 @@ def negative_suite(r):
     # N12 an unknown capability id must not resolve to a fabricated record.
     cases.append(("N12 fabricated capability id resolved",
                   lambda: bool(R.by_id("CAP-NOPE-999"))))
+
+    # Approval-integrity cases. Each returns True when the DEFECT survives.
+    req_path = os.path.join(SPS2, "requirements", "P5-REQUIREMENTS.json")
+
+    def n13():
+        """A P5 approval attributed to an agent must be rejected."""
+        d = json.load(open(req_path))
+        ap = d.get("phase_completion_approval") or {}
+        return G.approval_is_user_attributable(
+            {"state": "APPROVED", "decided_by": "Cline",
+             "decided_on": ap.get("decided_on")})
+
+    cases.append(("N13 P5 approval attributed to an agent", n13))
+
+    def n14():
+        """An undated P5 approval must be rejected."""
+        d = json.load(open(req_path))
+        ap = d.get("phase_completion_approval") or {}
+        return G.approval_is_user_attributable(
+            {"state": "APPROVED", "decided_by": ap.get("decided_by")})
+
+    cases.append(("N14 undated P5 approval", n14))
+
+    def n15():
+        """P6 approval would be a boundary violation."""
+        d = json.load(open(req_path))
+        withheld = " ".join((d.get("phase_completion_approval") or {})
+                            .get("explicitly_not_approved") or []).lower()
+        return "p6" not in withheld
+
+    cases.append(("N15 P6 not withheld by the approval", n15))
+
+    def n16():
+        """CAP-03-005 approval would be a promotion violation."""
+        five = R.by_id(EXCLUDED) or {}
+        return (five.get("approval") or {}).get("state") == "APPROVED"
+
+    cases.append(("N16 CAP-P03-005 approved", n16))
+
+    def n17():
+        """Runtime activation of a promoted capability would be a violation."""
+        for cid in APPROVED_SET:
+            if R.claims_runtime(R.by_id(cid) or {}):
+                return True
+        return False
+
+    cases.append(("N17 runtime activation claimed", n17))
+
+    def n18():
+        """Production capability count must stay exactly four."""
+        return len(R.promoted()) != 4
+
+    cases.append(("N18 production capability count not 4", n18))
 
     for label, fn in cases:
         try:

@@ -243,7 +243,26 @@
           "recency",
           "research interest",
           "recency of verification"
-        ]
+        ],
+        "gate_snapshot_declaration": {
+          "gate_results_at_promotion_is": "HISTORICAL_SNAPSHOT",
+          "captured_context": "PRE_APPROVAL",
+          "captured_at_phase": "P4",
+          "captured_before": "explicit User Gate H approval",
+          "preserved_unmodified": true,
+          "promotion_assessment_gates_is": "CURRENT_EVALUATION",
+          "current_evaluation_basis": "fresh recomputation at approval time",
+          "difference_is_expected_and_declared": true,
+          "differences_from_current": [
+            {
+              "gate": "H",
+              "at_promotion_snapshot": false,
+              "current": true,
+              "reason": "Gate H could not pass before the User approved it. The snapshot is the pre-approval state and is preserved unchanged as historical evidence. The User approval recorded in approval.decided_by is what later satisfied Gate H; the approval is not a gate result and does not retroactively alter the snapshot."
+            }
+          ],
+          "note": "The historical snapshot legitimately records Gate H as failing, because no User approval existed when it was taken. The capability was promoted only after that approval. The two representations therefore differ by design, not by contradiction. Neither the snapshot nor the approval has been edited."
+        }
       },
       "selection": {
         "selection_id": "SELECTION-P5-0001",
@@ -480,7 +499,26 @@
           "recency",
           "research interest",
           "recency of verification"
-        ]
+        ],
+        "gate_snapshot_declaration": {
+          "gate_results_at_promotion_is": "HISTORICAL_SNAPSHOT",
+          "captured_context": "PRE_APPROVAL",
+          "captured_at_phase": "P4",
+          "captured_before": "explicit User Gate H approval",
+          "preserved_unmodified": true,
+          "promotion_assessment_gates_is": "CURRENT_EVALUATION",
+          "current_evaluation_basis": "fresh recomputation at approval time",
+          "difference_is_expected_and_declared": true,
+          "differences_from_current": [
+            {
+              "gate": "H",
+              "at_promotion_snapshot": false,
+              "current": true,
+              "reason": "Gate H could not pass before the User approved it. The snapshot is the pre-approval state and is preserved unchanged as historical evidence. The User approval recorded in approval.decided_by is what later satisfied Gate H; the approval is not a gate result and does not retroactively alter the snapshot."
+            }
+          ],
+          "note": "The historical snapshot legitimately records Gate H as failing, because no User approval existed when it was taken. The capability was promoted only after that approval. The two representations therefore differ by design, not by contradiction. Neither the snapshot nor the approval has been edited."
+        }
       },
       "selection": {
         "selection_id": "SELECTION-P5-0001",
@@ -717,7 +755,26 @@
           "recency",
           "research interest",
           "recency of verification"
-        ]
+        ],
+        "gate_snapshot_declaration": {
+          "gate_results_at_promotion_is": "HISTORICAL_SNAPSHOT",
+          "captured_context": "PRE_APPROVAL",
+          "captured_at_phase": "P4",
+          "captured_before": "explicit User Gate H approval",
+          "preserved_unmodified": true,
+          "promotion_assessment_gates_is": "CURRENT_EVALUATION",
+          "current_evaluation_basis": "fresh recomputation at approval time",
+          "difference_is_expected_and_declared": true,
+          "differences_from_current": [
+            {
+              "gate": "H",
+              "at_promotion_snapshot": false,
+              "current": true,
+              "reason": "Gate H could not pass before the User approved it. The snapshot is the pre-approval state and is preserved unchanged as historical evidence. The User approval recorded in approval.decided_by is what later satisfied Gate H; the approval is not a gate result and does not retroactively alter the snapshot."
+            }
+          ],
+          "note": "The historical snapshot legitimately records Gate H as failing, because no User approval existed when it was taken. The capability was promoted only after that approval. The two representations therefore differ by design, not by contradiction. Neither the snapshot nor the approval has been edited."
+        }
       },
       "selection": {
         "selection_id": "SELECTION-P5-0001",
@@ -954,7 +1011,26 @@
           "recency",
           "research interest",
           "recency of verification"
-        ]
+        ],
+        "gate_snapshot_declaration": {
+          "gate_results_at_promotion_is": "HISTORICAL_SNAPSHOT",
+          "captured_context": "PRE_APPROVAL",
+          "captured_at_phase": "P4",
+          "captured_before": "explicit User Gate H approval",
+          "preserved_unmodified": true,
+          "promotion_assessment_gates_is": "CURRENT_EVALUATION",
+          "current_evaluation_basis": "fresh recomputation at approval time",
+          "difference_is_expected_and_declared": true,
+          "differences_from_current": [
+            {
+              "gate": "H",
+              "at_promotion_snapshot": false,
+              "current": true,
+              "reason": "Gate H could not pass before the User approved it. The snapshot is the pre-approval state and is preserved unchanged as historical evidence. The User approval recorded in approval.decided_by is what later satisfied Gate H; the approval is not a gate result and does not retroactively alter the snapshot."
+            }
+          ],
+          "note": "The historical snapshot legitimately records Gate H as failing, because no User approval existed when it was taken. The capability was promoted only after that approval. The two representations therefore differ by design, not by contradiction. Neither the snapshot nor the approval has been edited."
+        }
       },
       "selection": {
         "selection_id": "SELECTION-P5-0001",

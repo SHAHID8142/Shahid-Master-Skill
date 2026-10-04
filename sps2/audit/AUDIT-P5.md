@@ -3,7 +3,9 @@
 Audit date: 2026-10-04
 Auditor: implementation agent (not a User; this audit is not an approval)
 Branch: `main`
-Verdict: **IMPLEMENTED and VERIFIED. AWAITING_USER_APPROVAL.**
+Verdict: **IMPLEMENTED, VERIFIED and APPROVED** (User, 2026-10-04).
+Scope: P5 implementation/integration only.
+P6 remains NOT_STARTED / NOT_APPROVED.
 
 ---
 
@@ -21,10 +23,10 @@ Nothing outside that scope was started.
 |---|---|---|
 | IMPLEMENTED | COMPLETE | Six new units exist and import |
 | VERIFIED | COMPLETE | 35 validator checks, 39 unit tests, 12 negative cases |
-| APPROVED | NOT GIVEN | All eight requirements are `PENDING_USER_APPROVAL` |
+| APPROVED | GIVEN | User, 2026-10-04, scope limited to P5 implementation/integration |
 
-The agent did not approve its own work. No requirement, capability, decision
-or phase transition was self-approved.
+The agent did not approve its own work. The approval recorded here was given
+explicitly by the User in session and is attributable to them.
 
 ## 3. Findings
 

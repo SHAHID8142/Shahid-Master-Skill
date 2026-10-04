@@ -1,6 +1,11 @@
 # P5 — Implementation / Integration
 
-Phase status: **AWAITING_USER_APPROVAL**. Nothing in this file is self-approved.
+Phase status: **APPROVED** by the User on 2026-10-04, scope strictly limited to
+P5 implementation/integration.
+
+P6, runtime activation, capability installation, MCP installation, new
+capability promotion and CAP-P03-005 promotion are all explicitly NOT
+approved. Nothing in this file is self-approved.
 
 ## What P5 implemented
 

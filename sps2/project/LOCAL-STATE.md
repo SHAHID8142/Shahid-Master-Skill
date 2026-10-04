@@ -4,7 +4,8 @@ Project-local state for SPS 2.0. Nothing here is machine-global.
 
 ## Phase
 
-P5 — implementation/integration. Status: **AWAITING_USER_APPROVAL**.
+P5 — implementation/integration. Status: **APPROVED** (User, 2026-10-04).
+P6 — **NOT_STARTED / NOT_APPROVED**. Runtime activation **NOT_APPROVED**.
 
 ## Selected capabilities
 
