@@ -120,7 +120,8 @@
         "decided_by": "User",
         "decided_on": "2026-10-04",
         "scope": "TECHNOLOGY_RESEARCH_ONLY"
-      }
+      },
+      "requirement_id": "REQ-P6-04"
     },
     {
       "requirement_id": "REQ-P6-05",

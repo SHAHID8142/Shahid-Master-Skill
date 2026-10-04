@@ -266,12 +266,22 @@ def s8(r):
             r.bad("P6_APPROVAL_MISSING_EXCLUSION: %s" % must)
     if not r.failed:
         r.ok("approval explicitly withholds every prohibited action")
-    for x in doc["requirements"]:
+    reqs = doc.get("requirements") or []
+    ids = [x.get("requirement_id") or "" for x in reqs]
+    missing = [x.get("title") or "?" for x in reqs
+               if not (x.get("requirement_id") or "").strip()]
+    if missing:
+        r.bad("REQUIREMENT_ID_MISSING: %s" % "; ".join(missing))
+    dupes = sorted({i for i in ids if i and ids.count(i) > 1})
+    if dupes:
+        r.bad("REQUIREMENT_ID_DUPLICATE: %s" % ",".join(dupes))
+    if not missing and not dupes and len(ids) == len(set(ids)) == len(reqs):
+        r.ok("all %d requirement ids present and unique" % len(reqs))
+    for x in reqs:
         if not G.approval_is_user_attributable(x.get("approval") or {}):
             r.bad("P6_REQUIREMENT_APPROVAL_NOT_USER: %s"
-                  % x["requirement_id"])
-    r.ok("all %d requirements individually User-attributable"
-         % len(doc["requirements"]))
+                  % (x.get("requirement_id") or "unnamed"))
+    r.ok("all %d requirements individually User-attributable" % len(reqs))
     s8b(r, ap.get("preserved_state") or {})
 
 
@@ -474,6 +484,24 @@ def negatives(r):
         return bool(conf) and "UNRESOLVED" not in (conf[0].get("resolution")
                                                    or "")
     cases.append(("N21 CONF-001 no longer unresolved", n21))
+
+    reqs = req.get("requirements") or []
+
+    def n22():
+        # Defect survives if an unnamed requirement goes unnoticed.
+        holed = [dict(x) for x in reqs]
+        holed[0].pop("requirement_id", None)
+        return not [x for x in holed
+                    if not (x.get("requirement_id") or "").strip()]
+    cases.append(("N22 unnamed requirement undetected", n22))
+
+    def n23():
+        duped = [dict(x) for x in reqs]
+        duped[1]["requirement_id"] = duped[0]["requirement_id"]
+        ids = [x.get("requirement_id") or "" for x in duped]
+        dupes = {i for i in ids if i and ids.count(i) > 1}
+        return not dupes
+    cases.append(("N23 duplicate requirement id undetected", n23))
 
     for label, fn in cases:
         try:
