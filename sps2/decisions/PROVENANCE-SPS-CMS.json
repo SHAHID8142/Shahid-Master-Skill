@@ -2,8 +2,19 @@
   "schema": "sps2.provenance-finding/v1",
   "subject": "skills/sps-cms",
   "recorded_on": "2026-10-04",
-  "finding": "UNKNOWN",
-  "finding_detail": "UNKNOWN (leaning project-authored). No evidence of third-party derivation was found, but provenance rests on self-declared metadata that could not be independently verified, so it is not recorded as VERIFIED_PROJECT_AUTHORED.",
+  "finding": "VERIFIED_PROJECT_AUTHORED",
+  "finding_detail": "The user has explicitly attested that SHAHID8142 is their account and that skills/sps-cms is their own work, or comes from a repository they control under the MIT licence the component already declares.",
+  "evidence_class": "USER_ATTESTATION",
+  "independently_verified": false,
+  "confirmed_by": "User attestation on 2026-10-04. NOT independently verified.",
+  "attestation_statement": "I confirm that SHAHID8142 is my account and that skills/sps-cms is my own work / comes from a repository I control under its declared MIT licence.",
+  "scope_limit": "This finding is recorded on the basis of user attestation only. The underlying circumstantial evidence gathered earlier remains recorded below and was NOT independently verified. No external repository, URL or account was contacted at any point.",
+  "what_this_does_not_mean": [
+    "It does not mean the licence was independently verified as legally valid.",
+    "It does not mean any third-party code was relicensed.",
+    "It does not mean the agent verified the upstream repository contents.",
+    "It does not authorise promoting any production capability."
+  ],
   "method": "Local repository evidence only: git history, package manifests, file headers, upstream references, and existing P2 research records. No network access and no external repository was contacted, so upstream content could not be compared.",
   "evidence_for_project_authorship": [
     "package.json declares author SHAHID8142, licence MIT, repository https://github.com/SHAHID8142/sps-cms.git",
@@ -29,16 +40,19 @@
     "conflict_detected": false,
     "note": "No conflict was found, but absence of a conflict is not proof of clean provenance. The licence decision therefore remains blocked pending one confirmation from the user, and no licence file was created."
   },
-  "resolution_requires": [
-    "The user confirming that SHAHID8142 is their own account, and",
-    "The user confirming that skills/sps-cms is their own original work, or was taken from a repository they control under the MIT terms it already declares."
-  ],
-  "if_confirmed": "The finding upgrades to VERIFIED_PROJECT_AUTHORED and the repository licence decision becomes a straightforward user choice. The already-declared MIT on the component would then be consistent with a repository-wide MIT or Apache-2.0.",
-  "if_not_confirmed": "The component would be MIXED or VERIFIED_THIRD_PARTY, and the component would need to be excluded from the licence or relicensed separately under its own terms.",
+  "resolution_requires": [],
+  "resolved": {
+    "resolved_on": "2026-10-04",
+    "resolved_by": "USER_ATTESTATION",
+    "prerequisite_for_licence": "SATISFIED_BY_USER_ATTESTATION"
+  },
+  "if_confirmed": "Satisfied on 2026-10-04 by user attestation. The repository licence decision became available as a result.",
+  "if_not_confirmed": "Not applicable; the prerequisite was satisfied.",
+  "third_party_licensing_status": "No third-party code was identified and none was relicensed. The repository licence covers work the user attests is their own.",
   "not_done": [
-    "The licence was not changed.",
-    "No LICENSE, LICENCE or COPYING file was created.",
-    "No external repository or URL was contacted.",
-    "No provenance information was fabricated or inferred."
+    "No external repository, URL or account was contacted.",
+    "No provenance information was fabricated or inferred.",
+    "No independent verification of the attestation was claimed or attempted.",
+    "No third-party code was relicensed."
   ]
 }

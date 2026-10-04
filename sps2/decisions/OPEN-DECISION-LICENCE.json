@@ -2,12 +2,26 @@
   "schema": "sps2.open-decision/v1",
   "decision_id": "DEC-0023",
   "title": "Repository licence: options presented, awaiting an explicit user choice",
-  "state": "PENDING_USER_DECISION",
-  "blocked_by": "skills/sps-cms provenance is UNKNOWN; see PROVENANCE-SPS-CMS.json",
+  "state": "APPROVED",
+  "blocked_by": null,
   "recorded_on": "2026-10-04",
-  "resolved_on": null,
-  "decided_by": null,
-  "decision": "NO LICENCE HAS BEEN CHOSEN. The licence remains PENDING_USER_DECISION. No LICENSE, LICENCE or COPYING file was created and none will be until the user explicitly selects one.",
+  "resolved_on": "2026-10-04",
+  "decided_by": "User",
+  "licence": "MIT",
+  "scope": "SPS 2.0 repository",
+  "licence_file": "LICENSE",
+  "provenance_prerequisite": "SATISFIED_BY_USER_ATTESTATION",
+  "provenance_evidence": "See PROVENANCE-SPS-CMS.json. finding=VERIFIED_PROJECT_AUTHORED, evidence_class=USER_ATTESTATION, independently_verified=false.",
+  "third_party_code_relicensed": false,
+  "third_party_statement": "No third-party code was identified in this repository and none was relicensed. The MIT licence covers work the user attests is their own.",
+  "independent_legal_verification_claimed": false,
+  "legal_verification_statement": "This licence was selected by the User. It was NOT independently verified as legally valid, and no legal advice was given or implied.",
+  "gate_effect": {
+    "gate_D": "SATISFIED. A declared, permissive licence now exists at the repository root.",
+    "gate_H": "STILL BLOCKED. Explicit User production approval has NOT been given.",
+    "promotion_consequence": "None. 0 of 5 capabilities are promoted. Gate D and gate H are independent, so satisfying D alone changes no promotion outcome."
+  },
+  "decision": "NO LICENCE WAS PREVIOUSLY CHOSEN. The user explicitly selected the MIT licence on 2026-10-04 for the SPS 2.0 repository, after the provenance prerequisite was satisfied by user attestation.",
   "resolution_stage_2026_10_04": {
     "outcome": "Investigated and STOPPED before applying a licence, as instructed.",
     "provenance_investigation_completed": true,
@@ -30,7 +44,9 @@
     "licence_file_present": false,
     "root_manifest_licence_field": false,
     "vendored_third_party_code": false,
-    "dependency_manifests": ["skills/sps-cms/package.json"],
+    "dependency_manifests": [
+      "skills/sps-cms/package.json"
+    ],
     "notable": "skills/sps-cms/package.json already declares \"license\": \"MIT\", author SHAHID8142, with an upstream repository URL. Whether sps-cms is the user's own original work or a copy of another project materially affects whether the user may licence the whole repository permissively.",
     "gate_blocked": "D",
     "effect_of_choosing": "Choosing a licence unblocks gate D ONLY. It does NOT promote any capability. Gate H, explicit production approval, is independent and remains unsatisfied."
@@ -111,5 +127,9 @@
     "No licence was inferred from skills/sps-cms/package.json.",
     "No capability was promoted."
   ],
-  "related": ["DEC-0020", "DEC-0022", "EV-P4-018"]
+  "related": [
+    "DEC-0020",
+    "DEC-0022",
+    "EV-P4-018"
+  ]
 }

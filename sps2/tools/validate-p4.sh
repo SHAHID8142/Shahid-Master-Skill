@@ -15,7 +15,7 @@ REG="$SPS2/capability/registry.json"
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[1;34m'
 BOLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
-PASS=0; FAIL=0; NP=0; NF=0
+PASS=0; FAIL=0; NP=0; NF=0; CTR=0
 pass() { echo -e "  ${GREEN}PASS${NC}  $*"; PASS=$((PASS+1)); }
 fail() { echo -e "  ${RED}FAIL${NC}  $*"; FAIL=$((FAIL+1)); }
 info() { echo -e "  ${BLUE}CASE${NC} $*"; }
@@ -90,28 +90,48 @@ done
 [ -f "$REPO/AUDIT-PHASE-08-P4-PRODUCTION-PROMOTION.md" ] \
   && pass "present AUDIT-PHASE-08 report" || fail "missing AUDIT-PHASE-08 report"
 
-sect "2. Positive control: a conforming capability passes every achievable gate"
+sect "2. Positive controls: only an explicit User approval enables promotion"
 mk "pass"
-OUT=$(python3 "$CHECK" "$TMP/c.json" --promote 2>&1)
-# Gate D cannot pass while the repository declares no licence. That is the
-# correct outcome, not a validator defect, so the control asserts that every
-# OTHER gate passes and that D is the only blocker.
-NON_D=$(printf '%s\n' "$OUT" | grep -cE '^  [ABCEFGHIJK] .*PASS')
-D_FAILS=$(printf '%s\n' "$OUT" | grep -cE '^  D .*FAIL')
-if [ "$NON_D" -ge 10 ] && [ "$D_FAILS" -eq 1 ] \
-   && printf '%s\n' "$OUT" | grep -q 'blocking=D$'; then
-  NP=$((NP+1))
-  pass "POSCTRL-A  10 gates pass; only D blocks, and D is correctly unsatisfiable"
+# The base fixture is fully conforming INCLUDING an explicit User approval, so
+# it must promote. This proves the gate is not permanently stuck.
+if python3 "$CHECK" "$TMP/c.json" --promote 2>&1 | grep -q '^PROMOTED'; then
+  CTR=$((CTR+1)); pass "POSCTRL-A  a fully conforming capability IS promoted (gate works)"
 else
-  info "POSCTRL-A unexpected: $OUT"; NF=$((NF+1))
-  fail "POSCTRL-A  conforming capability behaved unexpectedly"
+  fail "POSCTRL-A  a conforming capability was not promoted (gate is stuck)"
 fi
-# Gate D must be unsatisfiable today, and that is the point.
-if python3 "$CHECK" "$TMP/c.json" --promote 2>&1 | grep -q 'blocking=D$'; then
-  NP=$((NP+1))
-  pass "POSCTRL-C  promotion is impossible without a declared licence (correct)"
+# Remove the approval: now exactly one gate, H, must block. This proves H is
+# the live blocker and that D being satisfied changed nothing on its own.
+python3 -c "
+import json
+d=json.load(open('$TMP/c.json'))
+d['approval']={'state':'PENDING_USER_APPROVAL'}
+json.dump(d,open('$TMP/c_noappr.json','w'))"
+OUT=$(python3 "$CHECK" "$TMP/c_noappr.json" --promote 2>&1)
+PASSED=$(printf '%s\n' "$OUT" | grep -cE '^  [A-K] .*PASS')
+D_PASS=$(printf '%s\n' "$OUT" | grep -cE '^  D .*PASS')
+H_FAIL=$(printf '%s\n' "$OUT" | grep -cE '^  H .*FAIL')
+if [ "$PASSED" -eq 10 ] && [ "$D_PASS" -eq 1 ] && [ "$H_FAIL" -eq 1 ] \
+   && printf '%s\n' "$OUT" | grep -q 'blocking=H$'; then
+  CTR=$((CTR+1)); pass "POSCTRL-C  10 gates pass, only H blocks, nothing promoted"
 else
-  NF=$((NF+1)); fail "POSCTRL-C  promotion was possible without a licence"
+  info "POSCTRL-C unexpected: $OUT"; fail "POSCTRL-C  H did not block as the sole blocker"
+fi
+# A declared licence alone must never enable promotion.
+if python3 "$CHECK" "$TMP/c_noappr.json" --promote 2>&1 | grep -q '^PROMOTED'; then
+  fail "POSCTRL-D  promotion became possible on a licence alone"
+else
+  CTR=$((CTR+1)); pass "POSCTRL-D  a declared licence alone does not enable promotion (correct)"
+fi
+# An agent-attributed approval must NOT enable promotion either.
+python3 -c "
+import json
+d=json.load(open('$TMP/c.json'))
+d['approval']={'state':'APPROVED','decided_by':'Agent'}
+json.dump(d,open('$TMP/c_agent.json','w'))"
+if python3 "$CHECK" "$TMP/c_agent.json" --promote 2>&1 | grep -q '^PROMOTED'; then
+  fail "POSCTRL-E  an agent-attributed approval enabled promotion"
+else
+  CTR=$((CTR+1)); pass "POSCTRL-E  an agent-attributed approval does NOT enable promotion"
 fi
 
 sect "3. Registry is consistent with the gate (computed, not asserted)"
@@ -183,7 +203,7 @@ mkdir -p "$TMP/emj" && printf 'x \360\237\216\257 y\n' > "$TMP/emj/a.md"
 if python3 "$EMOJI" "$TMP/emj" >/dev/null 2>&1; then
   fail "emoji checker failed to detect a real violation"
 else
-  NP=$((NP+1)); pass "POSCTRL-B  emoji checker detects a real violation"
+  CTR=$((CTR+1)); pass "POSCTRL-B  emoji checker detects a real violation"
 fi
 rm -rf "$TMP/emj"
 
@@ -218,7 +238,7 @@ fi
 
 sect "9. P4 approval is bounded, attributable, and promotes nothing"
 python3 - "$SPS2" > "$TMP/appr" 2>&1 <<'PY'
-import json, os, re, sys
+import json, os, re, subprocess, sys
 B = sys.argv[1]
 req = json.load(open(B + '/requirements/P4-REQUIREMENTS.json'))
 dec = json.load(open(B + '/decisions/P4-DECISIONS.json'))
@@ -254,20 +274,48 @@ for c in reg['capabilities']:
         print("APPROVAL_CHANGED_LIFECYCLE: %s -> %s"
               % (c['capability_id'], c['lifecycle_state']))
 
-# The licence must remain UNRESOLVED and unchosen.
+# The licence was RESOLVED by explicit user decision on 2026-10-04 (MIT). The
+# invariant is no longer "unresolved" but "resolved only by an attributable User
+# decision that is consistent with the tracked licence file and the registry".
 lic = [d for d in dec['decisions'] if d.get('unresolved', {}).get('item')
        == 'repository_licence']
 if not lic:
     print("LICENCE_DECISION_RECORD_MISSING")
-elif lic[0]['unresolved']['state'] != 'UNRESOLVED':
-    print("LICENCE_SILENTLY_RESOLVED: %s" % lic[0]['unresolved']['state'])
-if any((c.get('licence') or '') in ('MIT', 'Apache-2.0', 'BSD-3-Clause',
-                                    'GPL-3.0', 'ISC') for c in reg['capabilities']):
-    print("LICENCE_INVENTED: a permissive licence was written into the registry")
-for root, _, files in os.walk(B):
-    for f in files:
-        if f.upper() in ('LICENSE', 'LICENCE', 'COPYING'):
-            print("LICENCE_FILE_ADDED: %s" % os.path.join(root, f))
+else:
+    st = lic[0]['unresolved']
+    if st['state'] != 'RESOLVED_BY_USER_DECISION':
+        print("LICENCE_UNEXPECTED_STATE: %s" % st['state'])
+    if st.get('decided_by') != 'User':
+        print("LICENCE_NOT_USER_DECIDED: %s" % st.get('decided_by'))
+    if st.get('licence') != 'MIT':
+        print("LICENCE_MISMATCH_RECORD_VS_FILE: %s" % st.get('licence'))
+    if st.get('provenance_prerequisite') != 'SATISFIED_BY_USER_ATTESTATION':
+        print("LICENCE_PROVENANCE_NOT_ATTESTED: %s"
+              % st.get('provenance_prerequisite'))
+    if st.get('third_party_code_relicensed') is not False:
+        print("LICENCE_THIRD_PARTY_CLAIM: third-party relicensing must be false")
+    if st.get('independent_legal_verification_claimed') is not False:
+        print("LICENCE_OVERCLAIMS_VERIFICATION")
+
+# A tracked licence file must exist and the registry must agree with it.
+R = os.path.dirname(B)
+tracked = subprocess.run(['git', '-C', R, 'ls-files'], capture_output=True,
+                         text=True).stdout.split()
+lic_files = [n for n in tracked
+             if re.fullmatch(r'(LICEN[SC]E|COPYING)(\.\w+)?', n, re.I)]
+if not lic_files:
+    print("LICENCE_FILE_NOT_TRACKED: gate D cannot pass without it")
+for c in reg['capabilities']:
+    if c.get('licence') != 'KNOWN_PERMISSIVE' or \
+       c.get('licence_name') != 'MIT':
+        print("LICENCE_REGISTRY_MISMATCH: %s licence=%s name=%s"
+              % (c['capability_id'], c.get('licence'), c.get('licence_name')))
+    if c.get('licence_decided_by') != 'User':
+        print("LICENCE_REGISTRY_NOT_USER_DECIDED: %s" % c['capability_id'])
+    if not (c.get('licence_evidence') or '').strip():
+        print("LICENCE_REGISTRY_NO_EVIDENCE: %s" % c['capability_id'])
+    if c.get('licence_decided_on') is None:
+        print("LICENCE_REGISTRY_UNDATED: %s" % c['capability_id'])
 
 # P5 must not exist and must not be approved.
 for p in ('requirements/P5-REQUIREMENTS.json', 'handoff/HANDOFF-P5.json',
@@ -315,7 +363,7 @@ rejected = any(AGENT.search((r['approval'].get('approved_by') or ''))
 sys.exit(0 if rejected else 1)
 PY
 then
-  pass "POSCTRL-D  an agent-attributed approval is rejected"
+  CTR=$((CTR+1)); pass "POSCTRL-G  an agent-attributed approval is rejected"
 else
   fail "POSCTRL-D  agent-attributed approval was NOT rejected"
 fi
@@ -444,9 +492,9 @@ print('DETECTED' if any(k in TOKEN_KEYS for k in (d.get('env') or {}))
       else 'MISSED')
 PY
 )" = "DETECTED" ]; then
-  pass "POSCTRL-E  the committed-blob guard detects a planted credential key"
+  CTR=$((CTR+1)); pass "POSCTRL-H  the committed-blob guard detects a planted credential key"
 else
-  fail "POSCTRL-E  the committed-blob guard MISSED a planted credential key"
+  fail "POSCTRL-H  the committed-blob guard MISSED a planted credential key"
 fi
 
 sect "12c. Open decisions must stay open until the user answers them"
@@ -460,22 +508,35 @@ lic = os.path.join(D, 'OPEN-DECISION-LICENCE.json')
 setg = os.path.join(D, 'OPEN-DECISION-CLAUDE-SETTINGS.json')
 prov = os.path.join(D, 'PROVENANCE-SPS-CMS.json')
 
-# 1. The licence decision must remain open and unattributed.
+# 1. The licence decision was resolved by explicit user instruction, so it may
+#    no longer be pending, but it must record who decided it and on what basis.
 if not os.path.isfile(lic):
-    print("OPEN_DECISION_RECORD_MISSING: OPEN-DECISION-LICENCE.json")
+    print("DECISION_RECORD_MISSING: OPEN-DECISION-LICENCE.json")
 else:
     d = json.load(open(lic))
     did = d.get('decision_id')
-    if d.get('state') != 'PENDING_USER_DECISION':
-        print("OPEN_DECISION_SILENTLY_CLOSED: %s state=%s" % (did, d.get('state')))
-    if d.get('decided_by') not in (None, ''):
-        print("OPEN_DECISION_SELF_ANSWERED: %s decided_by=%s"
+    if d.get('state') != 'APPROVED':
+        print("LICENCE_DECISION_UNEXPECTED_STATE: %s state=%s"
+              % (did, d.get('state')))
+    if d.get('decided_by') != 'User':
+        print("LICENCE_DECISION_NOT_USER_ATTRIBUTED: %s decided_by=%s"
               % (did, d.get('decided_by')))
-    if d.get('resolved_on') not in (None, ''):
-        print("OPEN_DECISION_FALSELY_RESOLVED: %s resolved_on=%s"
-              % (did, d.get('resolved_on')))
+    if d.get('licence') != 'MIT':
+        print("LICENCE_DECISION_UNEXPECTED_VALUE: %s" % d.get('licence'))
+    if d.get('scope') != 'SPS 2.0 repository':
+        print("LICENCE_SCOPE_UNEXPECTED: %s" % d.get('scope'))
+    if d.get('provenance_prerequisite') != 'SATISFIED_BY_USER_ATTESTATION':
+        print("LICENCE_PREREQUISITE_WRONG: %s"
+              % d.get('provenance_prerequisite'))
+    if d.get('third_party_code_relicensed') is not False:
+        print("LICENCE_THIRD_PARTY_RELICENSE_CLAIM")
+    if d.get('independent_legal_verification_claimed') is not False:
+        print("LICENCE_OVERCLAIMS_LEGAL_VERIFICATION")
+    ge = d.get('gate_effect') or {}
+    if 'STILL BLOCKED' not in (ge.get('gate_H') or ''):
+        print("LICENCE_RECORD_IMPLIES_GATE_H_CLEARED")
     if len(d.get('options') or []) < 2:
-        print("OPEN_DECISION_NO_OPTIONS: %s" % did)
+        print("LICENCE_OPTIONS_DROPPED: %s" % did)
 
 # 2. The settings decision was resolved by explicit user instruction, so it may
 #    no longer be pending, but it must record who resolved it.
@@ -504,35 +565,88 @@ else:
        not (d.get('evidence_limits') or []):
         print("PROVENANCE_FINDING_UNSUPPORTED: no evidence recorded")
     if d.get('finding') in ('VERIFIED_PROJECT_AUTHORED', 'VERIFIED_THIRD_PARTY'):
-        # A VERIFIED finding must record who confirmed it. Without an explicit
-        # User confirmation the agent has upgraded the label on its own
-        # authority, which is exactly the failure mode this guards against.
+        # A VERIFIED finding must record who confirmed it, AND must not claim
+        # independent verification the agent never performed. An attested
+        # finding is recorded as attested; an agent cannot upgrade it to fact.
         if not (d.get('confirmed_by') or '').strip():
             print("PROVENANCE_VERIFIED_WITHOUT_USER_CONFIRMATION: %s"
                   % d.get('finding'))
+        if d.get('evidence_class') != 'USER_ATTESTATION':
+            print("PROVENANCE_VERIFIED_WRONG_EVIDENCE_CLASS: %s"
+                  % d.get('evidence_class'))
+        if d.get('independently_verified') is not False:
+            print("PROVENANCE_OVERCLAIMS_INDEPENDENT_VERIFICATION")
+        if not (d.get('what_this_does_not_mean') or []):
+            print("PROVENANCE_VERIFIED_WITHOUT_SCOPE_LIMITS")
     if d.get('finding') == 'UNKNOWN' and not d.get('evidence_limits'):
         print("PROVENANCE_UNKNOWN_WITHOUT_STATED_LIMITS")
 
-# 4. The licence must still be unresolved in the P4 decision record.
+# 4. The licence state in the P4 decision record must agree with the decision.
 dec = json.load(open(D + '/P4-DECISIONS.json'))
 lic_rec = [x for x in dec['decisions']
            if (x.get('unresolved') or {}).get('item') == 'repository_licence']
 if not lic_rec:
     print("LICENCE_DECISION_RECORD_MISSING")
-elif lic_rec[0]['unresolved']['state'] != 'UNRESOLVED':
-    print("LICENCE_SILENTLY_RESOLVED: %s" % lic_rec[0]['unresolved']['state'])
-
-# 5. Still no licence file anywhere.
-for root, dirs, files in os.walk(B):
-    dirs[:] = [d for d in dirs if d != '.git']
-    for f in files:
-        if f.upper() in ('LICENSE', 'LICENCE', 'COPYING'):
-            print("LICENCE_FILE_ADDED: %s" % os.path.join(root, f))
+else:
+    u = lic_rec[0]['unresolved']
+    if u['state'] != 'RESOLVED_BY_USER_DECISION':
+        print("LICENCE_RECORD_STATE_MISMATCH: %s" % u['state'])
+    if u.get('licence') != 'MIT' or u.get('decided_by') != 'User':
+        print("LICENCE_RECORD_MISMATCH: licence=%s decided_by=%s"
+              % (u.get('licence'), u.get('decided_by')))
+    if u.get('independent_legal_verification_claimed') is not False:
+        print("LICENCE_RECORD_OVERCLAIMS_VERIFICATION")
 PY
 if [ -s "$TMP/open" ]; then
   while IFS= read -r l; do fail "$l"; done < "$TMP/open"
 else
   pass "open decisions remain open, unattributed, and carry options"
+fi
+
+sect "12d. Gate H must stay blocked and nothing may be promoted"
+# The licence decision satisfied gate D. Gate H is independent and remains
+# blocked. This section locks that in so no future run can quietly promote.
+python3 - "$SPS2" "$REPO" > "$TMP/h" 2>&1 <<'PY'
+import json, os, subprocess, sys
+B, R = sys.argv[1], sys.argv[2]
+reg = json.load(open(B + '/capability/registry.json'))
+if reg['counts']['promoted'] != 0:
+    print("PROMOTION_OCCURRED_WITHOUT_APPROVAL: %d promoted"
+          % reg['counts']['promoted'])
+for c in reg['capabilities']:
+    # Every capability must remain unapproved for production.
+    ap = c.get('approval') or {}
+    if ap.get('state') == 'APPROVED':
+        print("CAPABILITY_PRODUCTION_APPROVED: %s" % c['capability_id'])
+    if c.get('lifecycle_state') in ('ACTIVE', 'PROMOTED', 'EVALUATED'):
+        print("CAPABILITY_ACTIVATED_WITHOUT_APPROVAL: %s -> %s"
+              % (c['capability_id'], c['lifecycle_state']))
+    if (c.get('promotion_decision') or '') not in ('NOT_PROMOTED', ''):
+        print("PROMOTION_DECISION_SET: %s -> %s"
+              % (c['capability_id'], c.get('promotion_decision')))
+    pa = c.get('promotion_assessment') or {}
+    if 'H' not in (pa.get('blocking_gates') or []):
+        print("GATE_H_NO_LONGER_BLOCKING: %s" % c['capability_id'])
+# The handoff must record promotion as not approved.
+ho = json.load(open(B + '/handoff/HANDOFF-P4.json'))['handoffs'][0]
+pps = ho.get('production_promotion_state') or {}
+if pps.get('approved') is not False:
+    print("HANDOFF_PROMOTION_APPROVAL_CLAIMED")
+if pps.get('promoted_count') != 0:
+    print("HANDOFF_PROMOTED_COUNT_NONZERO")
+if pps.get('gate_H') != 'BLOCKED':
+    print("HANDOFF_GATE_H_NOT_BLOCKED")
+# No P5 artefact may exist.
+for p in ('requirements/P5-REQUIREMENTS.json', 'handoff/HANDOFF-P5.json',
+          'decisions/P5-DECISIONS.json', 'evidence/P5-EVIDENCE.json',
+          'tasks/P5-TASKS.md', 'tools/validate-p5.sh'):
+    if os.path.exists(os.path.join(B, p)):
+        print("P5_ARTIFACT_CREATED: %s" % p)
+PY
+if [ -s "$TMP/h" ]; then
+  while IFS= read -r l; do fail "$l"; done < "$TMP/h"
+else
+  pass "gate H remains blocked and 0 of 5 capabilities are promoted"
 fi
 
 fi  # end structural
@@ -605,7 +719,7 @@ else
 fi
 echo ""
 if [ "$FAIL" -eq 0 ] && [ "$NNF" -eq 0 ]; then
-  echo -e "${GREEN}${BOLD}== P4 PROMOTION VALID: $PASS checks passed, 0 failed, $NNP negative cases rejected, $NP controls enforced ==${NC}"
+  echo -e "${GREEN}${BOLD}== P4 PROMOTION VALID: $PASS checks passed, 0 failed, $NNP negative cases rejected, $CTR controls enforced ==${NC}"
   exit 0
 fi
 echo -e "${RED}${BOLD}== P4 PROMOTION INVALID: $PASS passed, $FAIL failed, $NNF missed ==${NC}"

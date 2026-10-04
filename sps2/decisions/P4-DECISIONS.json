@@ -85,9 +85,18 @@
       },
       "unresolved": {
         "item": "repository_licence",
-        "state": "UNRESOLVED",
-        "resolved_by": "User explicit licence decision (not yet given)",
-        "blocking_gate": "D"
+        "state": "RESOLVED_BY_USER_DECISION",
+        "resolved_on": "2026-10-04",
+        "decided_by": "User",
+        "licence": "MIT",
+        "scope": "SPS 2.0 repository",
+        "licence_file": "LICENSE",
+        "provenance_prerequisite": "SATISFIED_BY_USER_ATTESTATION",
+        "third_party_code_relicensed": false,
+        "independent_legal_verification_claimed": false,
+        "blocking_gate": "D",
+        "gate_D_now": "SATISFIED",
+        "note": "Gate D is satisfied. Gate H remains BLOCKED: no explicit User production approval exists, so 0 of 5 capabilities are promoted. D and H are independent."
       }
     }
   ]

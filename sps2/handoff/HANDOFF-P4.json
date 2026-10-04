@@ -78,8 +78,24 @@
         "EV-P4-011"
       ],
       "user_approval": "PENDING_USER_APPROVAL",
-      "next_allowed_action": "Wait for an explicit user instruction. The next permitted actions are a licence decision and a separate production promotion approval, each of which the user must give explicitly. Do NOT begin P5 without instruction.",
-      "forbidden_next_action": "Do NOT start P5, do NOT promote any capability to production, do NOT select or add a licence, do NOT install any capability, skill, MCP or package, do NOT create a remote, do NOT push, do NOT modify the legacy implementation, do NOT purge checkpoint a7767cf, and do NOT perform Phase 01 remediation.",
+      "next_allowed_action": "Wait for an explicit user instruction. The only decision that can change the production registry is a separate, explicit User production promotion approval, which has NOT been given. Do NOT begin P5 without instruction.",
+      "forbidden_next_action": "Do NOT promote any capability to production without an explicit separate User approval, do NOT begin P5, do NOT perform capability discovery, do NOT install any capability, skill, MCP, dependency or external code, do NOT create a remote, do NOT push, do NOT modify the legacy implementation, do NOT purge checkpoint a7767cf, and do NOT perform Phase 01 remediation.",
+      "licence_state": {
+        "licence": "MIT",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "scope": "SPS 2.0 repository",
+        "licence_file": "LICENSE",
+        "provenance_prerequisite": "SATISFIED_BY_USER_ATTESTATION",
+        "independently_verified": false,
+        "gate_D": "SATISFIED"
+      },
+      "production_promotion_state": {
+        "approved": false,
+        "promoted_count": 0,
+        "gate_H": "BLOCKED",
+        "reason": "No explicit User production promotion approval exists. Gate H is independent of gate D, so declaring the MIT licence did not and must not promote anything."
+      },
       "approved_by": "User",
       "approved_on": "2026-10-04",
       "approval_scope": {

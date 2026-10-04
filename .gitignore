@@ -115,3 +115,9 @@ Desktop.ini
 .roo/
 .continue/
 .aider*
+# Kilo agent worktrees: generated tooling state (nested checkout of this repo,
+# created by the agent harness). Narrow on purpose: only .kilo/worktrees/ is
+# excluded by this rule, so any other .kilo content stays trackable. Mirrors
+# the tool's own local .git/info/exclude entry. (Note: .kilo/.gitignore is
+# ignored by the tool's OWN rule, not by this one.)
+.kilo/worktrees/

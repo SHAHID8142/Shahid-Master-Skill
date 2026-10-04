@@ -14,7 +14,6 @@
       "capability_id": "CAP-P03-001",
       "name": "promotion-gate",
       "blocking_gates": [
-        "D",
         "H"
       ],
       "recommendation": "REMAIN_CANDIDATE",
@@ -22,7 +21,7 @@
         "A": true,
         "B": true,
         "C": true,
-        "D": false,
+        "D": true,
         "E": true,
         "F": true,
         "G": true,
@@ -36,7 +35,6 @@
       "capability_id": "CAP-P03-002",
       "name": "deterministic-ranking",
       "blocking_gates": [
-        "D",
         "H"
       ],
       "recommendation": "REMAIN_CANDIDATE",
@@ -44,7 +42,7 @@
         "A": true,
         "B": true,
         "C": true,
-        "D": false,
+        "D": true,
         "E": true,
         "F": true,
         "G": true,
@@ -58,7 +56,6 @@
       "capability_id": "CAP-P03-003",
       "name": "forced-user-choice",
       "blocking_gates": [
-        "D",
         "H"
       ],
       "recommendation": "REMAIN_CANDIDATE",
@@ -66,7 +63,7 @@
         "A": true,
         "B": true,
         "C": true,
-        "D": false,
+        "D": true,
         "E": true,
         "F": true,
         "G": true,
@@ -80,7 +77,6 @@
       "capability_id": "CAP-P03-004",
       "name": "staleness-model",
       "blocking_gates": [
-        "D",
         "H"
       ],
       "recommendation": "REMAIN_CANDIDATE",
@@ -88,7 +84,7 @@
         "A": true,
         "B": true,
         "C": true,
-        "D": false,
+        "D": true,
         "E": true,
         "F": true,
         "G": true,
@@ -102,7 +98,6 @@
       "capability_id": "CAP-P03-005",
       "name": "seo-cls-threshold-verifier",
       "blocking_gates": [
-        "D",
         "F",
         "H",
         "K"
@@ -112,7 +107,7 @@
         "A": true,
         "B": true,
         "C": true,
-        "D": false,
+        "D": true,
         "E": true,
         "F": false,
         "G": true,

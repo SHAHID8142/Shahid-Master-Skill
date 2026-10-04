@@ -36,8 +36,8 @@
         "extraction_record": "sps2/research/P2-CAPABILITY-EXTRACTION.json",
         "extraction_note": "Promoted from a P3 candidate record, not from a P2 research record. No P2 research id is used as a capability id."
       },
-      "licence": "UNDECLARED",
-      "licence_evidence": "The repository contains no LICENSE or COPYING file, so no licence is declared for this project-authored source. Recorded as UNDECLARED rather than assumed permissive.",
+      "licence": "KNOWN_PERMISSIVE",
+      "licence_evidence": "The user selected the MIT licence for the SPS 2.0 repository on 2026-10-04. A LICENSE file exists at the repository root and is tracked. The applicable licence is MIT, classified KNOWN_PERMISSIVE. The licence prerequisite was satisfied by USER_ATTESTATION of skills/sps-cms provenance, which was NOT independently verified. No third-party code was identified and none was relicensed. This licence statement was not independently verified as legally valid.",
       "security": {
         "status": "VERIFIED_SAFE",
         "evidence": "Static source review of engine.promote; negative cases enforced by validate-p3.sh",
@@ -132,8 +132,8 @@
           },
           "D": {
             "gate": "LICENCE",
-            "pass": false,
-            "reason": "repository declares no LICENSE or COPYING file, so the applicable licence is UNRESOLVED; an unresolved licence blocks production promotion"
+            "pass": true,
+            "reason": "licence known, evidenced, and repository licence declared"
           },
           "E": {
             "gate": "MAINTENANCE",
@@ -172,12 +172,14 @@
           }
         },
         "blocking_gates": [
-          "D",
           "H"
         ],
         "recommendation": "REMAIN_CANDIDATE",
         "promotion_decision": "NOT_PROMOTED"
-      }
+      },
+      "licence_name": "MIT",
+      "licence_decided_by": "User",
+      "licence_decided_on": "2026-10-04"
     },
     {
       "capability_id": "CAP-P03-002",
@@ -200,8 +202,8 @@
         "extraction_record": "sps2/research/P2-CAPABILITY-EXTRACTION.json",
         "extraction_note": "Promoted from a P3 candidate record, not from a P2 research record. No P2 research id is used as a capability id."
       },
-      "licence": "UNDECLARED",
-      "licence_evidence": "The repository contains no LICENSE or COPYING file, so no licence is declared for this project-authored source. Recorded as UNDECLARED rather than assumed permissive.",
+      "licence": "KNOWN_PERMISSIVE",
+      "licence_evidence": "The user selected the MIT licence for the SPS 2.0 repository on 2026-10-04. A LICENSE file exists at the repository root and is tracked. The applicable licence is MIT, classified KNOWN_PERMISSIVE. The licence prerequisite was satisfied by USER_ATTESTATION of skills/sps-cms provenance, which was NOT independently verified. No third-party code was identified and none was relicensed. This licence statement was not independently verified as legally valid.",
       "security": {
         "status": "VERIFIED_SAFE",
         "evidence": "Static source review of engine.rank; determinism proven over 24 input permutations",
@@ -296,8 +298,8 @@
           },
           "D": {
             "gate": "LICENCE",
-            "pass": false,
-            "reason": "repository declares no LICENSE or COPYING file, so the applicable licence is UNRESOLVED; an unresolved licence blocks production promotion"
+            "pass": true,
+            "reason": "licence known, evidenced, and repository licence declared"
           },
           "E": {
             "gate": "MAINTENANCE",
@@ -336,12 +338,14 @@
           }
         },
         "blocking_gates": [
-          "D",
           "H"
         ],
         "recommendation": "REMAIN_CANDIDATE",
         "promotion_decision": "NOT_PROMOTED"
-      }
+      },
+      "licence_name": "MIT",
+      "licence_decided_by": "User",
+      "licence_decided_on": "2026-10-04"
     },
     {
       "capability_id": "CAP-P03-003",
@@ -364,8 +368,8 @@
         "extraction_record": "sps2/research/P2-CAPABILITY-EXTRACTION.json",
         "extraction_note": "Promoted from a P3 candidate record, not from a P2 research record. No P2 research id is used as a capability id."
       },
-      "licence": "UNDECLARED",
-      "licence_evidence": "The repository contains no LICENSE or COPYING file, so no licence is declared for this project-authored source. Recorded as UNDECLARED rather than assumed permissive.",
+      "licence": "KNOWN_PERMISSIVE",
+      "licence_evidence": "The user selected the MIT licence for the SPS 2.0 repository on 2026-10-04. A LICENSE file exists at the repository root and is tracked. The applicable licence is MIT, classified KNOWN_PERMISSIVE. The licence prerequisite was satisfied by USER_ATTESTATION of skills/sps-cms provenance, which was NOT independently verified. No third-party code was identified and none was relicensed. This licence statement was not independently verified as legally valid.",
       "security": {
         "status": "VERIFIED_SAFE",
         "evidence": "Static source review of engine.apply_forced_choice; blocked for SUSPECTED_RISK and VULNERABLE",
@@ -460,8 +464,8 @@
           },
           "D": {
             "gate": "LICENCE",
-            "pass": false,
-            "reason": "repository declares no LICENSE or COPYING file, so the applicable licence is UNRESOLVED; an unresolved licence blocks production promotion"
+            "pass": true,
+            "reason": "licence known, evidenced, and repository licence declared"
           },
           "E": {
             "gate": "MAINTENANCE",
@@ -500,12 +504,14 @@
           }
         },
         "blocking_gates": [
-          "D",
           "H"
         ],
         "recommendation": "REMAIN_CANDIDATE",
         "promotion_decision": "NOT_PROMOTED"
-      }
+      },
+      "licence_name": "MIT",
+      "licence_decided_by": "User",
+      "licence_decided_on": "2026-10-04"
     },
     {
       "capability_id": "CAP-P03-004",
@@ -528,8 +534,8 @@
         "extraction_record": "sps2/research/P2-CAPABILITY-EXTRACTION.json",
         "extraction_note": "Promoted from a P3 candidate record, not from a P2 research record. No P2 research id is used as a capability id."
       },
-      "licence": "UNDECLARED",
-      "licence_evidence": "The repository contains no LICENSE or COPYING file, so no licence is declared for this project-authored source. Recorded as UNDECLARED rather than assumed permissive.",
+      "licence": "KNOWN_PERMISSIVE",
+      "licence_evidence": "The user selected the MIT licence for the SPS 2.0 repository on 2026-10-04. A LICENSE file exists at the repository root and is tracked. The applicable licence is MIT, classified KNOWN_PERMISSIVE. The licence prerequisite was satisfied by USER_ATTESTATION of skills/sps-cms provenance, which was NOT independently verified. No third-party code was identified and none was relicensed. This licence statement was not independently verified as legally valid.",
       "security": {
         "status": "VERIFIED_SAFE",
         "evidence": "Static source review; STALE_AS_ACTIVE and STALE_WITHOUT_REVIEW enforced",
@@ -624,8 +630,8 @@
           },
           "D": {
             "gate": "LICENCE",
-            "pass": false,
-            "reason": "repository declares no LICENSE or COPYING file, so the applicable licence is UNRESOLVED; an unresolved licence blocks production promotion"
+            "pass": true,
+            "reason": "licence known, evidenced, and repository licence declared"
           },
           "E": {
             "gate": "MAINTENANCE",
@@ -664,12 +670,14 @@
           }
         },
         "blocking_gates": [
-          "D",
           "H"
         ],
         "recommendation": "REMAIN_CANDIDATE",
         "promotion_decision": "NOT_PROMOTED"
-      }
+      },
+      "licence_name": "MIT",
+      "licence_decided_by": "User",
+      "licence_decided_on": "2026-10-04"
     },
     {
       "capability_id": "CAP-P03-005",
@@ -692,8 +700,8 @@
         "extraction_record": "sps2/research/P2-CAPABILITY-EXTRACTION.json",
         "extraction_note": "Promoted from a P3 candidate record, not from a P2 research record. No P2 research id is used as a capability id."
       },
-      "licence": "UNDECLARED",
-      "licence_evidence": "The repository contains no LICENSE or COPYING file, so no licence is declared for this project-authored source. Recorded as UNDECLARED rather than assumed permissive.",
+      "licence": "KNOWN_PERMISSIVE",
+      "licence_evidence": "The user selected the MIT licence for the SPS 2.0 repository on 2026-10-04. A LICENSE file exists at the repository root and is tracked. The applicable licence is MIT, classified KNOWN_PERMISSIVE. The licence prerequisite was satisfied by USER_ATTESTATION of skills/sps-cms provenance, which was NOT independently verified. No third-party code was identified and none was relicensed. This licence statement was not independently verified as legally valid.",
       "security": {
         "status": "VERIFIED_SAFE",
         "evidence": "CLS good at or below 0.1 and poor above 0.25 confirmed verbatim in SRC-017 with stated derivation",
@@ -783,8 +791,8 @@
           },
           "D": {
             "gate": "LICENCE",
-            "pass": false,
-            "reason": "repository declares no LICENSE or COPYING file, so the applicable licence is UNRESOLVED; an unresolved licence blocks production promotion"
+            "pass": true,
+            "reason": "licence known, evidenced, and repository licence declared"
           },
           "E": {
             "gate": "MAINTENANCE",
@@ -823,14 +831,16 @@
           }
         },
         "blocking_gates": [
-          "D",
           "F",
           "H",
           "K"
         ],
         "recommendation": "DEFER",
         "promotion_decision": "NOT_PROMOTED"
-      }
+      },
+      "licence_name": "MIT",
+      "licence_decided_by": "User",
+      "licence_decided_on": "2026-10-04"
     }
   ],
   "deferred": [
