@@ -138,11 +138,35 @@ jq -e '.approval_scope.forensic_checkpoint_a7767cf | test("PRESERVED")' \
   && pass "forensic checkpoint a7767cf recorded as PRESERVED" \
   || fail "forensic checkpoint scope missing"
 
-# Approval must not silently promote capabilities past CANDIDATE.
-jq -e '[.capabilities[].lifecycle_state] | all(. == "CANDIDATE")' \
-  "$SPS2/capability/registry.json" >/dev/null 2>&1 \
-  && pass "no capability promoted beyond CANDIDATE by the approval" \
-  || fail "a capability lifecycle changed without its own approval"
+# P3 asserted every capability stayed at CANDIDATE. That was correct while no
+# promotion had been approved. P4 now records an explicit User production
+# approval, so the invariant becomes: a capability may advance beyond CANDIDATE
+# ONLY if it carries its own attributable User approval. Unapproved candidates
+# must still be at CANDIDATE.
+python3 - "$SPS2" > "$TMP/lc" 2>&1 <<'PY'
+import json, os, sys
+B = sys.argv[1]
+PROMOTED_STATES = {'EVALUATED', 'ACTIVE', 'PROMOTED', 'APPROVED', 'INSTALLED'}
+reg = json.load(open(B + '/capability/registry.json'))
+for c in reg['capabilities']:
+    ap = c.get('approval') or {}
+    user_ok = (ap.get('state') == 'APPROVED'
+               and ap.get('decided_by') == 'User'
+               and 'production promotion' in (ap.get('scope') or ''))
+    lc = c.get('lifecycle_state')
+    # Only a *promoted* lifecycle state requires User approval. CANDIDATE,
+    # DEFERRED and REJECTED are legitimate classifications without approval.
+    if lc in PROMOTED_STATES and not user_ok:
+        print("LIFECYCLE_WITHOUT_USER_APPROVAL: %s state=%s approval=%s/%s"
+              % (c['capability_id'], lc, ap.get('state'), ap.get('decided_by')))
+    if user_ok and not c.get('promotion_record'):
+        print("APPROVED_WITHOUT_PROMOTION_RECORD: %s" % c['capability_id'])
+PY
+if [ -s "$TMP/lc" ]; then
+  while IFS= read -r l; do fail "$l"; done < "$TMP/lc"
+else
+  pass "every capability past CANDIDATE carries its own User approval"
+fi
 jq -e '[.capabilities[].install_scope] | all(. == "PROJECT_LOCAL")' \
   "$SPS2/capability/registry.json" >/dev/null 2>&1 \
   && pass "every capability remains PROJECT_LOCAL" \
@@ -174,10 +198,35 @@ jq -e '[.capabilities[].install_scope] | all(. == "PROJECT_LOCAL")' \
   "$SPS2/capability/registry.json" >/dev/null 2>&1 \
   && pass "every registered capability is PROJECT_LOCAL" \
   || fail "a registered capability is not project-local"
-jq -e '[.capabilities[].approval.state] | all(. != "APPROVED")' \
-  "$SPS2/capability/registry.json" >/dev/null 2>&1 \
-  && pass "no capability is marked APPROVED by the agent" \
-  || fail "a capability claims approval without user authority"
+# An APPROVED capability is only legitimate if the User granted it. The agent
+# may never mark a capability APPROVED on its own authority.
+python3 - "$SPS2" > "$TMP/ap" 2>&1 <<'PY'
+import json, re, sys
+B = sys.argv[1]
+AGENTISH = re.compile(r'\b(agent|ai|assistant|model|bot|self|script|cline)\b',
+                      re.I)
+reg = json.load(open(B + '/capability/registry.json'))
+for c in reg['capabilities']:
+    ap = c.get('approval') or {}
+    if ap.get('state') != 'APPROVED':
+        continue
+    who = (ap.get('decided_by') or '').strip()
+    if not who:
+        print("APPROVED_WITHOUT_DECIDER: %s" % c['capability_id'])
+    elif AGENTISH.search(who):
+        print("APPROVED_BY_AGENT: %s decided_by=%s"
+              % (c['capability_id'], who))
+    if not (ap.get('decided_on') or '').strip():
+        print("APPROVED_UNDATED: %s" % c['capability_id'])
+    if 'production promotion' not in (ap.get('scope') or ''):
+        print("APPROVED_OUTSIDE_PROMOTION_SCOPE: %s scope=%s"
+              % (c['capability_id'], ap.get('scope')))
+PY
+if [ -s "$TMP/ap" ]; then
+  while IFS= read -r l; do fail "$l"; done < "$TMP/ap"
+else
+  pass "every APPROVED capability is attributable to the User"
+fi
 jq -e '[.deferred[].reason] | all(. != null and length > 10)' \
   "$SPS2/capability/registry.json" >/dev/null 2>&1 \
   && pass "every deferred candidate carries a stated reason" \

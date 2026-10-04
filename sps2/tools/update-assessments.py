@@ -27,7 +27,15 @@ for c in reg['capabilities']:
         'promotion_decision': ('PROMOTED_TO_PRODUCTION' if rec == 'PROMOTE'
                               else 'NOT_PROMOTED'),
     }
-    c['lifecycle_state'] = 'EVALUATED' if rec == 'PROMOTE' else 'CANDIDATE'
+    # Lifecycle wording must stay honest about what actually happened. Nothing
+    # was installed, so a promoted capability is EVALUATED and approved for
+    # production, not ACTIVE. A deferred capability is DEFERRED explicitly.
+    if rec == 'PROMOTE':
+        c['lifecycle_state'] = 'EVALUATED'
+    elif rec == 'DEFER':
+        c['lifecycle_state'] = 'DEFERRED'
+    else:
+        c['lifecycle_state'] = 'CANDIDATE'
     assessments.append({'capability_id': c['capability_id'], 'name': c['name'],
                         'blocking_gates': blocking, 'recommendation': rec,
                         'gate_results': {k: v['pass'] for k, v in

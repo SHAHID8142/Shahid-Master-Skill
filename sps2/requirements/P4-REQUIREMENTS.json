@@ -77,7 +77,12 @@
         ],
         "verified": true,
         "evidence": [
-          "EV-P4-018"
+          "EV-P4-018",
+          "EV-P4-026",
+          "EV-P4-027",
+          "EV-P4-028",
+          "EV-P4-029",
+          "EV-P4-031"
         ]
       },
       "verification": {
@@ -85,7 +90,12 @@
         "method": "AUTOMATED",
         "verifier": "validate-p4.sh",
         "evidence": [
-          "EV-P4-018"
+          "EV-P4-018",
+          "EV-P4-026",
+          "EV-P4-027",
+          "EV-P4-028",
+          "EV-P4-029",
+          "EV-P4-031"
         ],
         "observed_result": "The gate is enforced, not advisory. A capability cannot reach ACTIVE while any gate blocks it: check_p3.py and validate-p4.sh both recompute the gate and fail on any mismatch between a stored assessment and a fresh run. Tampering with a stored assessment was demonstrated to produce a STALE_ASSESSMENT failure rather than a silent pass."
       },
@@ -242,7 +252,8 @@
         ],
         "verified": true,
         "evidence": [
-          "EV-P4-023"
+          "EV-P4-023",
+          "EV-P4-030"
         ]
       },
       "verification": {
@@ -250,7 +261,8 @@
         "method": "AUTOMATED",
         "verifier": "validate-p4.sh",
         "evidence": [
-          "EV-P4-023"
+          "EV-P4-023",
+          "EV-P4-030"
         ],
         "observed_result": "SEO capability semantics stay precise. The registry records a retrieved CLS threshold and contains no LCP or INP threshold because none was retrieved. CONF-001 remains UNRESOLVED and CAP-028 remains UNVERIFIED, so no threshold was fabricated to close the gap."
       },

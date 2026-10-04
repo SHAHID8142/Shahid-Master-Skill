@@ -265,14 +265,22 @@ for r in req['requirements']:
 for d in dec['decisions']:
     approval_ok(d.get('approval'), d['decision_id'])
 
-# P4 approval must NOT have silently promoted anything.
+# A capability may be promoted ONLY under an explicit, attributable User
+# production-promotion approval. Section 12d proves the promoted set matches the
+# approved set exactly; here we only require that any APPROVED approval names
+# the User and scopes itself to production promotion.
 reg = json.load(open(B + '/capability/registry.json'))
-if reg['counts']['promoted'] != 0:
-    print("APPROVAL_PROMOTED_SOMETHING: %d promoted" % reg['counts']['promoted'])
 for c in reg['capabilities']:
-    if c.get('lifecycle_state') in ('ACTIVE', 'EVALUATED', 'PROMOTED'):
-        print("APPROVAL_CHANGED_LIFECYCLE: %s -> %s"
-              % (c['capability_id'], c['lifecycle_state']))
+    ap = c.get('approval') or {}
+    if ap.get('state') == 'APPROVED':
+        if ap.get('decided_by') != 'User':
+            print("APPROVAL_NOT_USER_ATTRIBUTED: %s" % c['capability_id'])
+        scope = (ap.get('scope') or '')
+        if 'production promotion' not in scope:
+            print("APPROVAL_SCOPE_UNEXPECTED: %s scope=%s"
+                  % (c['capability_id'], scope))
+        if not ap.get('decided_on'):
+            print("APPROVAL_UNDATED: %s" % c['capability_id'])
 
 # The licence was RESOLVED by explicit user decision on 2026-10-04 (MIT). The
 # invariant is no longer "unresolved" but "resolved only by an attributable User
@@ -370,9 +378,11 @@ fi
 PROM=$(python3 -c "
 import json
 print(json.load(open('$REG'))['counts']['promoted'])")
-[ "$PROM" = "0" ] \
-  && pass "zero capabilities promoted; P4 approval promoted nothing" \
-  || fail "$PROM promoted - approval must not promote"
+# Promotion is now permitted, but only for the four capabilities the User
+# explicitly approved, and only under an approval naming the User.
+[ "$PROM" = "4" ] \
+  && pass "4 capabilities promoted, matching the User-approved set" \
+  || fail "$PROM promoted - expected the 4 user-approved capabilities"
 
 sect "10. Legacy protection"
 DIFF=$(cd "$REPO" && git diff --name-only c11da27 -- skills scripts plugins .github \
@@ -603,50 +613,90 @@ else
   pass "open decisions remain open, unattributed, and carry options"
 fi
 
-sect "12d. Gate H must stay blocked and nothing may be promoted"
-# The licence decision satisfied gate D. Gate H is independent and remains
-# blocked. This section locks that in so no future run can quietly promote.
-python3 - "$SPS2" "$REPO" > "$TMP/h" 2>&1 <<'PY'
-import json, os, subprocess, sys
-B, R = sys.argv[1], sys.argv[2]
+sect "12d. Promotion is exactly the User-approved set, and nothing else"
+# The User approved production promotion for CAP-P03-001..004 only, each
+# conditioned on every other gate passing. CAP-P03-005 was explicitly excluded.
+# This section proves the promoted set is exactly that set, that every promoted
+# capability genuinely passes A-K, and that nothing was promoted by popularity.
+python3 - "$SPS2" > "$TMP/h" 2>&1 <<'PY'
+import importlib.util as _ilu
+import json, os, sys
+B = sys.argv[1]
+_spec = _ilu.spec_from_file_location("pg", B + '/capability/promotion_gates.py')
+_pg = _ilu.module_from_spec(_spec); _spec.loader.exec_module(_pg)
 reg = json.load(open(B + '/capability/registry.json'))
-if reg['counts']['promoted'] != 0:
-    print("PROMOTION_OCCURRED_WITHOUT_APPROVAL: %d promoted"
-          % reg['counts']['promoted'])
+APPROVED_SET = {'CAP-P03-001', 'CAP-P03-002', 'CAP-P03-003', 'CAP-P03-004'}
+EXCLUDED_SET = {'CAP-P03-005'}
+
+promoted = set()
 for c in reg['capabilities']:
-    # Every capability must remain unapproved for production.
-    ap = c.get('approval') or {}
-    if ap.get('state') == 'APPROVED':
-        print("CAPABILITY_PRODUCTION_APPROVED: %s" % c['capability_id'])
-    if c.get('lifecycle_state') in ('ACTIVE', 'PROMOTED', 'EVALUATED'):
-        print("CAPABILITY_ACTIVATED_WITHOUT_APPROVAL: %s -> %s"
-              % (c['capability_id'], c['lifecycle_state']))
-    if (c.get('promotion_decision') or '') not in ('NOT_PROMOTED', ''):
-        print("PROMOTION_DECISION_SET: %s -> %s"
-              % (c['capability_id'], c.get('promotion_decision')))
+    cid = c['capability_id']
     pa = c.get('promotion_assessment') or {}
-    if 'H' not in (pa.get('blocking_gates') or []):
-        print("GATE_H_NO_LONGER_BLOCKING: %s" % c['capability_id'])
-# The handoff must record promotion as not approved.
-ho = json.load(open(B + '/handoff/HANDOFF-P4.json'))['handoffs'][0]
-pps = ho.get('production_promotion_state') or {}
-if pps.get('approved') is not False:
-    print("HANDOFF_PROMOTION_APPROVAL_CLAIMED")
-if pps.get('promoted_count') != 0:
-    print("HANDOFF_PROMOTED_COUNT_NONZERO")
-if pps.get('gate_H') != 'BLOCKED':
-    print("HANDOFF_GATE_H_NOT_BLOCKED")
-# No P5 artefact may exist.
+    res, blocking = _pg.evaluate(c)
+    if pa.get('promotion_decision') == 'PROMOTED_TO_PRODUCTION':
+        promoted.add(cid)
+        # A promoted capability must genuinely pass every gate right now.
+        if blocking:
+            print("PROMOTED_BUT_BLOCKING: %s blocking=%s" % (cid, blocking))
+        ap = c.get('approval') or {}
+        if ap.get('state') != 'APPROVED' or ap.get('decided_by') != 'User':
+            print("PROMOTED_WITHOUT_USER_APPROVAL: %s" % cid)
+        pr = c.get('promotion_record') or {}
+        for f in ('promoted_on', 'promoted_by', 'previous_lifecycle_state',
+                  'previous_approval_state', 'gate_results_at_promotion'):
+            if pr.get(f) in (None, '', {}):
+                print("PROMOTION_RECORD_INCOMPLETE: %s missing %s" % (cid, f))
+        if pr.get('promoted_by') != 'User':
+            print("PROMOTION_NOT_USER_ATTRIBUTED: %s" % cid)
+    else:
+        # Anything not promoted must carry an explicit classification.
+        if pa.get('recommendation') not in ('DEFER', 'REMAIN_CANDIDATE',
+                                            'REJECT'):
+            print("UNPROMOTED_WITHOUT_CLASSIFICATION: %s" % cid)
+    # Nothing outside the approved set may be promoted.
+    if cid not in APPROVED_SET and pa.get('promotion_decision') == \
+       'PROMOTED_TO_PRODUCTION':
+        print("PROMOTED_OUTSIDE_USER_APPROVAL: %s" % cid)
+    # The excluded candidate must remain blocked and unapproved.
+    if cid in EXCLUDED_SET:
+        if (c.get('approval') or {}).get('state') == 'APPROVED':
+            print("EXCLUDED_CAPABILITY_APPROVED: %s" % cid)
+        if not {'F', 'K'} <= set(blocking):
+            print("EXCLUDED_CAPABILITY_GATE_BYPASSED: %s blocking=%s"
+                  % (cid, blocking))
+        if c.get('lifecycle_state') != 'DEFERRED':
+            print("EXCLUDED_CAPABILITY_NOT_DEFERRED: %s" % cid)
+
+if promoted != APPROVED_SET:
+    print("PROMOTED_SET_MISMATCH: promoted=%s expected=%s"
+          % (sorted(promoted), sorted(APPROVED_SET)))
+if reg['counts']['promoted'] != len(promoted):
+    print("PROMOTED_COUNT_MISMATCH: %s vs %s"
+          % (reg['counts']['promoted'], len(promoted)))
+
+# No P5 artefact may exist, and CONF-001 must remain unresolved.
 for p in ('requirements/P5-REQUIREMENTS.json', 'handoff/HANDOFF-P5.json',
           'decisions/P5-DECISIONS.json', 'evidence/P5-EVIDENCE.json',
           'tasks/P5-TASKS.md', 'tools/validate-p5.sh'):
     if os.path.exists(os.path.join(B, p)):
         print("P5_ARTIFACT_CREATED: %s" % p)
+src = json.load(open(B + '/research/P2-SOURCES.json'))
+if not any('UNRESOLVED' in (c.get('resolution') or '')
+           for c in src.get('conflicts', [])):
+    print("CONF_001_NO_LONGER_UNRESOLVED")
+# No LCP or INP threshold may have been introduced.
+for c in reg['capabilities']:
+    blob = json.dumps(c)
+    for bad in ('"LCP"', '"INP"', 'largest_contentful_paint_ms',
+                'interaction_to_next_paint_ms'):
+        if bad in blob:
+            print("INVENTED_WEB_VITAL_THRESHOLD: %s contains %s"
+                  % (c['capability_id'], bad))
 PY
 if [ -s "$TMP/h" ]; then
   while IFS= read -r l; do fail "$l"; done < "$TMP/h"
 else
-  pass "gate H remains blocked and 0 of 5 capabilities are promoted"
+  pass "promotion is exactly the User-approved set and nothing else"
 fi
 
 fi  # end structural

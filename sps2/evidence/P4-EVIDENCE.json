@@ -378,6 +378,101 @@
       "task_id": "P4",
       "incident_id": "INCIDENT-P3-001"
     }
+  },
+  {
+    "evidence_id": "EV-P4-026",
+    "source": "USER_DECISION",
+    "timestamp": "2026-10-04T00:00:00Z",
+    "command": "python3 sps2/tools/apply-promotion-approval.py",
+    "expected_result": "Explicit User production-promotion approval (Gate H) is recorded only for capabilities whose every other gate A-K passes",
+    "observed_result": "Gate A-K re-evaluated for all five candidates before any approval was written. CAP-P03-001, CAP-P03-002, CAP-P03-003 and CAP-P03-004 passed gates A, B, C, D, E, F, G, I, J and K, with gate H the sole blocker for each. Approval state APPROVED with decided_by=User and scope='production promotion only' was written for those four. CAP-P03-005 was excluded by explicit user instruction and received no approval.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED",
+    "relates_to": {
+      "capability_id": "CAP-P03-001",
+      "requirement_id": "REQ-P4-02",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-027",
+    "source": "USER_DECISION",
+    "timestamp": "2026-10-04T00:00:00Z",
+    "command": "python3 sps2/tools/apply-promotion-approval.py",
+    "expected_result": "Gate H approval for a capability whose other gates all pass, with previous state preserved",
+    "observed_result": "CAP-P03-002 (deterministic-ranking) promoted. Gates A, B, C, D, E, F, G, I, J, K passed at promotion time. Previous lifecycle_state CANDIDATE and previous approval state PENDING_USER_APPROVAL are recorded in the promotion record alongside the timestamp, user attribution and per-gate results.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED",
+    "relates_to": {
+      "capability_id": "CAP-P03-002",
+      "requirement_id": "REQ-P4-02",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-028",
+    "source": "USER_DECISION",
+    "timestamp": "2026-10-04T00:00:00Z",
+    "command": "python3 sps2/tools/apply-promotion-approval.py",
+    "expected_result": "Gate H approval for a capability whose other gates all pass, with previous state preserved",
+    "observed_result": "CAP-P03-003 (forced-user-choice) promoted. Gates A, B, C, D, E, F, G, I, J, K passed at promotion time. Previous lifecycle_state CANDIDATE and previous approval state PENDING_USER_APPROVAL are recorded in the promotion record alongside the timestamp, user attribution and per-gate results.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED",
+    "relates_to": {
+      "capability_id": "CAP-P03-003",
+      "requirement_id": "REQ-P4-02",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-029",
+    "source": "USER_DECISION",
+    "timestamp": "2026-10-04T00:00:00Z",
+    "command": "python3 sps2/tools/apply-promotion-approval.py",
+    "expected_result": "Gate H approval for a capability whose other gates all pass, with previous state preserved",
+    "observed_result": "CAP-P03-004 (staleness-model) promoted. Gates A, B, C, D, E, F, G, I, J, K passed at promotion time. Previous lifecycle_state CANDIDATE and previous approval state PENDING_USER_APPROVAL are recorded in the promotion record alongside the timestamp, user attribution and per-gate results.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED",
+    "relates_to": {
+      "capability_id": "CAP-P03-004",
+      "requirement_id": "REQ-P4-02",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-030",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-04T00:00:00Z",
+    "command": "python3 sps2/capability/promotion_gates.py against CAP-P03-005",
+    "expected_result": "CAP-P03-005 remains blocked because gates F and K are unsatisfied, and neither gate is bypassed",
+    "observed_result": "CAP-P03-005 (seo-cls-threshold-verifier) NOT promoted. Gate F fails because no executable CLS verifier implementation exists. Gate K fails because CONF-001 remains UNRESOLVED. Gate H approval was explicitly withheld by the user for this candidate. Lifecycle state is DEFERRED and promotion_decision is NOT_PROMOTED. No LCP or INP threshold was introduced and no SEO evidence was fabricated.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "capability_id": "CAP-P03-005",
+      "requirement_id": "REQ-P4-06",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-031",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-04T00:00:00Z",
+    "command": "grep popularity sps2/capability/promotion_gates.py",
+    "expected_result": "Promotion does not depend on popularity, recency or research interest",
+    "observed_result": "The promotion gate computes no gate result from popularity, star count or recency. All eleven gate inputs are structural: identity, provenance, security, licence, maintenance, implementation, requirements, approval, scope, staleness and conflicts. Popularity remains TIE_BREAKER_ONLY in selection_policy and plays no part in promotion.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "requirement_id": "REQ-P4-02",
+      "task_id": "P4"
+    }
   }
 ]
 }

@@ -72,10 +72,33 @@
         "EV-P3-004"
       ],
       "confidence": "HIGH",
-      "lifecycle_state": "CANDIDATE",
+      "lifecycle_state": "EVALUATED",
       "origin": "SPS_CORE",
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "required": true,
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "scope": "production promotion only",
+        "explicitly_not_approved": [
+          "P5, and the beginning of any P5 work.",
+          "Promotion of CAP-P03-005, which remains blocked by gates F and K.",
+          "Installing any skill, MCP, dependency or external software."
+        ],
+        "gates_passed_at_approval": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "I",
+          "J",
+          "K",
+          "H"
+        ],
+        "evidence": "User instruction: \"I explicitly approve production promotion under Gate H for the capabilities that already satisfy every other required gate.\""
       },
       "verification": {
         "state": "VERIFIED",
@@ -84,7 +107,8 @@
         "expected_result": "engine.promote accepts a complete record and rejects a record with evidence removed",
         "observed_result": "complete record accepted with zero reasons; record with evidence removed rejected with a MISSING or EVIDENCE reason",
         "evidence": [
-          "EV-P4-012"
+          "EV-P4-012",
+          "EV-P4-026"
         ],
         "verified_by": "deterministic P4 verification harness",
         "note": "Executed, not asserted."
@@ -152,8 +176,8 @@
           },
           "H": {
             "gate": "APPROVAL",
-            "pass": false,
-            "reason": "no explicit User approval; production promotion must await a User decision"
+            "pass": true,
+            "reason": "explicit User approval recorded"
           },
           "I": {
             "gate": "SCOPE",
@@ -171,15 +195,56 @@
             "reason": "no unresolved conflict touches this capability"
           }
         },
-        "blocking_gates": [
-          "H"
-        ],
-        "recommendation": "REMAIN_CANDIDATE",
-        "promotion_decision": "NOT_PROMOTED"
+        "blocking_gates": [],
+        "recommendation": "PROMOTE",
+        "promotion_decision": "PROMOTED_TO_PRODUCTION"
       },
       "licence_name": "MIT",
       "licence_decided_by": "User",
-      "licence_decided_on": "2026-10-04"
+      "licence_decided_on": "2026-10-04",
+      "promotion_record": {
+        "promoted": true,
+        "promoted_on": "2026-10-04",
+        "promoted_by": "User",
+        "previous_lifecycle_state": "CANDIDATE",
+        "previous_approval_state": "PENDING_USER_APPROVAL",
+        "previous_blocking_gates": [
+          "H"
+        ],
+        "gate_results_at_promotion": {
+          "A": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "E": true,
+          "F": true,
+          "G": true,
+          "H": false,
+          "I": true,
+          "J": true,
+          "K": true
+        },
+        "gate_reasons": {
+          "A": "id, type, version and lifecycle valid",
+          "B": "origin, commit, fact class, evidence and a resolvable source",
+          "C": "classified, evidenced, no secret, project-local",
+          "D": "licence known, evidenced, and repository licence declared",
+          "E": "maintenance state, review date and triggers present",
+          "F": "implementation exists and verification is fully evidenced",
+          "G": "linked requirements and acceptance criteria present",
+          "H": "no explicit User approval; production promotion must await a User decision",
+          "I": "project-local scope honoured",
+          "J": "no stale-as-active and no stale-without-review",
+          "K": "no unresolved conflict touches this capability"
+        },
+        "basis": "Gate H satisfied by explicit User approval; every other gate A-K computed and passing at promotion time.",
+        "not_based_on": [
+          "popularity",
+          "recency",
+          "research interest",
+          "recency of verification"
+        ]
+      }
     },
     {
       "capability_id": "CAP-P03-002",
@@ -238,10 +303,33 @@
         "EV-P3-004"
       ],
       "confidence": "HIGH",
-      "lifecycle_state": "CANDIDATE",
+      "lifecycle_state": "EVALUATED",
       "origin": "SPS_CORE",
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "required": true,
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "scope": "production promotion only",
+        "explicitly_not_approved": [
+          "P5, and the beginning of any P5 work.",
+          "Promotion of CAP-P03-005, which remains blocked by gates F and K.",
+          "Installing any skill, MCP, dependency or external software."
+        ],
+        "gates_passed_at_approval": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "I",
+          "J",
+          "K",
+          "H"
+        ],
+        "evidence": "User instruction: \"I explicitly approve production promotion under Gate H for the capabilities that already satisfy every other required gate.\""
       },
       "verification": {
         "state": "VERIFIED",
@@ -251,7 +339,8 @@
         "observed_result": "40 permutations produced exactly 1 distinct fingerprint; the top-ranked candidate had fewer stars than the maximum present in the candidate set",
         "evidence": [
           "EV-P4-013",
-          "EV-P4-020"
+          "EV-P4-020",
+          "EV-P4-027"
         ],
         "verified_by": "deterministic P4 verification harness",
         "note": "Executed, not asserted."
@@ -318,8 +407,8 @@
           },
           "H": {
             "gate": "APPROVAL",
-            "pass": false,
-            "reason": "no explicit User approval; production promotion must await a User decision"
+            "pass": true,
+            "reason": "explicit User approval recorded"
           },
           "I": {
             "gate": "SCOPE",
@@ -337,15 +426,56 @@
             "reason": "no unresolved conflict touches this capability"
           }
         },
-        "blocking_gates": [
-          "H"
-        ],
-        "recommendation": "REMAIN_CANDIDATE",
-        "promotion_decision": "NOT_PROMOTED"
+        "blocking_gates": [],
+        "recommendation": "PROMOTE",
+        "promotion_decision": "PROMOTED_TO_PRODUCTION"
       },
       "licence_name": "MIT",
       "licence_decided_by": "User",
-      "licence_decided_on": "2026-10-04"
+      "licence_decided_on": "2026-10-04",
+      "promotion_record": {
+        "promoted": true,
+        "promoted_on": "2026-10-04",
+        "promoted_by": "User",
+        "previous_lifecycle_state": "CANDIDATE",
+        "previous_approval_state": "PENDING_USER_APPROVAL",
+        "previous_blocking_gates": [
+          "H"
+        ],
+        "gate_results_at_promotion": {
+          "A": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "E": true,
+          "F": true,
+          "G": true,
+          "H": false,
+          "I": true,
+          "J": true,
+          "K": true
+        },
+        "gate_reasons": {
+          "A": "id, type, version and lifecycle valid",
+          "B": "origin, commit, fact class, evidence and a resolvable source",
+          "C": "classified, evidenced, no secret, project-local",
+          "D": "licence known, evidenced, and repository licence declared",
+          "E": "maintenance state, review date and triggers present",
+          "F": "implementation exists and verification is fully evidenced",
+          "G": "linked requirements and acceptance criteria present",
+          "H": "no explicit User approval; production promotion must await a User decision",
+          "I": "project-local scope honoured",
+          "J": "no stale-as-active and no stale-without-review",
+          "K": "no unresolved conflict touches this capability"
+        },
+        "basis": "Gate H satisfied by explicit User approval; every other gate A-K computed and passing at promotion time.",
+        "not_based_on": [
+          "popularity",
+          "recency",
+          "research interest",
+          "recency of verification"
+        ]
+      }
     },
     {
       "capability_id": "CAP-P03-003",
@@ -404,10 +534,33 @@
         "EV-P3-004"
       ],
       "confidence": "HIGH",
-      "lifecycle_state": "CANDIDATE",
+      "lifecycle_state": "EVALUATED",
       "origin": "SPS_CORE",
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "required": true,
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "scope": "production promotion only",
+        "explicitly_not_approved": [
+          "P5, and the beginning of any P5 work.",
+          "Promotion of CAP-P03-005, which remains blocked by gates F and K.",
+          "Installing any skill, MCP, dependency or external software."
+        ],
+        "gates_passed_at_approval": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "I",
+          "J",
+          "K",
+          "H"
+        ],
+        "evidence": "User instruction: \"I explicitly approve production promotion under Gate H for the capabilities that already satisfy every other required gate.\""
       },
       "verification": {
         "state": "VERIFIED",
@@ -417,7 +570,8 @@
         "observed_result": "forced choice moved the last-ranked candidate to rank 1; the VULNERABLE candidate was refused with MANDATORY_SAFECY_CONSTRAINT",
         "evidence": [
           "EV-P4-014",
-          "EV-P4-021"
+          "EV-P4-021",
+          "EV-P4-028"
         ],
         "verified_by": "deterministic P4 verification harness",
         "note": "Executed, not asserted."
@@ -484,8 +638,8 @@
           },
           "H": {
             "gate": "APPROVAL",
-            "pass": false,
-            "reason": "no explicit User approval; production promotion must await a User decision"
+            "pass": true,
+            "reason": "explicit User approval recorded"
           },
           "I": {
             "gate": "SCOPE",
@@ -503,15 +657,56 @@
             "reason": "no unresolved conflict touches this capability"
           }
         },
-        "blocking_gates": [
-          "H"
-        ],
-        "recommendation": "REMAIN_CANDIDATE",
-        "promotion_decision": "NOT_PROMOTED"
+        "blocking_gates": [],
+        "recommendation": "PROMOTE",
+        "promotion_decision": "PROMOTED_TO_PRODUCTION"
       },
       "licence_name": "MIT",
       "licence_decided_by": "User",
-      "licence_decided_on": "2026-10-04"
+      "licence_decided_on": "2026-10-04",
+      "promotion_record": {
+        "promoted": true,
+        "promoted_on": "2026-10-04",
+        "promoted_by": "User",
+        "previous_lifecycle_state": "CANDIDATE",
+        "previous_approval_state": "PENDING_USER_APPROVAL",
+        "previous_blocking_gates": [
+          "H"
+        ],
+        "gate_results_at_promotion": {
+          "A": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "E": true,
+          "F": true,
+          "G": true,
+          "H": false,
+          "I": true,
+          "J": true,
+          "K": true
+        },
+        "gate_reasons": {
+          "A": "id, type, version and lifecycle valid",
+          "B": "origin, commit, fact class, evidence and a resolvable source",
+          "C": "classified, evidenced, no secret, project-local",
+          "D": "licence known, evidenced, and repository licence declared",
+          "E": "maintenance state, review date and triggers present",
+          "F": "implementation exists and verification is fully evidenced",
+          "G": "linked requirements and acceptance criteria present",
+          "H": "no explicit User approval; production promotion must await a User decision",
+          "I": "project-local scope honoured",
+          "J": "no stale-as-active and no stale-without-review",
+          "K": "no unresolved conflict touches this capability"
+        },
+        "basis": "Gate H satisfied by explicit User approval; every other gate A-K computed and passing at promotion time.",
+        "not_based_on": [
+          "popularity",
+          "recency",
+          "research interest",
+          "recency of verification"
+        ]
+      }
     },
     {
       "capability_id": "CAP-P03-004",
@@ -569,10 +764,33 @@
         "EV-P3-004"
       ],
       "confidence": "HIGH",
-      "lifecycle_state": "CANDIDATE",
+      "lifecycle_state": "EVALUATED",
       "origin": "SPS_CORE",
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "state": "APPROVED",
+        "required": true,
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "scope": "production promotion only",
+        "explicitly_not_approved": [
+          "P5, and the beginning of any P5 work.",
+          "Promotion of CAP-P03-005, which remains blocked by gates F and K.",
+          "Installing any skill, MCP, dependency or external software."
+        ],
+        "gates_passed_at_approval": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "I",
+          "J",
+          "K",
+          "H"
+        ],
+        "evidence": "User instruction: \"I explicitly approve production promotion under Gate H for the capabilities that already satisfy every other required gate.\""
       },
       "verification": {
         "state": "VERIFIED",
@@ -582,7 +800,8 @@
         "observed_result": "STALE_AS_ACTIVE rejected; STALE_WITHOUT_REVIEW rejected; a STALE record carrying review_due was accepted",
         "evidence": [
           "EV-P4-015",
-          "EV-P4-022"
+          "EV-P4-022",
+          "EV-P4-029"
         ],
         "verified_by": "deterministic P4 verification harness",
         "note": "Executed, not asserted."
@@ -650,8 +869,8 @@
           },
           "H": {
             "gate": "APPROVAL",
-            "pass": false,
-            "reason": "no explicit User approval; production promotion must await a User decision"
+            "pass": true,
+            "reason": "explicit User approval recorded"
           },
           "I": {
             "gate": "SCOPE",
@@ -669,15 +888,56 @@
             "reason": "no unresolved conflict touches this capability"
           }
         },
-        "blocking_gates": [
-          "H"
-        ],
-        "recommendation": "REMAIN_CANDIDATE",
-        "promotion_decision": "NOT_PROMOTED"
+        "blocking_gates": [],
+        "recommendation": "PROMOTE",
+        "promotion_decision": "PROMOTED_TO_PRODUCTION"
       },
       "licence_name": "MIT",
       "licence_decided_by": "User",
-      "licence_decided_on": "2026-10-04"
+      "licence_decided_on": "2026-10-04",
+      "promotion_record": {
+        "promoted": true,
+        "promoted_on": "2026-10-04",
+        "promoted_by": "User",
+        "previous_lifecycle_state": "CANDIDATE",
+        "previous_approval_state": "PENDING_USER_APPROVAL",
+        "previous_blocking_gates": [
+          "H"
+        ],
+        "gate_results_at_promotion": {
+          "A": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "E": true,
+          "F": true,
+          "G": true,
+          "H": false,
+          "I": true,
+          "J": true,
+          "K": true
+        },
+        "gate_reasons": {
+          "A": "id, type, version and lifecycle valid",
+          "B": "origin, commit, fact class, evidence and a resolvable source",
+          "C": "classified, evidenced, no secret, project-local",
+          "D": "licence known, evidenced, and repository licence declared",
+          "E": "maintenance state, review date and triggers present",
+          "F": "implementation exists and verification is fully evidenced",
+          "G": "linked requirements and acceptance criteria present",
+          "H": "no explicit User approval; production promotion must await a User decision",
+          "I": "project-local scope honoured",
+          "J": "no stale-as-active and no stale-without-review",
+          "K": "no unresolved conflict touches this capability"
+        },
+        "basis": "Gate H satisfied by explicit User approval; every other gate A-K computed and passing at promotion time.",
+        "not_based_on": [
+          "popularity",
+          "recency",
+          "research interest",
+          "recency of verification"
+        ]
+      }
     },
     {
       "capability_id": "CAP-P03-005",
@@ -735,10 +995,12 @@
         "EV-P3-005"
       ],
       "confidence": "HIGH",
-      "lifecycle_state": "CANDIDATE",
+      "lifecycle_state": "DEFERRED",
       "origin": "SPS_CORE",
       "approval": {
-        "state": "PENDING_USER_APPROVAL"
+        "state": "PENDING_USER_APPROVAL",
+        "decided_by": null,
+        "note": "Explicitly NOT approved for promotion by the User on 2026-10-04. Gates F (no executable CLS verifier) and K (CONF-001 unresolved) are unsatisfied. Neither gate was bypassed and no LCP or INP evidence was invented."
       },
       "verification": {
         "state": "UNVERIFIED",
@@ -840,7 +1102,13 @@
       },
       "licence_name": "MIT",
       "licence_decided_by": "User",
-      "licence_decided_on": "2026-10-04"
+      "licence_decided_on": "2026-10-04",
+      "promotion_record": {
+        "promoted": false,
+        "state": "DEFER",
+        "reason": "Gates F and K unsatisfied: no executable CLS verifier exists, and CONF-001 is unresolved. Gate H approval was withheld by the User. Neither gate was bypassed.",
+        "classified_on": "2026-10-04"
+      }
     }
   ],
   "deferred": [
@@ -910,8 +1178,8 @@
   ],
   "counts": {
     "total": 5,
-    "promoted": 0,
-    "candidate": 5,
+    "promoted": 4,
+    "candidate": 1,
     "deferred": 9
   },
   "promotion_gate": {
