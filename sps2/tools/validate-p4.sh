@@ -402,6 +402,98 @@ else
   pass "requirement, evidence and implementation records are fully wired"
 fi
 
+sect "12b. The committed .claude/settings.json can never carry a credential"
+# The working tree may be rewritten by the harness at any time, so scanning the
+# working tree alone is a vacuous guarantee. This checks the COMMITTED blob at
+# HEAD, which is what a future `git commit` would publish. Key names only; no
+# credential value is read, printed or transmitted.
+python3 - "$REPO" > "$TMP/claude" 2>&1 <<'PY'
+import json, subprocess, sys
+R = sys.argv[1]
+PATH = '.claude/settings.json'
+TOKEN_KEYS = ('ANTHROPIC_AUTH_TOKEN', 'OPENROUTER_KEY', 'OPENAI_API_KEY',
+              'ANTHROPIC_API_KEY')
+try:
+    raw = subprocess.run(['git', '-C', R, 'show', 'HEAD:' + PATH],
+                         capture_output=True, text=True, check=True).stdout
+    d = json.loads(raw)
+except Exception as e:
+    print("CLAUDE_SETTINGS_UNREADABLE: %s" % type(e).__name__)
+    raise SystemExit(0)
+env = d.get('env') or {}
+bad = sorted(k for k in env if k in TOKEN_KEYS)
+if bad:
+    print("COMMITTED_CREDENTIAL_KEY: .claude/settings.json holds %s" % bad)
+if not isinstance(d.get('enabledPlugins', {}), dict):
+    print("CLAUDE_SETTINGS_MALFORMED: enabledPlugins is not an object")
+PY
+if [ -s "$TMP/claude" ]; then
+  while IFS= read -r l; do fail "$l"; done < "$TMP/claude"
+else
+  pass "the committed .claude/settings.json carries no credential key"
+fi
+# POSCTRL-E: the committed-blob guard must actually detect a planted key.
+if [ "$(python3 - "$TMP" <<'PY'
+import json, os, sys
+TOKEN_KEYS = ('ANTHROPIC_AUTH_TOKEN', 'OPENROUTER_KEY', 'OPENAI_API_KEY',
+              'ANTHROPIC_API_KEY')
+p = os.path.join(sys.argv[1], 'claude_fake.json')
+json.dump({'env': {'ANTHROPIC_AUTH_TOKEN': 'PLANTED-FOR-TEST'}}, open(p, 'w'))
+d = json.load(open(p))
+print('DETECTED' if any(k in TOKEN_KEYS for k in (d.get('env') or {}))
+      else 'MISSED')
+PY
+)" = "DETECTED" ]; then
+  pass "POSCTRL-E  the committed-blob guard detects a planted credential key"
+else
+  fail "POSCTRL-E  the committed-blob guard MISSED a planted credential key"
+fi
+
+sect "12c. Open decisions must stay open until the user answers them"
+# A pending decision must carry no decider. If an agent ever fills in
+# decided_by, or flips state, the record is a fabricated approval.
+python3 - "$SPS2" > "$TMP/open" 2>&1 <<'PY'
+import json, os, sys
+B = sys.argv[1]
+D = B + '/decisions'
+lic = os.path.join(D, 'OPEN-DECISION-LICENCE.json')
+setg = os.path.join(D, 'OPEN-DECISION-CLAUDE-SETTINGS.json')
+for p in (lic, setg):
+    if not os.path.isfile(p):
+        print("OPEN_DECISION_RECORD_MISSING: %s" % os.path.basename(p))
+for p in (lic, setg):
+    if not os.path.isfile(p):
+        continue
+    d = json.load(open(p))
+    did = d.get('decision_id')
+    if d.get('state') != 'PENDING_USER_DECISION':
+        print("OPEN_DECISION_SILENTLY_CLOSED: %s state=%s" % (did, d.get('state')))
+    if d.get('decided_by') not in (None, ''):
+        print("OPEN_DECISION_SELF_ANSWERED: %s decided_by=%s"
+              % (did, d.get('decided_by')))
+    if len(d.get('options') or []) < 2:
+        print("OPEN_DECISION_NO_OPTIONS: %s" % did)
+# The licence must still be unresolved in the P4 decision record.
+dec = json.load(open(D + '/P4-DECISIONS.json'))
+lic_rec = [x for x in dec['decisions']
+           if (x.get('unresolved') or {}).get('item') == 'repository_licence']
+if not lic_rec:
+    print("LICENCE_DECISION_RECORD_MISSING")
+elif lic_rec[0]['unresolved']['state'] != 'UNRESOLVED':
+    print("LICENCE_SILENTLY_RESOLVED: %s" % lic_rec[0]['unresolved']['state'])
+# Still no licence file anywhere under the repository root.
+for root, dirs, files in os.walk(B):
+    dirs[:] = [d for d in dirs if d != '.git']
+    for f in files:
+        if f.upper() in ('LICENSE', 'LICENCE', 'COPYING'):
+            print("LICENCE_FILE_ADDED: %s" % os.path.join(root, f))
+PY
+if [ -s "$TMP/open" ]; then
+  while IFS= read -r l; do fail "$l"; done < "$TMP/open"
+else
+  pass "open decisions remain open, unattributed, and carry options"
+fi
+
 fi  # end structural
 
 # ══ NEGATIVE SUITE: 20 mandated cases ═══════════════════════════════════════

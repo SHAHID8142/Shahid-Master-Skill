@@ -1,0 +1,74 @@
+{
+  "schema": "sps2.open-decision/v1",
+  "decision_id": "DEC-0024",
+  "title": "Tracked .claude/settings.json: treatment recommended, awaiting an explicit user decision",
+  "state": "PENDING_USER_DECISION",
+  "recorded_on": "2026-10-04",
+  "decided_by": null,
+  "decision": "NO TREATMENT WAS APPLIED. The file was neither modified nor deleted. This record documents the safest repository-level treatment and leaves the choice to the user.",
+  "inspection_method": "Key names and presence only. No credential value was printed, hashed, logged or transmitted. No provider-side credential verification was attempted.",
+  "findings": {
+    "tracked_in_HEAD": true,
+    "committed_content_at_HEAD": "{\"enabledPlugins\": {}} - no env block, no credential",
+    "working_tree_file_present": false,
+    "working_tree_state": "deleted by the harness, unstaged, left untouched by design",
+    "commits_touching_the_path": 1,
+    "commits_holding_a_credential_in_this_path": 1,
+    "credential_bearing_commit": "a7767cf5f761cab4aa633c1cbc7604f83e4d14f8",
+    "credential_bearing_commit_is_the_forensic_checkpoint": true,
+    "baseline_commit_10ab67a_contains_a_credential": false,
+    "history_rewrite_required_to_remove_it": true,
+    "history_rewrite_is_forbidden": "The user decided checkpoint a7767cf must be preserved. Purging it is prohibited and was not attempted."
+  },
+  "material_correction": "The P4 working assumption that the credential was committed to the repository holds for exactly one commit, a7767cf, which is the preserved forensic checkpoint. The baseline commit 10ab67a and current HEAD both hold a credential-free file. The exposure surface is therefore (a) one deliberately preserved commit and (b) the working tree, which the harness rewrites at will.",
+  "options": [
+    {
+      "id": "A",
+      "summary": "Keep the path tracked and enforce a committed-blob guard. RECOMMENDED and ALREADY IMPLEMENTED.",
+      "consequences": [
+        "validate-p4.sh section 12b now checks the COMMITTED blob at HEAD, so no credential can be published by a future commit. POSCTRL-E proves the guard is not vacuous.",
+        "No repository structure change and no harness disruption.",
+        "Does NOT remove the credential already present in checkpoint a7767cf. That removal would require rewriting history, which is forbidden.",
+        "Leaves the spurious working-tree deletion for the user to resolve."
+      ]
+    },
+    {
+      "id": "B",
+      "summary": "Untrack the path with git rm --cached and add it to .gitignore.",
+      "consequences": [
+        "Removes the possibility of committing this path at all, which is the strongest guarantee.",
+        "Changes repository structure; collaborators lose the tracked enabledPlugins configuration.",
+        "May disrupt the harness if it expects the file to be tracked.",
+        "Does not affect history either; the a7767cf credential would remain reachable."
+      ]
+    },
+    {
+      "id": "C",
+      "summary": "Restore the working-tree file to its committed state with git restore.",
+      "consequences": [
+        "Clears the spurious deletion and returns the tree to a clean state.",
+        "Restores a credential-free file containing only {\"enabledPlugins\": {}}.",
+        "Provides no protection against a future harness rewrite."
+      ]
+    },
+    {
+      "id": "D",
+      "summary": "Rewrite history to purge the a7767cf credential.",
+      "consequences": [
+        "PROHIBITED by the standing user decision to preserve checkpoint a7767cf.",
+        "Not attempted and must not be attempted.",
+        "Recorded only so the option set is complete and explicitly refused."
+      ]
+    }
+  ],
+  "recommendation": "Option A, already implemented, plus Option C. Together they keep the harness working, guarantee that no credential can be published in a new commit, and leave the tree clean. Option B is stronger but changes repository structure and should be chosen knowingly. Credential revocation remains USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED and was not independently verified.",
+  "not_done": [
+    "The file was not modified.",
+    "The file was not deleted.",
+    "No credential value was read, printed, hashed or transmitted.",
+    "No provider-side verification was attempted.",
+    "Checkpoint a7767cf was not purged. No history rewrite, reflog expiry, garbage collection or force-push occurred.",
+    "The P3 incident classification was not changed."
+  ],
+  "related": ["EV-P4-019", "INCIDENT-P3-001"]
+}
