@@ -3,9 +3,29 @@
   "decision_id": "DEC-0023",
   "title": "Repository licence: options presented, awaiting an explicit user choice",
   "state": "PENDING_USER_DECISION",
+  "blocked_by": "skills/sps-cms provenance is UNKNOWN; see PROVENANCE-SPS-CMS.json",
   "recorded_on": "2026-10-04",
+  "resolved_on": null,
   "decided_by": null,
-  "decision": "NO LICENCE HAS BEEN CHOSEN. The licence remains PENDING_USER_DECISION. This record presents the options and their consequences so the user can choose; it selects nothing.",
+  "decision": "NO LICENCE HAS BEEN CHOSEN. The licence remains PENDING_USER_DECISION. No LICENSE, LICENCE or COPYING file was created and none will be until the user explicitly selects one.",
+  "resolution_stage_2026_10_04": {
+    "outcome": "Investigated and STOPPED before applying a licence, as instructed.",
+    "provenance_investigation_completed": true,
+    "provenance_finding": "UNKNOWN",
+    "conflict_that_blocks_permissive_licence": false,
+    "conflict_detail": "No conflict was found. No evidence of third-party derivation exists. However, provenance rests on self-declared metadata that could not be independently verified, so it is not recorded as VERIFIED_PROJECT_AUTHORED.",
+    "why_still_pending": "The licence choice was not made on the user's behalf. It remains an explicit user decision, and it is additionally gated on one confirmation about skills/sps-cms provenance.",
+    "options_still_available": [
+      "MIT",
+      "Apache-2.0",
+      "BSD-3-Clause",
+      "MPL-2.0",
+      "GPL-3.0",
+      "AGPL-3.0",
+      "None / proprietary (all rights reserved)"
+    ],
+    "constraint_carried_forward": "Choosing a licence unblocks gate D only. Gate H, explicit production approval, is independent and remains unsatisfied, so 0 of 5 promoted would still hold immediately after any licence decision."
+  },
   "repository_facts": {
     "licence_file_present": false,
     "root_manifest_licence_field": false,

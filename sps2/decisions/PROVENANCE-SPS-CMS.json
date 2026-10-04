@@ -1,0 +1,44 @@
+{
+  "schema": "sps2.provenance-finding/v1",
+  "subject": "skills/sps-cms",
+  "recorded_on": "2026-10-04",
+  "finding": "UNKNOWN",
+  "finding_detail": "UNKNOWN (leaning project-authored). No evidence of third-party derivation was found, but provenance rests on self-declared metadata that could not be independently verified, so it is not recorded as VERIFIED_PROJECT_AUTHORED.",
+  "method": "Local repository evidence only: git history, package manifests, file headers, upstream references, and existing P2 research records. No network access and no external repository was contacted, so upstream content could not be compared.",
+  "evidence_for_project_authorship": [
+    "package.json declares author SHAHID8142, licence MIT, repository https://github.com/SHAHID8142/sps-cms.git",
+    "README.md licence footer reads: MIT (c) SHAHID8142, linking to github.com/SHAHID8142",
+    "The parent repository self-identifies as github.com/SHAHID8142/Shahid-Personal-SkillSet in get-sps.sh, scripts/sps-update.sh, scripts/update-sps.ps1 and skills/sps copies, so the owner account is the same one.",
+    "INSTALL.md and README.md install commands fetch from raw.githubusercontent.com/SHAHID8142/sps-cms/main/scripts/, a self-referential path under the same account.",
+    "No 'forked from', 'based on', 'adapted from', 'vendored' or 'derived from' statement appears anywhere in the 56 files.",
+    "No @license, @preserve or SPDX-License header appears anywhere in the component.",
+    "No vendored or minified third-party library was found. The earlier 'React from' matches were prose fragments in template files, not third-party headers.",
+    "Third-party product names (WordPress, Sanity, Contentful) appear only as supported CMS targets and comparison tables in CMS-ENGINES.md and PROJECT-ROOT-MIRRORS.md, not as sources of code.",
+    "AUTO-SYNC-PROTOCOL.md describes database record synchronisation inside the CMS, not source-code synchronisation from an upstream project."
+  ],
+  "evidence_limits": [
+    "Git history for this path is a single atomic import in the baseline commit 10ab67a (56 files, 3939 insertions, all additions). There is no authoring history to inspect.",
+    "All provenance evidence is self-declared by the same party that would benefit from a permissive licence. Self-declaration cannot independently establish ownership.",
+    "It could not be confirmed that SHAHID8142 is the user's account, because that requires external verification which was deliberately not performed.",
+    "It could not be confirmed that the local content matches the upstream sps-cms repository, so it is unknown whether this copy was taken from upstream, from a different licence state, or written independently."
+  ],
+  "why_not_verified_project_authored": "The finding would require at least one independently verifiable fact tying the code to the user. None is available from local evidence alone.",
+  "why_not_verified_third_party": "No marker of third-party derivation exists anywhere: no attribution, no foreign licence header, no upstream copy, no vendored dependency.",
+  "licensing_impact": {
+    "permits_permissive_licence": "not yet established",
+    "conflict_detected": false,
+    "note": "No conflict was found, but absence of a conflict is not proof of clean provenance. The licence decision therefore remains blocked pending one confirmation from the user, and no licence file was created."
+  },
+  "resolution_requires": [
+    "The user confirming that SHAHID8142 is their own account, and",
+    "The user confirming that skills/sps-cms is their own original work, or was taken from a repository they control under the MIT terms it already declares."
+  ],
+  "if_confirmed": "The finding upgrades to VERIFIED_PROJECT_AUTHORED and the repository licence decision becomes a straightforward user choice. The already-declared MIT on the component would then be consistent with a repository-wide MIT or Apache-2.0.",
+  "if_not_confirmed": "The component would be MIXED or VERIFIED_THIRD_PARTY, and the component would need to be excluded from the licence or relicensed separately under its own terms.",
+  "not_done": [
+    "The licence was not changed.",
+    "No LICENSE, LICENCE or COPYING file was created.",
+    "No external repository or URL was contacted.",
+    "No provenance information was fabricated or inferred."
+  ]
+}

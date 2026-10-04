@@ -458,22 +458,62 @@ B = sys.argv[1]
 D = B + '/decisions'
 lic = os.path.join(D, 'OPEN-DECISION-LICENCE.json')
 setg = os.path.join(D, 'OPEN-DECISION-CLAUDE-SETTINGS.json')
-for p in (lic, setg):
-    if not os.path.isfile(p):
-        print("OPEN_DECISION_RECORD_MISSING: %s" % os.path.basename(p))
-for p in (lic, setg):
-    if not os.path.isfile(p):
-        continue
-    d = json.load(open(p))
+prov = os.path.join(D, 'PROVENANCE-SPS-CMS.json')
+
+# 1. The licence decision must remain open and unattributed.
+if not os.path.isfile(lic):
+    print("OPEN_DECISION_RECORD_MISSING: OPEN-DECISION-LICENCE.json")
+else:
+    d = json.load(open(lic))
     did = d.get('decision_id')
     if d.get('state') != 'PENDING_USER_DECISION':
         print("OPEN_DECISION_SILENTLY_CLOSED: %s state=%s" % (did, d.get('state')))
     if d.get('decided_by') not in (None, ''):
         print("OPEN_DECISION_SELF_ANSWERED: %s decided_by=%s"
               % (did, d.get('decided_by')))
+    if d.get('resolved_on') not in (None, ''):
+        print("OPEN_DECISION_FALSELY_RESOLVED: %s resolved_on=%s"
+              % (did, d.get('resolved_on')))
     if len(d.get('options') or []) < 2:
         print("OPEN_DECISION_NO_OPTIONS: %s" % did)
-# The licence must still be unresolved in the P4 decision record.
+
+# 2. The settings decision was resolved by explicit user instruction, so it may
+#    no longer be pending, but it must record who resolved it.
+if not os.path.isfile(setg):
+    print("DECISION_RECORD_MISSING: OPEN-DECISION-CLAUDE-SETTINGS.json")
+else:
+    d = json.load(open(setg))
+    if d.get('state') != 'RESOLVED_APPLIED':
+        print("SETTINGS_DECISION_UNEXPECTED_STATE: %s" % d.get('state'))
+    if not (d.get('resolved_by') or '').strip():
+        print("RESOLVED_WITHOUT_ATTRIBUTION: settings decision")
+    fs = d.get('final_state') or {}
+    if not fs.get('credential_keys') == 'none':
+        print("SETTINGS_FINAL_STATE_HAS_CREDENTIAL: %s" % fs.get('credential_keys'))
+
+# 3. A provenance finding must exist and must be one of the four allowed values.
+if not os.path.isfile(prov):
+    print("PROVENANCE_FINDING_MISSING")
+else:
+    d = json.load(open(prov))
+    allowed = {'VERIFIED_PROJECT_AUTHORED', 'VERIFIED_THIRD_PARTY', 'MIXED',
+               'UNKNOWN'}
+    if d.get('finding') not in allowed:
+        print("PROVENANCE_FINDING_INVALID: %s" % d.get('finding'))
+    if not (d.get('evidence_for_project_authorship') or []) and \
+       not (d.get('evidence_limits') or []):
+        print("PROVENANCE_FINDING_UNSUPPORTED: no evidence recorded")
+    if d.get('finding') in ('VERIFIED_PROJECT_AUTHORED', 'VERIFIED_THIRD_PARTY'):
+        # A VERIFIED finding must record who confirmed it. Without an explicit
+        # User confirmation the agent has upgraded the label on its own
+        # authority, which is exactly the failure mode this guards against.
+        if not (d.get('confirmed_by') or '').strip():
+            print("PROVENANCE_VERIFIED_WITHOUT_USER_CONFIRMATION: %s"
+                  % d.get('finding'))
+    if d.get('finding') == 'UNKNOWN' and not d.get('evidence_limits'):
+        print("PROVENANCE_UNKNOWN_WITHOUT_STATED_LIMITS")
+
+# 4. The licence must still be unresolved in the P4 decision record.
 dec = json.load(open(D + '/P4-DECISIONS.json'))
 lic_rec = [x for x in dec['decisions']
            if (x.get('unresolved') or {}).get('item') == 'repository_licence']
@@ -481,7 +521,8 @@ if not lic_rec:
     print("LICENCE_DECISION_RECORD_MISSING")
 elif lic_rec[0]['unresolved']['state'] != 'UNRESOLVED':
     print("LICENCE_SILENTLY_RESOLVED: %s" % lic_rec[0]['unresolved']['state'])
-# Still no licence file anywhere under the repository root.
+
+# 5. Still no licence file anywhere.
 for root, dirs, files in os.walk(B):
     dirs[:] = [d for d in dirs if d != '.git']
     for f in files:

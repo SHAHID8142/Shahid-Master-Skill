@@ -333,6 +333,11 @@ then
 else
   fail "a reachable commit outside the preserved checkpoint contains a credential"
 fi
+if python3 "$SPS2/tools/test-history-credential-check.py" >/dev/null 2>&1; then
+  pass "history-credential check mutation test: all 4 scenarios correct"
+else
+  fail "history-credential check mutation test FAILED"
+fi
 if git -C "$REPO" check-ignore -q .claude/settings.local.json 2>/dev/null; then
   pass "local agent settings are gitignored as a prevention measure"
 else
