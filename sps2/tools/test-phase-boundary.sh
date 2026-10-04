@@ -47,7 +47,45 @@ mutate "M5 D-P6-1 undated" "$DEC" \
   "[x['approval'].pop('decided_at', None) for x in d['decisions'] if x['decision_id'] == 'D-P6-1']"
 
 cp "$BAK" "$DEC"
-rm -f "$BAK"
+REQB="$REPO/sps2/requirements/P6-REQUIREMENTS.json"
+RB="$(mktemp)"; cp "$REQB" "$RB"
+mutate_req() {  # mutate_req <label> <python-body>
+  local label="$1" body="$2" out
+  cp "$RB" "$REQB"
+  python3 - "$REQB" "$body" <<'PY'
+import json, sys
+p, body = sys.argv[1], sys.argv[2]
+d = json.load(open(p))
+exec(body)
+json.dump(d, open(p, "w"), indent=2)
+PY
+  if [ $? -ne 0 ]; then
+    echo "  ERROR   $label (mutation did not apply)"; FAILN=$((FAILN+1)); return
+  fi
+  out="$(python3 "$REPO/sps2/tools/validate-p6.py" 2>&1)"
+  if printf '%s' "$out" | grep -q 'P6 RESEARCH VALID'; then
+    echo "  MISSED  $label"; FAILN=$((FAILN+1))
+  else
+    echo "  CAUGHT  $label  ->  $(printf '%s' "$out" | grep -oE 'P6_APPROVAL_[A-Z_]*|P6_REQUIREMENT_APPROVAL_NOT_USER|P6_PHASE_APPROVAL_MISSING' | sort -u | tr '\n' ' ')"
+    PASSN=$((PASSN+1))
+  fi
+  cp "$RB" "$REQB"
+}
+mutate_req "M6 P6 approval attributed to an agent" \
+  "d['phase_completion_approval']['decided_by'] = 'Cline'"
+mutate_req "M7 P6 approval undated" \
+  "d['phase_completion_approval'].pop('decided_on', None)"
+mutate_req "M8 P6 approval scope broadened" \
+  "d['phase_completion_approval']['scope'] = 'FULL_AUTHORITY'"
+mutate_req "M9 approval drops the P7 exclusion" \
+  "d['phase_completion_approval']['explicitly_not_approved'] = [x for x in d['phase_completion_approval']['explicitly_not_approved'] if 'P7' not in x]"
+mutate_req "M10 a requirement approval forged to an agent" \
+  "d['requirements'][0]['approval']['decided_by'] = 'Agent'"
+mutate_req "M11 preserved state claims CONF-001 resolved" \
+  "d['phase_completion_approval']['preserved_state']['CONF-001'] = 'RESOLVED'"
+
+cp "$RB" "$REQB"
+rm -f "$RB" "$BAK"
 echo ""
 if [ "$FAILN" -eq 0 ]; then
   echo "== PHASE BOUNDARY MUTATION SUITE: $PASSN caught, $FAILN missed =="

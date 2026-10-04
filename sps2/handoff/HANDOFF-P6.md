@@ -1,10 +1,11 @@
 # HANDOFF-P6 — Technology Research
 
 Phase: **P6 — Technology Research** (authoritative roadmap definition, per D-P6-1).
-Status: **IMPLEMENTED and VERIFIED. NOT APPROVED. Awaiting User approval.**
+Status: **IMPLEMENTED, VERIFIED and APPROVED** (User, 2026-10-04).
+Approval scope: `TECHNOLOGY_RESEARCH_ONLY`.
 
-P6 was not self-approved. No requirement carries an approval, and no
-completion approval exists for the phase.
+P6 was not self-approved. The recorded approval was given explicitly by the
+User in session and is attributable to them.
 
 ---
 
@@ -62,7 +63,15 @@ started.
   repository's own decision records do not use. Corrected to accept `decided_at`
   as well. Attribution is still judged on WHO and WHEN.
 
-## 6. Open decisions for the User
+## 6. What the approval does NOT permit
+
+The approval is limited to the completed P6 research work. It explicitly
+withholds: inventing LCP or INP thresholds, resolving CONF-001, promoting any
+capability, runtime activation, installing anything, beginning P7, legacy
+modification, machine-global changes, purging checkpoint a7767cf, rewriting
+history, and force-pushing. P7 remains NOT_APPROVED and NOT_STARTED.
+
+## 7. Remaining decisions for a future phase
 
 1. Approve or rework the six P6 requirements.
 2. Whether to close CONF-001 now that CLS is independently confirmed but LCP

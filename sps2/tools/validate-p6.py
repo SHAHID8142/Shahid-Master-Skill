@@ -25,6 +25,20 @@ import technology_readiness as T    # noqa: E402
 
 GREEN, RED, BOLD, NC = (
     "\033[0;32m", "\033[0;31m", "\033[1m", "\033[0m")
+WITHHELD = ""
+
+
+def approval_scope_ok(ap):
+    """Only the research-only scope is an acceptable P6 approval."""
+    return (ap.get("scope") or "") == "TECHNOLOGY_RESEARCH_ONLY"
+
+
+def approval_withholds(ap, phrase):
+    """True when the approval record explicitly withholds the given action."""
+    text = " ".join(ap.get("explicitly_not_approved") or []).lower()
+    return phrase in text
+
+
 LIFECYCLE_PATH = os.path.join(SPS2, "core", "lifecycle", "STATE-MACHINE.md")
 DECISIONS = os.path.join(SPS2, "decisions", "P6-DECISIONS.json")
 
@@ -215,23 +229,97 @@ def s7(r):
 
 
 def s8(r):
-    r.sect("8. P6 is not self-approved")
+    r.sect("8. P6 approval is genuine, dated and correctly scoped")
+    # The previous invariant here was "no P6 completion approval may exist",
+    # correct while P6 was unapproved and obsolete once the User approved it.
+    # It is replaced, not removed, by a stronger check: the approval must
+    # exist, be User-attributable, be dated, be scoped to research only, and
+    # every state the User required preserved must actually hold rather than
+    # merely be recorded.
     req = os.path.join(SPS2, "requirements", "P6-REQUIREMENTS.json")
     if not os.path.isfile(req):
         r.bad("P6_REQUIREMENTS_MISSING")
         return
     doc = json.load(open(req))
-    if doc.get("phase_completion_approval"):
-        r.bad("P6_PHASE_APPROVED_BY_AGENT: a completion approval exists")
+    ap = doc.get("phase_completion_approval") or {}
+    if ap.get("state") != "APPROVED":
+        r.bad("P6_PHASE_APPROVAL_MISSING: %r" % (ap.get("state"),))
+        return
+    if G.approval_is_user_attributable(ap):
+        r.ok("P6 phase approval is User-attributable and dated "
+             "(by=%r on=%r)" % (ap.get("decided_by"), ap.get("decided_on")))
     else:
-        r.ok("no P6 completion approval recorded (correct)")
-    pending = 0
+        r.bad("P6_APPROVAL_NOT_USER_ATTRIBUTABLE: %s"
+              % G.reason_not_attributable(ap))
+    scope = ap.get("scope") or ""
+    if approval_scope_ok(ap):
+        r.ok("approval scope is exactly TECHNOLOGY_RESEARCH_ONLY")
+    else:
+        r.bad("P6_APPROVAL_SCOPE_WRONG: %r" % scope)
+    global WITHHELD
+    WITHHELD = " ".join(ap.get("explicitly_not_approved") or []).lower()
+    for must in ("lcp or inp", "conf-001", "promoting any capability",
+                 "runtime activation", "installing any dependency",
+                 "beginning p7", "legacy", "machine-global", "a7767cf",
+                 "rewriting git history", "force-push"):
+        if not approval_withholds(ap, must):
+            r.bad("P6_APPROVAL_MISSING_EXCLUSION: %s" % must)
+    if not r.failed:
+        r.ok("approval explicitly withholds every prohibited action")
     for x in doc["requirements"]:
-        st = (x.get("approval") or {}).get("state")
-        if st == "APPROVED":
-            r.bad("P6_REQUIREMENT_SELF_APPROVED: %s" % x["requirement_id"])
-        elif st == "PENDING_USER_APPROVAL":
-            pending += 1
+        if not G.approval_is_user_attributable(x.get("approval") or {}):
+            r.bad("P6_REQUIREMENT_APPROVAL_NOT_USER: %s"
+                  % x["requirement_id"])
+    r.ok("all %d requirements individually User-attributable"
+         % len(doc["requirements"]))
+    s8b(r, ap.get("preserved_state") or {})
+
+
+def s8b(r, preserved):
+    """Assert the preserved state actually holds, not merely that it is typed."""
+    r.sect("8b. Preserved state is asserted, not merely recorded")
+    reg = REG.load_registry()
+    cache = T.load_cache()
+    actual = {}
+    conf = [c for c in load("research/P2-SOURCES.json").get("conflicts", [])
+            if c.get("id") == "CONF-001"]
+    actual["CONF-001"] = "UNRESOLVED" if (
+        conf and "UNRESOLVED" in (conf[0].get("resolution") or "")) else "OTHER"
+    for tid in ("TECH-PYTHON-STDLIB", "TECH-WEB-VITALS", "TECH-SPS-CMS"):
+        actual[tid] = T.evaluate(T.by_id(tid, cache))[0]
+    # CAP-P03-005 is expressed as lifecycle state plus the recorded promotion
+    # decision. The registry stores recommendation "DEFER" and promotion
+    # decision "NOT_PROMOTED"; the preserved value is the latter, which is
+    # what "DEFERRED / NOT_PROMOTED" means.
+    five = REG.by_id("CAP-P03-005", reg) or {}
+    actual["CAP-P03-005"] = "%s / %s" % (
+        five.get("lifecycle_state"),
+        (five.get("promotion_assessment") or {}).get("promotion_decision"))
+    actual["production_capability_count"] = len(REG.promoted(reg))
+    states = {c.get("lifecycle_state") for c in reg["capabilities"]
+              if c.get("capability_id") in {"CAP-P03-001", "CAP-P03-002",
+                                            "CAP-P03-003", "CAP-P03-004"}}
+    actual["capability_lifecycle_state"] = (
+        "EVALUATED (all four)" if states == {"EVALUATED"}
+        else "MIXED %s" % sorted(states))
+    for k, want in preserved.items():
+        got = actual.get(k)
+        if got is None:
+            continue          # narrative items checked by their own sections
+        if got == want:
+            r.ok("preserved %s = %s" % (k, want))
+        else:
+            r.bad("PRESERVED_STATE_DRIFT: %s recorded %r but actual %r"
+                  % (k, want, got))
+    if "runtime activation" in WITHHELD:
+        r.ok("runtime activation explicitly withheld by the approval")
+    if "p7" in WITHHELD or "beginning p7" in WITHHELD:
+        r.ok("P7 explicitly withheld by the approval")
+    p7 = [f for _r, _d, fs in os.walk(SPS2) for f in fs if f.startswith("P7")]
+    if p7:
+        r.bad("P7_ARTIFACT_CREATED: %s" % p7)
+    else:
+        r.ok("P7 recorded NOT_APPROVED and no P7 artefact exists")
 def s9(r):
     r.sect("9. Nothing installed, nothing global, P7 not started")
     offenders = []
@@ -339,6 +427,53 @@ def negatives(r):
         return bool(re.search(r'"LCP[^"]*":\s*"[0-9]',
                               json.dumps(T.load_cache())))
     cases.append(("N13 invented LCP threshold present", n13))
+
+    req = json.load(open(os.path.join(SPS2, "requirements",
+                                      "P6-REQUIREMENTS.json")))
+    ap6 = req.get("phase_completion_approval") or {}
+
+    def n14():
+        return ap6.get("decided_by") != "User"
+    cases.append(("N14 P6 approval not decided_by User", n14))
+
+    def n15():
+        # Defect survives if the attribution control ACCEPTS a forged approval.
+        return G.approval_is_user_attributable(dict(ap6, decided_by="Cline"))
+    cases.append(("N15 P6 approval attributed to an agent", n15))
+
+    def n16():
+        return G.approval_is_user_attributable(dict(ap6, decided_on=""))
+    cases.append(("N16 P6 approval undated", n16))
+
+    def n17():
+        return approval_scope_ok(dict(ap6, scope="FULL_AUTHORITY"))
+    cases.append(("N17 over-broad P6 scope accepted", n17))
+
+    def n18():
+        stripped = dict(ap6, explicitly_not_approved=[
+            x for x in (ap6.get("explicitly_not_approved") or [])
+            if "runtime activation" not in x.lower()])
+        return approval_withholds(stripped, "runtime activation")
+    cases.append(("N18 approval missing runtime-activation exclusion", n18))
+
+    def n19():
+        stripped = dict(ap6, explicitly_not_approved=[
+            x for x in (ap6.get("explicitly_not_approved") or [])
+            if "p7" not in x.lower()])
+        return approval_withholds(stripped, "beginning p7")
+    cases.append(("N19 approval missing P7 exclusion", n19))
+
+    def n20():
+        return bool([f for _r, _d, fs in os.walk(SPS2) for f in fs
+                     if f.startswith("P7")])
+    cases.append(("N20 P7 artefact exists", n20))
+
+    def n21():
+        conf = [c for c in load("research/P2-SOURCES.json")["conflicts"]
+                if c.get("id") == "CONF-001"]
+        return bool(conf) and "UNRESOLVED" not in (conf[0].get("resolution")
+                                                   or "")
+    cases.append(("N21 CONF-001 no longer unresolved", n21))
 
     for label, fn in cases:
         try:

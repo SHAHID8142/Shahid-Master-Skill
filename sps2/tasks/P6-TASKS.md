@@ -1,9 +1,10 @@
 # P6 — Tasks
 
 Phase: **Technology Research** (roadmap definition, per D-P6-1).
-Status: **IMPLEMENTED / VERIFIED. NOT APPROVED. Awaiting User approval.**
+Status: **IMPLEMENTED / VERIFIED / APPROVED** (User, 2026-10-04),
+scope `TECHNOLOGY_RESEARCH_ONLY`.
 
-P6 is not self-approved. No requirement carries an approval.
+P6 was not self-approved; the approval was given explicitly by the User.
 
 | ID | Task | Status | Artefact |
 |---|---|---|---|
